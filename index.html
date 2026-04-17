@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -160,6 +159,15 @@ border-top:1px solid #1f2937;
 padding-top:10px;
 }
 
+/* LOGIN BOX */
+.loginBox{
+background:#0f172a;
+padding:15px;
+margin:20px;
+border-radius:12px;
+border:1px solid #1f2937;
+}
+
 </style>
 </head>
 
@@ -177,6 +185,19 @@ padding-top:10px;
 </div>
 
 <div class="main">
+
+<!-- 🔐 LOGIN (FIREBASE CONNECTED) -->
+<div class="loginBox">
+<h2>Login System</h2>
+
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+<button onclick="signup()">Sign Up</button>
+
+<p id="userStatus">Not logged in</p>
+</div>
 
 <!-- DASHBOARD -->
 <div id="dash" class="dashboard">
@@ -229,144 +250,155 @@ padding-top:10px;
 
 </div>
 
+<!-- ================= FIREBASE ================= -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBD1TFfCDnqP1VYwskBu-Qd9AROWL0TOSk",
+  authDomain: "autoknowledge-pro.firebaseapp.com",
+  projectId: "autoknowledge-pro",
+  storageBucket: "autoknowledge-pro.firebasestorage.app",
+  messagingSenderId: "476847258960",
+  appId: "1:476847258960:web:2898e7d7968d8ba84b8055"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* LOGIN */
+window.login = function(){
+const email=document.getElementById("email").value;
+const pass=document.getElementById("password").value;
+
+signInWithEmailAndPassword(auth,email,pass)
+.then(()=>alert("Logged in"))
+.catch(e=>alert(e.message));
+}
+
+/* SIGNUP */
+window.signup = function(){
+const email=document.getElementById("email").value;
+const pass=document.getElementById("password").value;
+
+createUserWithEmailAndPassword(auth,email,pass)
+.then(()=>alert("Account created"))
+.catch(e=>alert(e.message));
+}
+
+/* STATUS */
+onAuthStateChanged(auth,user=>{
+document.getElementById("userStatus").innerText =
+user ? "Logged in: "+user.email : "Not logged in";
+});
+
+/* SAVE REPORT */
+window.saveReport = async function(data){
+const user=auth.currentUser;
+if(!user) return;
+
+await addDoc(collection(db,"reports"),{
+userId:user.uid,
+email:user.email,
+...data,
+date:new Date().toISOString()
+});
+}
+
+</script>
+
+<!-- YOUR ORIGINAL SCRIPT -->
 <script>
 
 let last={};
 
 function runAI(){
-try{
-
 let f=document.getElementById('fault').value;
 let score=Math.floor(Math.random()*15)+85;
 
 let root="", explain="", steps="", severity="";
 
-switch(f){
-
-case "overheat":
+if(f=="overheat"){
 root="Cooling System Failure";
 severity="HIGH";
-explain="Temperature rise without fan compensation detected.";
-steps=`1. Coolant level
-2. Thermostat test
-3. Radiator flow
-4. Pump efficiency
-5. Fan relay`;
-break;
-
-case "no_start":
+explain="Temperature instability detected.";
+steps=`1. Coolant
+2. Thermostat
+3. Radiator
+4. Pump
+5. Fan`;
+}
+else if(f=="no_start"){
 root="Starting System Failure";
 severity="CRITICAL";
-explain="Cranking failure + ignition/fuel absence.";
-steps=`1. Battery test
-2. Starter signal
-3. ECU scan
-4. Fuel pressure
-5. Spark test`;
-break;
-
-case "misfire":
-root="Combustion Misfire";
+explain="No crank / fuel / spark detected.";
+steps=`1. Battery
+2. Starter
+3. ECU
+4. Fuel
+5. Spark`;
+}
+else{
+root="Fuel/Air Imbalance";
 severity="MEDIUM";
-explain="Cylinder imbalance detected.";
-steps=`1. Coil test
-2. Spark plugs
-3. Injectors
-4. Compression`;
-break;
-
-default:
-root="Air/Fuel Efficiency Issue";
-severity="LOW";
-explain="Fuel-air imbalance under load.";
-steps=`1. MAF sensor
+explain="Mixture irregularity detected.";
+steps=`1. MAF
 2. Intake leaks
 3. Fuel system`;
 }
 
 last={root,score,steps,severity};
 
-document.getElementById('result').innerHTML=
-root+" <span class='badge'>"+severity+"</span>";
-
-document.getElementById('confidence').innerText=
-"AI Confidence: "+score+"%";
-
+document.getElementById('result').innerHTML=root+" <span class='badge'>"+severity+"</span>";
+document.getElementById('confidence').innerText="AI Confidence: "+score+"%";
 document.getElementById('steps').innerText=steps;
 document.getElementById('aiExplain').innerText=explain;
-
-document.getElementById('eng').innerText="FAULT DETECTED";
-
-}catch(err){
-alert("Diagnostic error");
-console.error(err);
-}
 }
 
 function generateReport(){
-if(!last.root){
-alert("Run diagnostic first");
-return;
-}
 
 document.getElementById('report').style.display="block";
 
+saveReport({
+fault:last.root,
+confidence:last.score,
+steps:last.steps
+});
+
 document.getElementById('reportText').innerText=
-`AUTO KNOWLEDGE PRO REPORT
+`FAULT: ${last.root}
+SEVERITY: ${last.severity}
+CONFIDENCE: ${last.score}%
 
-Fault: ${last.root}
-Severity: ${last.severity}
-Confidence: ${last.score}%
-
-Steps:
-${last.steps}
-
-Recommendation:
-Carry out physical testing before replacing parts.`;
+STEPS:
+${last.steps}`;
 }
 
 function lookup(){
 
 let raw=document.getElementById('code').value;
 
-if(!raw){
-alert("Enter OBD codes");
-return;
-}
-
 let db={
 "P0300":"Misfire detected",
 "P0171":"Lean mixture",
-"P0299":"Turbo underboost",
-"P2002":"DPF issue",
-"P0401":"EGR flow issue"
+"P0299":"Turbo underboost"
 };
 
-let risk=0;
-let output="";
+let out="";
 
-raw.toUpperCase().split(",").forEach(c=>{
+raw.split(",").forEach(c=>{
 c=c.trim();
-if(db[c]){
-output+=db[c]+"\n";
-risk+=1;
-}else{
-output+=c+" unknown\n";
-}
+out+=db[c] || (c+" unknown") +"\n";
 });
 
-let status="LOW";
-if(risk>=3) status="HIGH";
-else if(risk==2) status="MEDIUM";
-
-document.getElementById('codeOut').innerText=output;
-document.getElementById('combo').innerText=
-"Combined Fault Risk: "+status;
+document.getElementById('codeOut').innerText=out;
 }
 
-// LIVE DATA
 setInterval(()=>{
-document.getElementById('rpm').innerText=Math.floor(Math.random()*6500);
+document.getElementById('rpm').innerText=Math.floor(Math.random()*6000);
 document.getElementById('temp').innerText=(85+Math.random()*20).toFixed(0)+"°C";
 document.getElementById('trim').innerText=(Math.random()*10-5).toFixed(1)+"%";
 },1000);
@@ -375,315 +407,3 @@ document.getElementById('trim').innerText=(Math.random()*10-5).toFixed(1)+"%";
 
 </body>
 </html>
-=======
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AutoKnowledge Pro - Version 3</title>
-
-<style>
-:root{
---bg:#0a0f1c;
---panel:#0f172a;
---panel2:#111827;
---accent:#38bdf8;
---text:#ffffff;
---muted:#9ca3af;
---danger:#ef4444;
---ok:#22c55e;
-}
-
-*{box-sizing:border-box}
-
-body{
-margin:0;
-font-family:Arial;
-background:var(--bg);
-color:var(--text);
-display:flex;
-}
-
-/* SIDEBAR */
-.sidebar{
-width:250px;
-background:#020617;
-height:100vh;
-position:fixed;
-padding:20px;
-}
-
-.sidebar h2{
-color:var(--accent);
-margin-bottom:20px;
-}
-
-.sidebar a{
-display:block;
-color:var(--muted);
-text-decoration:none;
-margin:14px 0;
-}
-
-.sidebar a:hover{color:var(--accent)}
-
-/* MAIN */
-.main{
-margin-left:250px;
-width:100%;
-}
-
-header{
-background:#020617;
-padding:18px;
-text-align:center;
-border-bottom:1px solid #1f2937;
-}
-
-.hero{
-padding:50px 20px;
-text-align:center;
-background:linear-gradient(90deg,#020617,#0f172a);
-}
-
-.hero h2{margin:0 0 10px 0}
-
-.grid{
-display:flex;
-flex-wrap:wrap;
-gap:15px;
-justify-content:center;
-}
-
-/* PANELS */
-.panel{
-background:var(--panel2);
-padding:18px;
-border-radius:12px;
-box-shadow:0 0 20px rgba(0,0,0,0.3);
-}
-
-.tool{
-max-width:750px;
-margin:auto;
-background:var(--panel2);
-padding:20px;
-border-radius:12px;
-}
-
-select,input{
-width:100%;
-padding:10px;
-margin:8px 0;
-border-radius:6px;
-border:none;
-}
-
-button{
-width:100%;
-padding:12px;
-background:var(--accent);
-border:none;
-border-radius:6px;
-font-weight:bold;
-cursor:pointer;
-}
-
-button:hover{opacity:0.9}
-
-pre{
-background:#020617;
-padding:12px;
-border-radius:8px;
-white-space:pre-wrap;
-}
-
-.badge{
-padding:3px 8px;
-border-radius:6px;
-font-size:12px;
-}
-
-.badge.red{background:var(--danger)}
-.badge.green{background:var(--ok)}
-
-/* LIVE DATA */
-.live{
-margin-top:12px;
-padding:12px;
-background:#0b1220;
-border-radius:10px;
-}
-
-@media(max-width:768px){
-.sidebar{position:relative;width:100%;height:auto}
-.main{margin-left:0}
-}
-</style>
-</head>
-<body>
-
-<!-- SIDEBAR -->
-<div class="sidebar">
-<h2>AutoKnowledge</h2>
-<a href="#diagnostics">Diagnostics</a>
-<a href="#obd">OBD Database</a>
-<a href="#training">Training</a>
-<a href="#report">Report</a>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-
-<header>
-<h1>AutoKnowledge Pro</h1>
-<p>Version 3 - Professional Diagnostic Platform</p>
-</header>
-
-<section class="hero">
-<h2>Snap-On Style Diagnostic Interface</h2>
-<p>Engineered using real workshop diagnostic logic</p>
-</section>
-
-<!-- DIAGNOSTICS -->
-<section id="diagnostics" class="panel">
-<h2>Smart Diagnostic Engine</h2>
-
-<div class="tool">
-
-<select id="system">
-<option value="">Select System</option>
-<option value="engine">Engine</option>
-<option value="electrical">Electrical</option>
-<option value="cooling">Cooling</option>
-<option value="fuel">Fuel System</option>
-</select>
-
-<select id="symptom">
-<option value="">Select Fault</option>
-<option value="no_start">No Start</option>
-<option value="overheat">Overheating</option>
-<option value="misfire">Misfire</option>
-<option value="power_loss">Power Loss</option>
-<option value="smoke">Exhaust Smoke</option>
-</select>
-
-<button onclick="diagnose()">Run Diagnosis</button>
-
-<h3 id="result"></h3>
-<p id="prob"></p>
-<pre id="steps"></pre>
-
-<div class="live">
-<strong>Live Data Simulation</strong>
-<p id="rpm">RPM: 0</p>
-<p id="temp">Coolant: 90°C</p>
-<p id="trim">Fuel Trim: 0%</p>
-</div>
-
-</div>
-</section>
-
-<!-- OBD DATABASE -->
-<section id="obd" class="panel">
-<h2>OBD Code Database</h2>
-<input id="code" placeholder="Enter codes e.g. P0300, P0171, P2002">
-<button onclick="lookup()">Analyse</button>
-<h3 id="codeResult"></h3>
-<pre id="codeSteps"></pre>
-</section>
-
-<!-- TRAINING -->
-<section id="training" class="panel">
-<h2>Training Modules</h2>
-<div class="grid">
-<div class="panel">Engine Diagnostics<br>Compression • Timing • Sensors</div>
-<div class="panel">Diesel Systems<br>EGR • DPF • Turbo</div>
-<div class="panel">Electrical<br>CAN Bus • ECU • Wiring</div>
-</div>
-</section>
-
-</div>
-
-<script>
-function diagnose(){
-const system=document.getElementById('system').value;
-const fault=document.getElementById('symptom').value;
-
-let r=document.getElementById('result');
-let p=document.getElementById('prob');
-let s=document.getElementById('steps');
-
-let boost="";
-
-if(system==='engine') boost='Engine subsystem selected';
-if(system==='electrical') boost='Electrical diagnostics priority';
-if(system==='cooling') boost='Cooling system focus';
-if(system==='fuel') boost='Fuel system analysis active';
-
-if(fault==='overheat'){
-r.innerHTML='Cooling System Fault <span class="badge red">HIGH PRIORITY</span>';
-p.innerText='Thermostat 40% | Radiator 35% | Pump 25%';
-s.innerText='1. Check coolant level\n2. Test thermostat\n3. Radiator flow test\n4. Water pump inspection\n5. Cooling fan activation';
-}
-else if(fault==='no_start'){
-r.innerHTML='No Start Condition <span class="badge red">CRITICAL</span>';
-p.innerText='Battery 45% | Starter 35% | ECU 20%';
-s.innerText='1. Battery load test\n2. Starter signal check\n3. ECU communication scan\n4. Fuel pressure test\n5. Ignition verification';
-}
-else if(fault==='misfire'){
-r.innerHTML='Combustion Fault <span class="badge red">ACTIVE</span>';
-p.innerText='Ignition 45% | Fuel 35% | Air 20%';
-s.innerText='1. Scan ECU codes\n2. Coil swap test\n3. Spark plug inspection\n4. Injector balance test\n5. Compression test';
-}
-else if(fault==='power_loss'){
-r.innerHTML='Power Loss Detected <span class="badge red">FAULT</span>';
-p.innerText='Turbo 40% | Fuel 35% | Air 25%';
-s.innerText='1. Boost leak test\n2. MAF sensor check\n3. Fuel pressure test\n4. Air filter inspection';
-}
-else if(fault==='smoke'){
-r.innerHTML='Exhaust Smoke Analysis';
-p.innerText='Oil / Fuel / Coolant related fault';
-s.innerText='1. Identify smoke colour\n2. Compression test\n3. Injector inspection\n4. Turbo seal check';
-}
-else{
-r.innerText='Select system + fault';p.innerText='';s.innerText='';}
-}
-
-function lookup(){
-const input=document.getElementById('code').value.toUpperCase().split(',');
-let r=document.getElementById('codeResult');
-let s=document.getElementById('codeSteps');
-
-let out='';
-let steps='';
-
-input.forEach(c=>{
-c=c.trim();
-
-if(c==='P0300'){out+='P0300 Misfire\n';steps+='Check coils + plugs + fuel system\n\n';}
-else if(c==='P0171'){out+='P0171 Lean mixture\n';steps+='Vacuum leaks + MAF + fuel pressure\n\n';}
-else if(c==='P2002'){out+='P2002 DPF efficiency low\n';steps+='Check DPF saturation + regeneration\n\n';}
-else if(c==='P0299'){out+='P0299 Turbo underboost\n';steps+='Boost leaks + turbo actuator\n\n';}
-else if(c==='P0401'){out+='P0401 EGR low flow\n';steps+='EGR valve + carbon blockage\n\n';}
-else{
-out+=c+' unknown\n';steps+='No data available\n\n';}
-});
-
-r.innerText=out;
-s.innerText=steps;
-}
-
-// LIVE DATA
-setInterval(()=>{
-document.getElementById('rpm').innerText='RPM: '+Math.floor(Math.random()*6500);
-document.getElementById('temp').innerText='Coolant: '+(85+Math.floor(Math.random()*25))+'°C';
-document.getElementById('trim').innerText='Fuel Trim: '+(Math.random()*10-5).toFixed(1)+'%';
-},1200);
-</script>
-
-</body>
-</html>
-
->>>>>>> 8f4ed907b5def87a3a29229cd1e268df6001015a
