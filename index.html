@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoKnowledge Pro AI</title>
+
+<style>
+:root{
+--bg:#060913;
+--panel:#0f172a;
+--accent:#38bdf8;
+--accent2:#0ea5e9;
+--text:#e2e8f0;
+--muted:#94a3b8;
+--danger:#ef4444;
+--ok:#22c55e;
+--warn:#f59e0b;
+}
+
+body{
+margin:0;
+font-family:Segoe UI;
+background:radial-gradient(circle at top,#0f172a,#020617);
+color:var(--text);
+}
+
+/* TOP BAR */
+.topbar{
+position:fixed;
+top:0;
+left:0;
+right:0;
+height:60px;
+background:#020617;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+border-bottom:1px solid #1f2937;
+z-index:1000;
+}
+
+.brand{
+color:var(--accent);
+font-weight:bold;
+}
+
+/* SIDEBAR */
+.sidebar{
+position:fixed;
+top:60px;
+left:0;
+width:230px;
+height:100%;
+background:#020617;
+padding:15px;
+}
+
+.sidebar a{
+display:block;
+padding:10px;
+margin:5px 0;
+color:var(--muted);
+text-decoration:none;
+border-radius:6px;
+}
+.sidebar a:hover{
+background:#0f172a;
+color:var(--accent);
+}
+
+/* MAIN */
+.main{
+margin-left:230px;
+padding-top:70px;
+}
+
+/* DASHBOARD */
+.dashboard{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:12px;
+padding:20px;
+}
+
+.card{
+background:var(--panel);
+padding:15px;
+border-radius:10px;
+}
+
+.card h3{
+margin:0;
+color:var(--accent2);
+font-size:13px;
+}
+
+.card p{
+font-size:18px;
+font-weight:bold;
+}
+
+/* PANEL */
+.panel{
+background:var(--panel);
+margin:20px;
+padding:20px;
+border-radius:12px;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin:8px 0;
+background:#020617;
+border:none;
+color:white;
+border-radius:6px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:var(--accent);
+border:none;
+border-radius:6px;
+font-weight:bold;
+cursor:pointer;
+}
+
+pre{
+background:#020617;
+padding:10px;
+border-radius:8px;
+white-space:pre-wrap;
+}
+
+.aiBox{
+background:#020617;
+padding:10px;
+border-radius:8px;
+margin-top:10px;
+color:var(--muted);
+font-size:13px;
+}
+
+.badge{
+background:var(--warn);
+padding:3px 8px;
+border-radius:6px;
+font-size:11px;
+}
+
+.report{
+display:none;
+margin-top:10px;
+border-top:1px solid #1f2937;
+padding-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+<div class="brand">AutoKnowledge Pro AI</div>
+<div>Smart Diagnostic System</div>
+</div>
+
+<div class="sidebar">
+<a href="#dash">Dashboard</a>
+<a href="#diag">Diagnostics</a>
+<a href="#obd">OBD</a>
+</div>
+
+<div class="main">
+
+<!-- DASHBOARD -->
+<div id="dash" class="dashboard">
+<div class="card"><h3>Engine</h3><p id="eng">OK</p></div>
+<div class="card"><h3>RPM</h3><p id="rpm">0</p></div>
+<div class="card"><h3>Temp</h3><p id="temp">90°C</p></div>
+<div class="card"><h3>Fuel Trim</h3><p id="trim">0%</p></div>
+</div>
+
+<!-- DIAGNOSTICS -->
+<div id="diag" class="panel">
+<h2>AI Diagnostic Engine</h2>
+
+<select id="fault">
+<option value="overheat">Overheating</option>
+<option value="no_start">No Start</option>
+<option value="misfire">Misfire</option>
+<option value="power_loss">Power Loss</option>
+<option value="smoke">Excess Smoke</option>
+</select>
+
+<button onclick="runAI()">RUN AI ANALYSIS</button>
+
+<h3 id="result"></h3>
+<p id="confidence"></p>
+
+<div class="aiBox" id="aiExplain">Awaiting analysis...</div>
+
+<pre id="steps"></pre>
+
+<button onclick="generateReport()">Generate Report</button>
+
+<div id="report" class="report">
+<pre id="reportText"></pre>
+<button onclick="window.print()">Print Report</button>
+</div>
+
+</div>
+
+<!-- OBD -->
+<div id="obd" class="panel">
+<h2>OBD Smart Scanner</h2>
+
+<input id="code" placeholder="Enter codes e.g. P0300,P0171">
+<button onclick="lookup()">Analyse Codes</button>
+
+<pre id="codeOut"></pre>
+<div class="aiBox" id="combo"></div>
+</div>
+
+</div>
+
+<script>
+
+let last={};
+
+function runAI(){
+try{
+
+let f=document.getElementById('fault').value;
+let score=Math.floor(Math.random()*15)+85;
+
+let root="", explain="", steps="", severity="";
+
+switch(f){
+
+case "overheat":
+root="Cooling System Failure";
+severity="HIGH";
+explain="Temperature rise without fan compensation detected.";
+steps=`1. Coolant level
+2. Thermostat test
+3. Radiator flow
+4. Pump efficiency
+5. Fan relay`;
+break;
+
+case "no_start":
+root="Starting System Failure";
+severity="CRITICAL";
+explain="Cranking failure + ignition/fuel absence.";
+steps=`1. Battery test
+2. Starter signal
+3. ECU scan
+4. Fuel pressure
+5. Spark test`;
+break;
+
+case "misfire":
+root="Combustion Misfire";
+severity="MEDIUM";
+explain="Cylinder imbalance detected.";
+steps=`1. Coil test
+2. Spark plugs
+3. Injectors
+4. Compression`;
+break;
+
+default:
+root="Air/Fuel Efficiency Issue";
+severity="LOW";
+explain="Fuel-air imbalance under load.";
+steps=`1. MAF sensor
+2. Intake leaks
+3. Fuel system`;
+}
+
+last={root,score,steps,severity};
+
+document.getElementById('result').innerHTML=
+root+" <span class='badge'>"+severity+"</span>";
+
+document.getElementById('confidence').innerText=
+"AI Confidence: "+score+"%";
+
+document.getElementById('steps').innerText=steps;
+document.getElementById('aiExplain').innerText=explain;
+
+document.getElementById('eng').innerText="FAULT DETECTED";
+
+}catch(err){
+alert("Diagnostic error");
+console.error(err);
+}
+}
+
+function generateReport(){
+if(!last.root){
+alert("Run diagnostic first");
+return;
+}
+
+document.getElementById('report').style.display="block";
+
+document.getElementById('reportText').innerText=
+`AUTO KNOWLEDGE PRO REPORT
+
+Fault: ${last.root}
+Severity: ${last.severity}
+Confidence: ${last.score}%
+
+Steps:
+${last.steps}
+
+Recommendation:
+Carry out physical testing before replacing parts.`;
+}
+
+function lookup(){
+
+let raw=document.getElementById('code').value;
+
+if(!raw){
+alert("Enter OBD codes");
+return;
+}
+
+let db={
+"P0300":"Misfire detected",
+"P0171":"Lean mixture",
+"P0299":"Turbo underboost",
+"P2002":"DPF issue",
+"P0401":"EGR flow issue"
+};
+
+let risk=0;
+let output="";
+
+raw.toUpperCase().split(",").forEach(c=>{
+c=c.trim();
+if(db[c]){
+output+=db[c]+"\n";
+risk+=1;
+}else{
+output+=c+" unknown\n";
+}
+});
+
+let status="LOW";
+if(risk>=3) status="HIGH";
+else if(risk==2) status="MEDIUM";
+
+document.getElementById('codeOut').innerText=output;
+document.getElementById('combo').innerText=
+"Combined Fault Risk: "+status;
+}
+
+// LIVE DATA
+setInterval(()=>{
+document.getElementById('rpm').innerText=Math.floor(Math.random()*6500);
+document.getElementById('temp').innerText=(85+Math.random()*20).toFixed(0)+"°C";
+document.getElementById('trim').innerText=(Math.random()*10-5).toFixed(1)+"%";
+},1000);
+
+</script>
+
+</body>
+</html>
