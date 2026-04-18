@@ -119,19 +119,21 @@ const obdCodes = {
 };
 
 function setMessage(target, text, type = "") {
+  if (!target) return;
   target.className = "message";
   if (type) target.classList.add(type);
   target.textContent = text;
 }
 
-function setLoading(btn, state, text = "Loading...") {
+function setLoading(button, state, loadingText = "Loading...") {
+  if (!button) return;
   if (state) {
-    btn.dataset.old = btn.textContent;
-    btn.textContent = text;
-    btn.disabled = true;
+    button.dataset.old = button.textContent;
+    button.textContent = loadingText;
+    button.disabled = true;
   } else {
-    btn.textContent = btn.dataset.old || btn.textContent;
-    btn.disabled = false;
+    button.textContent = button.dataset.old || button.textContent;
+    button.disabled = false;
   }
 }
 
@@ -146,14 +148,8 @@ function escapeHtml(value) {
 
 function formatDate(value) {
   if (!value) return "Unknown date";
-
-  if (typeof value.toDate === "function") {
-    return value.toDate().toLocaleString();
-  }
-
-  if (value?.seconds) {
-    return new Date(value.seconds * 1000).toLocaleString();
-  }
+  if (typeof value.toDate === "function") return value.toDate().toLocaleString();
+  if (value?.seconds) return new Date(value.seconds * 1000).toLocaleString();
 
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime()) ? "Unknown date" : parsed.toLocaleString();
@@ -165,13 +161,13 @@ function money(value) {
 
 function getProfileData() {
   return {
-    customerName: el.customerName.value.trim(),
-    customerPhone: el.customerPhone.value.trim(),
-    vehicleMake: el.vehicleMake.value.trim(),
-    vehicleModel: el.vehicleModel.value.trim(),
-    vehicleReg: el.vehicleReg.value.trim(),
-    vehicleMileage: el.vehicleMileage.value.trim(),
-    serviceNotes: el.serviceNotes.value.trim()
+    customerName: el.customerName?.value.trim() || "",
+    customerPhone: el.customerPhone?.value.trim() || "",
+    vehicleMake: el.vehicleMake?.value.trim() || "",
+    vehicleModel: el.vehicleModel?.value.trim() || "",
+    vehicleReg: el.vehicleReg?.value.trim() || "",
+    vehicleMileage: el.vehicleMileage?.value.trim() || "",
+    serviceNotes: el.serviceNotes?.value.trim() || ""
   };
 }
 
@@ -183,10 +179,10 @@ function validateProfile(profile) {
 }
 
 function getInvoiceData() {
-  const labourHours = Number(el.labourHours.value || 0);
-  const hourlyRate = Number(el.hourlyRate.value || 0);
-  const partsCost = Number(el.partsCost.value || 0);
-  const vatRate = Number(el.vatRate.value || 0);
+  const labourHours = Number(el.labourHours?.value || 0);
+  const hourlyRate = Number(el.hourlyRate?.value || 0);
+  const partsCost = Number(el.partsCost?.value || 0);
+  const vatRate = Number(el.vatRate?.value || 0);
 
   const labourTotal = labourHours * hourlyRate;
   const subTotal = labourTotal + partsCost;
@@ -202,17 +198,19 @@ function getInvoiceData() {
     subTotal,
     vatTotal,
     grandTotal,
-    paymentStatus: el.paymentStatus.value
+    paymentStatus: el.paymentStatus?.value || "Unpaid"
   };
 }
 
 function updateInvoiceUI(invoice) {
-  el.labourTotal.textContent = money(invoice.labourTotal);
-  el.subTotal.textContent = money(invoice.subTotal);
-  el.vatTotal.textContent = money(invoice.vatTotal);
-  el.grandTotal.textContent = money(invoice.grandTotal);
-  el.invoiceStatus.textContent = invoice.paymentStatus;
-  el.invoiceStatus.style.color = invoice.paymentStatus === "Paid" ? "#22c55e" : "#f59e0b";
+  if (el.labourTotal) el.labourTotal.textContent = money(invoice.labourTotal);
+  if (el.subTotal) el.subTotal.textContent = money(invoice.subTotal);
+  if (el.vatTotal) el.vatTotal.textContent = money(invoice.vatTotal);
+  if (el.grandTotal) el.grandTotal.textContent = money(invoice.grandTotal);
+  if (el.invoiceStatus) {
+    el.invoiceStatus.textContent = invoice.paymentStatus;
+    el.invoiceStatus.style.color = invoice.paymentStatus === "Paid" ? "#22c55e" : "#f59e0b";
+  }
 }
 
 function calculateInvoice() {
@@ -222,7 +220,7 @@ function calculateInvoice() {
 }
 
 function runAI() {
-  const item = diagnostics[el.fault.value];
+  const item = diagnostics[el.fault?.value];
   if (!item) return;
 
   lastReport = item;
@@ -237,28 +235,26 @@ function runAI() {
 
 async function login() {
   setLoading(el.loginBtn, true, "Logging in...");
-
   try {
     await loginUser(el.email.value, el.password.value);
     setMessage(el.authMessage, "Logged in successfully.", "success");
   } catch (error) {
-    setMessage(el.authMessage, error.message, "error");
+    setMessage(el.authMessage, error.message || "Login failed.", "error");
+  } finally {
+    setLoading(el.loginBtn, false);
   }
-
-  setLoading(el.loginBtn, false);
 }
 
 async function signup() {
   setLoading(el.signupBtn, true, "Creating...");
-
   try {
     await signupUser(el.email.value, el.password.value);
     setMessage(el.authMessage, "Account created.", "success");
   } catch (error) {
-    setMessage(el.authMessage, error.message, "error");
+    setMessage(el.authMessage, error.message || "Sign up failed.", "error");
+  } finally {
+    setLoading(el.signupBtn, false);
   }
-
-  setLoading(el.signupBtn, false);
 }
 
 async function logout() {
@@ -266,7 +262,7 @@ async function logout() {
     await logoutUser();
     setMessage(el.authMessage, "Logged out.", "success");
   } catch (error) {
-    setMessage(el.authMessage, error.message, "error");
+    setMessage(el.authMessage, error.message || "Logout failed.", "error");
   }
 }
 
@@ -296,18 +292,19 @@ async function save() {
     setMessage(el.invoiceMessage, "Invoice attached.", "success");
     setMessage(el.reportMessage, "Saved to cloud.", "success");
   } catch (error) {
+    const message = error.message || "Save failed.";
     if (
-      error.message.includes("Customer") ||
-      error.message.includes("Vehicle") ||
-      error.message.includes("Registration")
+      message.includes("Customer") ||
+      message.includes("Vehicle") ||
+      message.includes("Registration")
     ) {
-      setMessage(el.profileMessage, error.message, "error");
+      setMessage(el.profileMessage, message, "error");
     } else {
-      setMessage(el.reportMessage, error.message, "error");
+      setMessage(el.reportMessage, message, "error");
     }
+  } finally {
+    setLoading(el.saveReportBtn, false);
   }
-
-  setLoading(el.saveReportBtn, false);
 }
 
 function createProfileHtml(report) {
@@ -343,10 +340,9 @@ function renderReports(list) {
     return;
   }
 
-  list.forEach((report) => {
+  for (const report of list) {
     const card = document.createElement("div");
     card.className = "report-card";
-
     card.innerHTML = `
       <h3>${escapeHtml(report.fault)}</h3>
       ${createProfileHtml(report)}
@@ -356,51 +352,51 @@ function renderReports(list) {
       <div class="report-meta"><strong>Saved:</strong> ${escapeHtml(formatDate(report.createdAt))}</div>
       <pre>${escapeHtml(report.steps)}</pre>
     `;
-
     el.reportList.appendChild(card);
-  });
+  }
 }
 
 function updateDashboardStats(list) {
   const totalReports = list.length;
-  const customers = new Set();
-  const vehicles = new Set();
+  const customerSet = new Set();
+  const vehicleSet = new Set();
   const faultCount = {};
   let confidenceTotal = 0;
   let revenueTotal = 0;
 
   for (const report of list) {
-    if (report.customerName) customers.add(report.customerName.trim().toLowerCase());
-    if (report.vehicleReg) vehicles.add(report.vehicleReg.trim().toLowerCase());
+    if (report.customerName) customerSet.add(report.customerName.trim().toLowerCase());
+    if (report.vehicleReg) vehicleSet.add(report.vehicleReg.trim().toLowerCase());
 
     confidenceTotal += Number(report.confidence || 0);
     revenueTotal += Number(report.grandTotal || 0);
 
-    const key = report.fault || "Unknown";
-    faultCount[key] = (faultCount[key] || 0) + 1;
+    const fault = report.fault || "Unknown";
+    faultCount[fault] = (faultCount[fault] || 0) + 1;
   }
 
-  let topFault = "N/A";
+  let topFaultName = "N/A";
   let topCount = 0;
 
   for (const [fault, count] of Object.entries(faultCount)) {
     if (count > topCount) {
       topCount = count;
-      topFault = fault;
+      topFaultName = fault;
     }
   }
 
   const avg = totalReports ? Math.round(confidenceTotal / totalReports) : 0;
 
-  el.totalReports.textContent = String(totalReports);
-  el.totalCustomers.textContent = String(customers.size);
-  el.totalVehicles.textContent = String(vehicles.size);
-  el.avgConfidence.textContent = `${avg}%`;
-  el.topFault.textContent = topFault;
-  el.totalRevenue.textContent = money(revenueTotal);
+  if (el.totalReports) el.totalReports.textContent = String(totalReports);
+  if (el.totalCustomers) el.totalCustomers.textContent = String(customerSet.size);
+  if (el.totalVehicles) el.totalVehicles.textContent = String(vehicleSet.size);
+  if (el.avgConfidence) el.avgConfidence.textContent = `${avg}%`;
+  if (el.topFault) el.topFault.textContent = topFaultName;
+  if (el.totalRevenue) el.totalRevenue.textContent = money(revenueTotal);
 }
 
 function renderRecentActivity(list) {
+  if (!el.recentActivity) return;
   el.recentActivity.innerHTML = "";
 
   if (!list.length) {
@@ -419,7 +415,6 @@ function renderRecentActivity(list) {
   for (const report of recent) {
     const card = document.createElement("div");
     card.className = "activity-card";
-
     card.innerHTML = `
       <h3>${escapeHtml(report.fault)}</h3>
       <div class="report-meta"><strong>Customer:</strong> ${escapeHtml(report.customerName || "N/A")}</div>
@@ -429,14 +424,12 @@ function renderRecentActivity(list) {
       <div class="report-meta"><strong>Status:</strong> ${escapeHtml(report.paymentStatus || "Unpaid")}</div>
       <div class="report-meta"><strong>Saved:</strong> ${escapeHtml(formatDate(report.createdAt))}</div>
     `;
-
     el.recentActivity.appendChild(card);
   }
 }
 
 async function loadReports() {
   setLoading(el.loadReportsBtn, true, "Loading...");
-
   try {
     allReports = await getMyReports();
     applyFilters();
@@ -444,15 +437,15 @@ async function loadReports() {
     renderRecentActivity(allReports);
     setMessage(el.reportMessage, "Reports loaded.", "success");
   } catch (error) {
-    setMessage(el.reportMessage, error.message, "error");
+    setMessage(el.reportMessage, error.message || "Failed to load reports.", "error");
+  } finally {
+    setLoading(el.loadReportsBtn, false);
   }
-
-  setLoading(el.loadReportsBtn, false);
 }
 
 function applyFilters() {
   let list = [...allReports];
-  const q = el.reportSearch.value.toLowerCase();
+  const q = (el.reportSearch?.value || "").toLowerCase();
 
   if (q) {
     list = list.filter(
@@ -470,9 +463,9 @@ function applyFilters() {
     );
   }
 
-  if (el.reportSort.value === "confidence") {
+  if (el.reportSort?.value === "confidence") {
     list.sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
-  } else if (el.reportSort.value === "oldest") {
+  } else if (el.reportSort?.value === "oldest") {
     list.sort((a, b) => {
       const aTime = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : new Date(a.createdAt || 0).getTime();
       const bTime = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : new Date(b.createdAt || 0).getTime();
@@ -490,7 +483,7 @@ function applyFilters() {
 }
 
 function lookup() {
-  const codes = el.code.value
+  const codes = (el.code?.value || "")
     .split(",")
     .map((x) => x.trim().toUpperCase())
     .filter(Boolean);
@@ -500,13 +493,8 @@ function lookup() {
     return;
   }
 
-  let out = "";
-
-  for (const code of codes) {
-    out += `${code} = ${obdCodes[code] || "Unknown code"}\n`;
-  }
-
-  el.codeOut.textContent = out.trim();
+  const out = codes.map((code) => `${code} = ${obdCodes[code] || "Unknown code"}`).join("\n");
+  el.codeOut.textContent = out;
 }
 
 function exportPDF() {
@@ -516,7 +504,6 @@ function exportPDF() {
   }
 
   const printWindow = window.open("", "_blank");
-
   if (!printWindow) {
     setMessage(el.reportMessage, "Popup blocked. Allow popups and try again.", "error");
     return;
@@ -602,20 +589,20 @@ watchAuthState((user) => {
   }
 });
 
-el.loginBtn.onclick = login;
-el.signupBtn.onclick = signup;
-el.logoutBtn.onclick = logout;
-el.calculateInvoiceBtn.onclick = calculateInvoice;
-el.runAiBtn.onclick = runAI;
-el.saveReportBtn.onclick = save;
-el.lookupBtn.onclick = lookup;
-el.loadReportsBtn.onclick = loadReports;
-el.exportPdfBtn.onclick = exportPDF;
-el.reportSearch.oninput = applyFilters;
-el.reportSort.onchange = applyFilters;
-el.paymentStatus.onchange = calculateInvoice;
+if (el.loginBtn) el.loginBtn.onclick = login;
+if (el.signupBtn) el.signupBtn.onclick = signup;
+if (el.logoutBtn) el.logoutBtn.onclick = logout;
+if (el.calculateInvoiceBtn) el.calculateInvoiceBtn.onclick = calculateInvoice;
+if (el.runAiBtn) el.runAiBtn.onclick = runAI;
+if (el.saveReportBtn) el.saveReportBtn.onclick = save;
+if (el.lookupBtn) el.lookupBtn.onclick = lookup;
+if (el.loadReportsBtn) el.loadReportsBtn.onclick = loadReports;
+if (el.exportPdfBtn) el.exportPdfBtn.onclick = exportPDF;
+if (el.reportSearch) el.reportSearch.oninput = applyFilters;
+if (el.reportSort) el.reportSort.onchange = applyFilters;
+if (el.paymentStatus) el.paymentStatus.onchange = calculateInvoice;
 
-el.saveReportBtn.disabled = true;
+if (el.saveReportBtn) el.saveReportBtn.disabled = true;
 calculateInvoice();
 updateDashboardStats([]);
 renderRecentActivity([]);
