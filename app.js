@@ -59,6 +59,9 @@ const el = {
   totalRevenue: document.getElementById("totalRevenue"),
   recentActivity: document.getElementById("recentActivity"),
 
+  totalReportsMirror: document.getElementById("totalReportsMirror"),
+  totalRevenueMirror: document.getElementById("totalRevenueMirror"),
+
   loginBtn: document.getElementById("loginBtn"),
   signupBtn: document.getElementById("signupBtn"),
   runAiBtn: document.getElementById("runAiBtn"),
@@ -76,35 +79,40 @@ const diagnostics = {
   overheat: {
     fault: "Cooling System Failure",
     confidence: 92,
-    explanation: "Likely thermostat, coolant loss, blocked radiator or weak water pump.",
+    explanation:
+      "Likely thermostat, coolant loss, blocked radiator or weak water pump.",
     steps:
       "1. Check coolant level\n2. Check leaks\n3. Test thermostat\n4. Inspect radiator fan\n5. Test water pump"
   },
   no_start: {
     fault: "Starting / Fuel Delivery Fault",
     confidence: 89,
-    explanation: "Likely battery voltage issue, starter fault, immobilizer or no fuel.",
+    explanation:
+      "Likely battery voltage issue, starter fault, immobilizer or no fuel.",
     steps:
       "1. Check battery voltage\n2. Inspect starter relay\n3. Verify spark\n4. Verify fuel pressure"
   },
   misfire: {
     fault: "Ignition or Fuel Misfire",
     confidence: 94,
-    explanation: "Likely spark plugs, coils, injectors, vacuum leak or compression issue.",
+    explanation:
+      "Likely spark plugs, coils, injectors, vacuum leak or compression issue.",
     steps:
       "1. Check plugs\n2. Test coils\n3. Check injector pulse\n4. Compression test"
   },
   battery: {
     fault: "Battery Drain / Charging Fault",
     confidence: 87,
-    explanation: "Likely parasitic drain, battery wear or alternator issue.",
+    explanation:
+      "Likely parasitic drain, battery wear or alternator issue.",
     steps:
       "1. Test battery health\n2. Check alternator output\n3. Perform drain test"
   },
   rough_idle: {
     fault: "Idle Air/Fuel Imbalance",
     confidence: 88,
-    explanation: "Likely vacuum leak, dirty throttle body, MAF issue or weak ignition.",
+    explanation:
+      "Likely vacuum leak, dirty throttle body, MAF issue or weak ignition.",
     steps:
       "1. Inspect vacuum leaks\n2. Clean throttle body\n3. Test MAF\n4. Inspect ignition"
   }
@@ -127,6 +135,7 @@ function setMessage(target, text, type = "") {
 
 function setLoading(button, state, loadingText = "Loading...") {
   if (!button) return;
+
   if (state) {
     button.dataset.old = button.textContent;
     button.textContent = loadingText;
@@ -148,8 +157,14 @@ function escapeHtml(value) {
 
 function formatDate(value) {
   if (!value) return "Unknown date";
-  if (typeof value.toDate === "function") return value.toDate().toLocaleString();
-  if (value?.seconds) return new Date(value.seconds * 1000).toLocaleString();
+
+  if (typeof value.toDate === "function") {
+    return value.toDate().toLocaleString();
+  }
+
+  if (value?.seconds) {
+    return new Date(value.seconds * 1000).toLocaleString();
+  }
 
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime()) ? "Unknown date" : parsed.toLocaleString();
@@ -157,6 +172,10 @@ function formatDate(value) {
 
 function money(value) {
   return `£${Number(value || 0).toFixed(2)}`;
+}
+
+function setText(target, value) {
+  if (target) target.textContent = value;
 }
 
 function getProfileData() {
@@ -203,13 +222,15 @@ function getInvoiceData() {
 }
 
 function updateInvoiceUI(invoice) {
-  if (el.labourTotal) el.labourTotal.textContent = money(invoice.labourTotal);
-  if (el.subTotal) el.subTotal.textContent = money(invoice.subTotal);
-  if (el.vatTotal) el.vatTotal.textContent = money(invoice.vatTotal);
-  if (el.grandTotal) el.grandTotal.textContent = money(invoice.grandTotal);
+  setText(el.labourTotal, money(invoice.labourTotal));
+  setText(el.subTotal, money(invoice.subTotal));
+  setText(el.vatTotal, money(invoice.vatTotal));
+  setText(el.grandTotal, money(invoice.grandTotal));
+
   if (el.invoiceStatus) {
     el.invoiceStatus.textContent = invoice.paymentStatus;
-    el.invoiceStatus.style.color = invoice.paymentStatus === "Paid" ? "#22c55e" : "#f59e0b";
+    el.invoiceStatus.style.color =
+      invoice.paymentStatus === "Paid" ? "#22c55e" : "#f59e0b";
   }
 }
 
@@ -224,17 +245,20 @@ function runAI() {
   if (!item) return;
 
   lastReport = item;
-  el.result.textContent = item.fault;
-  el.confidence.textContent = `${item.confidence}%`;
-  el.aiExplain.textContent = item.explanation;
-  el.steps.textContent = item.steps;
-  el.saveReportBtn.disabled = false;
+
+  setText(el.result, item.fault);
+  setText(el.confidence, `${item.confidence}%`);
+  setText(el.aiExplain, item.explanation);
+  setText(el.steps, item.steps);
+
+  if (el.saveReportBtn) el.saveReportBtn.disabled = false;
 
   setMessage(el.reportMessage, "Analysis complete. Ready to save.", "success");
 }
 
 async function login() {
   setLoading(el.loginBtn, true, "Logging in...");
+
   try {
     await loginUser(el.email.value, el.password.value);
     setMessage(el.authMessage, "Logged in successfully.", "success");
@@ -247,6 +271,7 @@ async function login() {
 
 async function signup() {
   setLoading(el.signupBtn, true, "Creating...");
+
   try {
     await signupUser(el.email.value, el.password.value);
     setMessage(el.authMessage, "Account created.", "success");
@@ -293,6 +318,7 @@ async function save() {
     setMessage(el.reportMessage, "Saved to cloud.", "success");
   } catch (error) {
     const message = error.message || "Save failed.";
+
     if (
       message.includes("Customer") ||
       message.includes("Vehicle") ||
@@ -333,6 +359,7 @@ function createInvoiceHtml(report) {
 }
 
 function renderReports(list) {
+  if (!el.reportList) return;
   el.reportList.innerHTML = "";
 
   if (!list.length) {
@@ -387,12 +414,14 @@ function updateDashboardStats(list) {
 
   const avg = totalReports ? Math.round(confidenceTotal / totalReports) : 0;
 
-  if (el.totalReports) el.totalReports.textContent = String(totalReports);
-  if (el.totalCustomers) el.totalCustomers.textContent = String(customerSet.size);
-  if (el.totalVehicles) el.totalVehicles.textContent = String(vehicleSet.size);
-  if (el.avgConfidence) el.avgConfidence.textContent = `${avg}%`;
-  if (el.topFault) el.topFault.textContent = topFaultName;
-  if (el.totalRevenue) el.totalRevenue.textContent = money(revenueTotal);
+  setText(el.totalReports, String(totalReports));
+  setText(el.totalCustomers, String(customerSet.size));
+  setText(el.totalVehicles, String(vehicleSet.size));
+  setText(el.avgConfidence, `${avg}%`);
+  setText(el.topFault, topFaultName);
+  setText(el.totalRevenue, money(revenueTotal));
+  setText(el.totalReportsMirror, String(totalReports));
+  setText(el.totalRevenueMirror, money(revenueTotal));
 }
 
 function renderRecentActivity(list) {
@@ -406,8 +435,12 @@ function renderRecentActivity(list) {
 
   const recent = [...list]
     .sort((a, b) => {
-      const aTime = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : new Date(a.createdAt || 0).getTime();
-      const bTime = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : new Date(b.createdAt || 0).getTime();
+      const aTime = a.createdAt?.seconds
+        ? a.createdAt.seconds * 1000
+        : new Date(a.createdAt || 0).getTime();
+      const bTime = b.createdAt?.seconds
+        ? b.createdAt.seconds * 1000
+        : new Date(b.createdAt || 0).getTime();
       return bTime - aTime;
     })
     .slice(0, 5);
@@ -430,6 +463,7 @@ function renderRecentActivity(list) {
 
 async function loadReports() {
   setLoading(el.loadReportsBtn, true, "Loading...");
+
   try {
     allReports = await getMyReports();
     applyFilters();
@@ -467,14 +501,22 @@ function applyFilters() {
     list.sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
   } else if (el.reportSort?.value === "oldest") {
     list.sort((a, b) => {
-      const aTime = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : new Date(a.createdAt || 0).getTime();
-      const bTime = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : new Date(b.createdAt || 0).getTime();
+      const aTime = a.createdAt?.seconds
+        ? a.createdAt.seconds * 1000
+        : new Date(a.createdAt || 0).getTime();
+      const bTime = b.createdAt?.seconds
+        ? b.createdAt.seconds * 1000
+        : new Date(b.createdAt || 0).getTime();
       return aTime - bTime;
     });
   } else {
     list.sort((a, b) => {
-      const aTime = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : new Date(a.createdAt || 0).getTime();
-      const bTime = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : new Date(b.createdAt || 0).getTime();
+      const aTime = a.createdAt?.seconds
+        ? a.createdAt.seconds * 1000
+        : new Date(a.createdAt || 0).getTime();
+      const bTime = b.createdAt?.seconds
+        ? b.createdAt.seconds * 1000
+        : new Date(b.createdAt || 0).getTime();
       return bTime - aTime;
     });
   }
@@ -493,7 +535,10 @@ function lookup() {
     return;
   }
 
-  const out = codes.map((code) => `${code} = ${obdCodes[code] || "Unknown code"}`).join("\n");
+  const out = codes
+    .map((code) => `${code} = ${obdCodes[code] || "Unknown code"}`)
+    .join("\n");
+
   el.codeOut.textContent = out;
 }
 
@@ -509,7 +554,10 @@ function exportPDF() {
     return;
   }
 
-  const revenue = allReports.reduce((sum, report) => sum + Number(report.grandTotal || 0), 0);
+  const revenue = allReports.reduce(
+    (sum, report) => sum + Number(report.grandTotal || 0),
+    0
+  );
 
   const cards = allReports
     .map(
@@ -582,10 +630,10 @@ function exportPDF() {
 watchAuthState((user) => {
   if (user) {
     el.userStatus.textContent = `Logged in: ${user.email}`;
-    el.logoutBtn.hidden = false;
+    if (el.logoutBtn) el.logoutBtn.hidden = false;
   } else {
     el.userStatus.textContent = "Not logged in";
-    el.logoutBtn.hidden = true;
+    if (el.logoutBtn) el.logoutBtn.hidden = true;
   }
 });
 
@@ -603,6 +651,7 @@ if (el.reportSort) el.reportSort.onchange = applyFilters;
 if (el.paymentStatus) el.paymentStatus.onchange = calculateInvoice;
 
 if (el.saveReportBtn) el.saveReportBtn.disabled = true;
+
 calculateInvoice();
 updateDashboardStats([]);
 renderRecentActivity([]);
