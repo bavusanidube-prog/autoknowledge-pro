@@ -105,11 +105,14 @@ const diagnosticsMap = {
 };
 
 const obdMap = {
-  P0300: "Random/Multiple Cylinder Misfire Detected",
-  P0171: "System Too Lean (Bank 1)",
-  P0420: "Catalyst System Efficiency Below Threshold (Bank 1)",
+  P0101: "Mass Air Flow Sensor Range/Performance Problem",
   P0118: "Engine Coolant Temperature Circuit High Input",
-  P0101: "Mass Air Flow Sensor Range/Performance Problem"
+  P0171: "System Too Lean (Bank 1)",
+  P0300: "Random/Multiple Cylinder Misfire Detected",
+  P0420: "Catalyst System Efficiency Below Threshold (Bank 1)",
+  P0442: "Evaporative Emission System Leak Detected (Small Leak)",
+  P0455: "Evaporative Emission System Leak Detected (Large Leak)",
+  P0500: "Vehicle Speed Sensor Malfunction"
 };
 
 function setMessage(target, text, type = "") {
@@ -129,6 +132,10 @@ function setLoading(button, isLoading, loadingText = "Loading...") {
   }
 }
 
+function resetReportMessage() {
+  setMessage(el.reportMessage, "");
+}
+
 function validateCredentials(email, password) {
   if (!email || !password) {
     throw new Error("Email and password are required.");
@@ -141,7 +148,10 @@ function validateCredentials(email, password) {
 
 function formatDate(value) {
   if (!value) return "Unknown date";
-  if (typeof value.toDate === "function") return value.toDate().toLocaleString();
+
+  if (typeof value.toDate === "function") {
+    return value.toDate().toLocaleString();
+  }
 
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime()) ? "Unknown date" : parsed.toLocaleString();
@@ -179,13 +189,22 @@ function renderReports(reports) {
   if (!reports.length) {
     const empty = document.createElement("div");
     empty.className = "empty-state";
-    empty.textContent = "No reports found for this account.";
+    empty.textContent = "No reports found for this account yet.";
     el.reportList.appendChild(empty);
     return;
   }
 
+  const summary = document.createElement("div");
+  summary.className = "empty-state";
+  summary.textContent = `${reports.length} report${reports.length === 1 ? "" : "s"} loaded`;
+
   const fragment = document.createDocumentFragment();
-  reports.forEach((report) => fragment.appendChild(createReportCard(report)));
+  fragment.appendChild(summary);
+
+  reports.forEach((report) => {
+    fragment.appendChild(createReportCard(report));
+  });
+
   el.reportList.appendChild(fragment);
 }
 
@@ -199,6 +218,7 @@ function runAI() {
     el.aiExplain.textContent = "No analysis available.";
     el.steps.textContent = "No steps available.";
     lastReport = null;
+    el.saveReportBtn.disabled = true;
     return;
   }
 
@@ -217,8 +237,9 @@ function runAI() {
   el.confidence.textContent = `${diagnostic.confidence}%`;
   el.aiExplain.textContent = diagnostic.explanation;
   el.steps.textContent = stepsText;
+  el.saveReportBtn.disabled = false;
 
-  setMessage(el.reportMessage, "Analysis complete.", "success");
+  setMessage(el.reportMessage, "Analysis complete. You can now save this report.", "success");
 }
 
 function analyzeObdCodes() {
@@ -272,7 +293,7 @@ async function handleSignup() {
     validateCredentials(email, password);
     await signupUser(email, password);
 
-    setMessage(el.authMessage, "Account created successfully.", "success");
+    setMessage(el.authMessage, "Account created successfully. You can now use cloud features.", "success");
   } catch (error) {
     setMessage(el.authMessage, error.message || "Sign up failed.", "error");
   } finally {
@@ -286,7 +307,7 @@ async function handleLogout() {
   try {
     await logoutUser();
     setMessage(el.authMessage, "Logged out successfully.", "success");
-    setMessage(el.reportMessage, "");
+    resetReportMessage();
     el.reportList.innerHTML = "";
   } catch (error) {
     setMessage(el.authMessage, error.message || "Logout failed.", "error");
@@ -296,7 +317,7 @@ async function handleLogout() {
 }
 
 async function handleSaveReport() {
-  setMessage(el.reportMessage, "");
+  resetReportMessage();
 
   if (!lastReport) {
     setMessage(el.reportMessage, "Run an analysis before saving a report.", "error");
@@ -356,6 +377,7 @@ function initializeAuthUI() {
 
 function init() {
   setupEventListeners();
+  el.saveReportBtn.disabled = true;
   initializeAuthUI();
   runAI();
 }
