@@ -1,58 +1,69 @@
 # AutoKnowledge Pro AI
 
-AutoKnowledge Pro AI is a premium vehicle diagnostics web application designed for workshops, independent mechanics, and portfolio presentation.
+Premium workshop management and vehicle diagnostics web application built for modern garages.
 
 ## Live Demo
+
 https://bavusanidube-prog.github.io/autoknowledge-pro/
 
-## Highlights
-- Premium dashboard UI with modern glassmorphism styling
-- Email and password authentication with Firebase
-- AI-style guided vehicle diagnosis
-- OBD trouble code lookup
-- Cloud report saving with Firestore
-- Personal report history with search and sorting
-- Responsive layout for desktop and mobile
+---
+
+## Screenshots
+
+### Dashboard
+
+![Dashboard](images/imagesdashboard.png.png)
+
+### Invoice Builder
+
+![Invoice](images/imagesinvoice.png.png)
+
+### Reports System
+
+![Reports](images/imagesreports.png.png)
+
+---
 
 ## Features
-### Authentication
-- User sign up
-- User login
-- Logout flow
-- Auth-aware UI state
 
-### Diagnostics
-- Guided analysis for common workshop symptoms
-- Confidence scoring
-- Recommended inspection steps
-- Workshop advice panel
+- Secure Firebase Authentication
+- Customer & Vehicle Profile Intake
+- AI Diagnostic Engine
+- OBD Fault Code Lookup
+- Smart Invoice Builder
+- Revenue Dashboard
+- Workshop Reports History
+- PDF Export
+- Responsive Premium UI
+- GitHub Pages Deployment
 
-### OBD Scanner
-- Multi-code lookup
-- Clear meaning output
-- Workflow tip guidance
-
-### Reports
-- Save reports to the cloud
-- Load personal report history
-- Search reports by content
-- Sort by newest, oldest, or confidence
+---
 
 ## Tech Stack
+
 - HTML5
 - CSS3
-- JavaScript (ES Modules)
+- JavaScript (Vanilla)
 - Firebase Authentication
 - Cloud Firestore
 - GitHub Pages
 
-## Project Structure
-```text
-autoknowledge-pro/
-├─ index.html
-├─ styles.css
-├─ app.js
-├─ firebase.js
-├─ firestore.rules
-├─ .gitignore
-└─ README.md
+---
+
+## Business Use Case
+
+Designed as a lightweight SaaS platform for independent garages and workshop owners who need:
+
+- customer management
+- diagnostics workflow
+- invoicing
+- reporting
+- operational analytics
+
+---
+
+## How to Run Locally
+
+```bash
+git clone https://github.com/bavusanidube-prog/autoknowledge-pro.git
+cd autoknowledge-pro
