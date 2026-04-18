@@ -54,7 +54,7 @@ const diagnosticsMap = {
     fault: "Starting System / Fuel Delivery Fault",
     confidence: 89,
     explanation:
-      "A no-start condition often comes from battery voltage issues, starter circuit faults, immobilizer problems, or lack of spark/fuel delivery.",
+      "A no-start condition often comes from battery voltage issues, starter circuit faults, immobilizer problems, or lack of spark or fuel delivery.",
     steps: [
       "Measure battery voltage under load",
       "Inspect starter motor and relay operation",
@@ -77,7 +77,7 @@ const diagnosticsMap = {
     ]
   },
   battery: {
-    fault: "Parasitic Draw / Charging System Issue",
+    fault: "Parasitic Draw or Charging System Issue",
     confidence: 87,
     explanation:
       "Battery drain usually points to excessive key-off current draw, failing battery health, or poor charging system performance.",
@@ -202,7 +202,9 @@ function runAI() {
     return;
   }
 
-  const stepsText = diagnostic.steps.map((step, index) => `${index + 1}. ${step}`).join("\n");
+  const stepsText = diagnostic.steps
+    .map((step, index) => `${index + 1}. ${step}`)
+    .join("\n");
 
   lastReport = {
     fault: diagnostic.fault,

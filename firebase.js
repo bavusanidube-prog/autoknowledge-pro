@@ -30,8 +30,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-export { auth, db };
-
 export async function loginUser(email, password) {
   return signInWithEmailAndPassword(auth, email, password);
 }
@@ -50,7 +48,6 @@ export function watchAuthState(callback) {
 
 export async function saveReport(report) {
   const user = auth.currentUser;
-
   if (!user) {
     throw new Error("You must be logged in to save a report.");
   }
@@ -68,7 +65,6 @@ export async function saveReport(report) {
 
 export async function getMyReports() {
   const user = auth.currentUser;
-
   if (!user) {
     throw new Error("You must be logged in to view reports.");
   }
