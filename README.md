@@ -1,37 +1,45 @@
 # AutoKnowledge Pro AI
 
-AutoKnowledge Pro AI is a web-based smart vehicle diagnostics dashboard with:
-- Firebase Authentication
-- Firestore cloud report storage
-- OBD code lookup
-- AI-style diagnostic summaries
-- Personal report history
+AutoKnowledge Pro AI is a smart vehicle diagnostics web app built with Firebase Authentication and Cloud Firestore.
+
+## Live Demo
+https://bavusanidube-prog.github.io/autoknowledge-pro/
 
 ## Features
-- Email/password authentication
-- Save diagnostic reports to Firestore
-- Load user-specific report history
-- Basic OBD fault code analysis
+- Email and password authentication
+- AI-style diagnostic analysis
+- OBD fault code lookup
+- Cloud report saving
+- Personal report history
 - Responsive dark dashboard UI
 
 ## Tech Stack
-- HTML
-- CSS
+- HTML5
+- CSS3
 - JavaScript (ES Modules)
-- Firebase Auth
+- Firebase Authentication
 - Cloud Firestore
+- GitHub Pages
 
-## Setup
-1. Create a Firebase project
-2. Enable Email/Password Authentication
-3. Enable Firestore Database
-4. Replace config values in `firebase.js`
-5. Add Firestore rules from `firestore.rules`
-6. Run the app with Live Server or local hosting
+## How It Works
+1. Users create an account or log in
+2. A vehicle fault symptom is selected
+3. The app generates a likely diagnosis and recommended steps
+4. Logged-in users can save reports to Firestore
+5. Users can load their own saved report history
 
-## Future Improvements
-- Real AI API integration
-- Expanded OBD database
-- PDF report export
-- Search and filter history
-- Admin dashboard
+## Firebase Features Used
+- Email/Password Authentication
+- Firestore Database
+- Firestore Security Rules
+
+## Project Structure
+```text
+autoknowledge-pro/
+├─ index.html
+├─ styles.css
+├─ app.js
+├─ firebase.js
+├─ firestore.rules
+├─ .gitignore
+└─ README.md
