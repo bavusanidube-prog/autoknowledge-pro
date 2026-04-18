@@ -37,6 +37,13 @@ reportSearch: document.getElementById("reportSearch"),
 reportSort: document.getElementById("reportSort"),
 reportList: document.getElementById("reportList"),
 
+totalReports: document.getElementById("totalReports"),
+totalCustomers: document.getElementById("totalCustomers"),
+totalVehicles: document.getElementById("totalVehicles"),
+avgConfidence: document.getElementById("avgConfidence"),
+topFault: document.getElementById("topFault"),
+recentActivity: document.getElementById("recentActivity"),
+
 loginBtn: document.getElementById("loginBtn"),
 signupBtn: document.getElementById("signupBtn"),
 runAiBtn: document.getElementById("runAiBtn"),
@@ -161,16 +168,13 @@ throw new Error("Registration number is required.");
 
 function runAI(){
 const item = diagnostics[el.fault.value];
-
 if(!item) return;
 
 lastReport = item;
-
 el.result.textContent = item.fault;
 el.confidence.textContent = item.confidence + "%";
 el.aiExplain.textContent = item.explanation;
 el.steps.textContent = item.steps;
-
 el.saveReportBtn.disabled = false;
 
 msg(el.reportMessage,"Analysis complete. Ready to save.","success");
@@ -281,12 +285,83 @@ el.reportList.appendChild(card);
 });
 }
 
+function updateDashboardStats(list){
+const totalReports = list.length;
+
+const customerSet = new Set();
+const vehicleSet = new Set();
+const faultCount = {};
+
+let confidenceTotal = 0;
+
+list.forEach((r)=>{
+if(r.customerName) customerSet.add(r.customerName.trim().toLowerCase());
+if(r.vehicleReg) vehicleSet.add(r.vehicleReg.trim().toLowerCase());
+
+confidenceTotal += Number(r.confidence || 0);
+
+const fault = r.fault || "Unknown";
+faultCount[fault] = (faultCount[fault] || 0) + 1;
+});
+
+let topFault = "N/A";
+let highestFaultCount = 0;
+
+Object.entries(faultCount).forEach(([fault,count])=>{
+if(count > highestFaultCount){
+highestFaultCount = count;
+topFault = fault;
+}
+});
+
+const avg = totalReports ? Math.round(confidenceTotal / totalReports) : 0;
+
+el.totalReports.textContent = String(totalReports);
+el.totalCustomers.textContent = String(customerSet.size);
+el.totalVehicles.textContent = String(vehicleSet.size);
+el.avgConfidence.textContent = `${avg}%`;
+el.topFault.textContent = topFault;
+}
+
+function renderRecentActivity(list){
+el.recentActivity.innerHTML="";
+
+if(!list.length){
+el.recentActivity.innerHTML="<p>No recent activity yet.</p>";
+return;
+}
+
+const recent = [...list]
+.sort((a,b)=>
+new Date(b.createdAt?.seconds ? b.createdAt.seconds * 1000 : b.createdAt || 0) -
+new Date(a.createdAt?.seconds ? a.createdAt.seconds * 1000 : a.createdAt || 0)
+)
+.slice(0,5);
+
+recent.forEach((r)=>{
+const card = document.createElement("div");
+card.className = "activity-card";
+
+card.innerHTML = `
+<h3>${escapeHtml(r.fault)}</h3>
+<div class="report-meta"><strong>Customer:</strong> ${escapeHtml(r.customerName || "N/A")}</div>
+<div class="report-meta"><strong>Vehicle:</strong> ${escapeHtml(r.vehicleMake || "")} ${escapeHtml(r.vehicleModel || "")}</div>
+<div class="report-meta"><strong>Registration:</strong> ${escapeHtml(r.vehicleReg || "N/A")}</div>
+<div class="report-meta"><strong>Saved:</strong> ${escapeHtml(formatDate(r.createdAt))}</div>
+`;
+
+el.recentActivity.appendChild(card);
+});
+}
+
 async function loadReports(){
 loading(el.loadReportsBtn,true,"Loading...");
 
 try{
 allReports = await getMyReports();
 applyFilters();
+updateDashboardStats(allReports);
+renderRecentActivity(allReports);
 msg(el.reportMessage,"Reports loaded.","success");
 }catch(error){
 msg(el.reportMessage,error.message,"error");
@@ -316,9 +391,15 @@ list=list.filter(r =>
 if(el.reportSort.value==="confidence"){
 list.sort((a,b)=>(b.confidence || 0) - (a.confidence || 0));
 }else if(el.reportSort.value==="oldest"){
-list.sort((a,b)=>new Date(a.createdAt?.seconds ? a.createdAt.seconds * 1000 : a.createdAt || 0) - new Date(b.createdAt?.seconds ? b.createdAt.seconds * 1000 : b.createdAt || 0));
+list.sort((a,b)=>
+new Date(a.createdAt?.seconds ? a.createdAt.seconds * 1000 : a.createdAt || 0) -
+new Date(b.createdAt?.seconds ? b.createdAt.seconds * 1000 : b.createdAt || 0)
+);
 }else{
-list.sort((a,b)=>new Date(b.createdAt?.seconds ? b.createdAt.seconds * 1000 : b.createdAt || 0) - new Date(a.createdAt?.seconds ? a.createdAt.seconds * 1000 : a.createdAt || 0));
+list.sort((a,b)=>
+new Date(b.createdAt?.seconds ? b.createdAt.seconds * 1000 : b.createdAt || 0) -
+new Date(a.createdAt?.seconds ? a.createdAt.seconds * 1000 : a.createdAt || 0)
+);
 }
 
 renderReports(list);
@@ -480,4 +561,6 @@ el.reportSort.onchange=applyFilters;
 
 el.saveReportBtn.disabled=true;
 
+updateDashboardStats([]);
+renderRecentActivity([]);
 runAI();
