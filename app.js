@@ -93,9 +93,30 @@ btn.dataset.old=btn.textContent;
 btn.textContent=text;
 btn.disabled=true;
 }else{
-btn.textContent=btn.dataset.old;
+btn.textContent=btn.dataset.old || btn.textContent;
 btn.disabled=false;
 }
+}
+
+function escapeHtml(value){
+return String(value ?? "")
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#39;");
+}
+
+function formatDate(value){
+if(!value) return "Unknown date";
+
+if(typeof value.toDate === "function"){
+return value.toDate().toLocaleString();
+}
+
+const d = new Date(value);
+if(Number.isNaN(d.getTime())) return "Unknown date";
+return d.toLocaleString();
 }
 
 function runAI(){
@@ -142,8 +163,12 @@ loading(el.signupBtn,false);
 }
 
 async function logout(){
+try{
 await logoutUser();
 msg(el.authMessage,"Logged out.","success");
+}catch(error){
+msg(el.authMessage,error.message,"error");
+}
 }
 
 async function save(){
@@ -173,19 +198,17 @@ return;
 }
 
 list.forEach(r=>{
-
 const card=document.createElement("div");
 card.className="report-card";
 
 card.innerHTML=`
-<h3>${r.fault}</h3>
-<div class="report-meta">Confidence: ${r.confidence}%</div>
-<div class="report-meta">${r.explanation}</div>
-<pre>${r.steps}</pre>
+<h3>${escapeHtml(r.fault)}</h3>
+<div class="report-meta">Confidence: ${escapeHtml(r.confidence)}%</div>
+<div class="report-meta">${escapeHtml(r.explanation)}</div>
+<pre>${escapeHtml(r.steps)}</pre>
 `;
 
 el.reportList.appendChild(card);
-
 });
 }
 
@@ -195,6 +218,7 @@ loading(el.loadReportsBtn,true,"Loading...");
 try{
 allReports = await getMyReports();
 applyFilters();
+msg(el.reportMessage,"Reports loaded.","success");
 }catch(error){
 msg(el.reportMessage,error.message,"error");
 }
@@ -203,27 +227,29 @@ loading(el.loadReportsBtn,false);
 }
 
 function applyFilters(){
-
 let list=[...allReports];
-
 const q = el.reportSearch.value.toLowerCase();
 
 if(q){
 list=list.filter(r =>
 (r.fault || "").toLowerCase().includes(q) ||
-(r.explanation || "").toLowerCase().includes(q)
+(r.explanation || "").toLowerCase().includes(q) ||
+(r.steps || "").toLowerCase().includes(q)
 );
 }
 
 if(el.reportSort.value==="confidence"){
-list.sort((a,b)=>b.confidence-a.confidence);
+list.sort((a,b)=>(b.confidence || 0) - (a.confidence || 0));
+}else if(el.reportSort.value==="oldest"){
+list.sort((a,b)=>new Date(a.createdAt?.seconds ? a.createdAt.seconds * 1000 : a.createdAt || 0) - new Date(b.createdAt?.seconds ? b.createdAt.seconds * 1000 : b.createdAt || 0));
+}else{
+list.sort((a,b)=>new Date(b.createdAt?.seconds ? b.createdAt.seconds * 1000 : b.createdAt || 0) - new Date(a.createdAt?.seconds ? a.createdAt.seconds * 1000 : a.createdAt || 0));
 }
 
 renderReports(list);
 }
 
 function lookup(){
-
 const codes = el.code.value
 .split(",")
 .map(x=>x.trim().toUpperCase())
@@ -240,43 +266,116 @@ codes.forEach(c=>{
 out += c + " = " + (obdCodes[c] || "Unknown code") + "\n";
 });
 
-el.codeOut.textContent = out;
+el.codeOut.textContent = out.trim();
 }
 
 function exportPDF(){
-
 if(!allReports.length){
 msg(el.reportMessage,"Load reports first.","error");
 return;
 }
 
-const box=document.createElement("div");
+const printWindow = window.open("", "_blank");
 
-box.className="pdf-export-sheet";
+if(!printWindow){
+msg(el.reportMessage,"Popup blocked. Allow popups and try again.","error");
+return;
+}
 
-let html=`<h1>AutoKnowledge Pro AI</h1>`;
-html+=`<p>Workshop Report Export</p><br>`;
-
-allReports.forEach(r=>{
-
-html+=`
-<div class="pdf-export-card">
-<h3>${r.fault}</h3>
-<p>Confidence: ${r.confidence}%</p>
-<p>${r.explanation}</p>
-<pre class="pdf-export-steps">${r.steps}</pre>
+const cards = allReports.map((r, index) => `
+<div class="pdf-card">
+<h2>${index + 1}. ${escapeHtml(r.fault)}</h2>
+<p><strong>Confidence:</strong> ${escapeHtml(r.confidence)}%</p>
+<p><strong>Saved:</strong> ${escapeHtml(formatDate(r.createdAt))}</p>
+<p><strong>Explanation:</strong> ${escapeHtml(r.explanation)}</p>
+<pre>${escapeHtml(r.steps)}</pre>
 </div>
-`;
+`).join("");
 
-});
+printWindow.document.open();
+printWindow.document.write(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AutoKnowledge Pro AI Report Export</title>
+<style>
+body{
+font-family:Arial,sans-serif;
+color:#0f172a;
+background:#ffffff;
+margin:0;
+padding:24px;
+}
+.header{
+margin-bottom:20px;
+padding-bottom:12px;
+border-bottom:2px solid #0ea5e9;
+}
+h1{
+margin:0 0 8px 0;
+font-size:28px;
+color:#0369a1;
+}
+.meta{
+font-size:14px;
+color:#475569;
+margin:4px 0;
+}
+.pdf-card{
+border:1px solid #cbd5e1;
+border-radius:12px;
+padding:16px;
+margin-bottom:16px;
+break-inside:avoid;
+page-break-inside:avoid;
+}
+.pdf-card h2{
+margin:0 0 10px 0;
+font-size:18px;
+color:#0f172a;
+}
+.pdf-card p{
+margin:6px 0;
+line-height:1.5;
+}
+.pdf-card pre{
+white-space:pre-wrap;
+background:#f8fafc;
+padding:12px;
+border-radius:8px;
+line-height:1.6;
+}
+@media print{
+body{
+padding:12mm;
+}
+}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>AutoKnowledge Pro AI</h1>
+<div class="meta">Workshop Report Export</div>
+<div class="meta">Generated: ${escapeHtml(new Date().toLocaleString())}</div>
+<div class="meta">User: ${escapeHtml(el.userStatus.textContent)}</div>
+<div class="meta">Total Reports: ${allReports.length}</div>
+</div>
+${cards}
+<script>
+window.onload = function(){
+window.print();
+};
+</script>
+</body>
+</html>
+`);
+printWindow.document.close();
 
-box.innerHTML=html;
-
-html2pdf().from(box).save("autoknowledge-report.pdf");
+msg(el.reportMessage,"Print dialog opened. Choose Save as PDF.","success");
 }
 
 watchAuthState(user=>{
-
 if(user){
 el.userStatus.textContent="Logged in: " + user.email;
 el.logoutBtn.hidden=false;
@@ -284,7 +383,6 @@ el.logoutBtn.hidden=false;
 el.userStatus.textContent="Not logged in";
 el.logoutBtn.hidden=true;
 }
-
 });
 
 el.loginBtn.onclick=login;

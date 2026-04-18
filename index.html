@@ -20,8 +20,8 @@
 <section class="panel">
 <h2>Login</h2>
 
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
+<input id="email" placeholder="Email" autocomplete="email">
+<input id="password" type="password" placeholder="Password" autocomplete="current-password">
 
 <button id="loginBtn">Login</button>
 <button id="signupBtn">Sign Up</button>
@@ -76,12 +76,9 @@
 <button id="exportPdfBtn">Export PDF</button>
 
 <div id="reportList"></div>
-
 </section>
 
 </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script type="module" src="app.js"></script>
 
