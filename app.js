@@ -14,6 +14,7 @@ const el = {
   logoutBtn: document.getElementById("logoutBtn"),
   authMessage: document.getElementById("authMessage"),
   profileMessage: document.getElementById("profileMessage"),
+  invoiceMessage: document.getElementById("invoiceMessage"),
   reportMessage: document.getElementById("reportMessage"),
 
   customerName: document.getElementById("customerName"),
@@ -23,6 +24,19 @@ const el = {
   vehicleReg: document.getElementById("vehicleReg"),
   vehicleMileage: document.getElementById("vehicleMileage"),
   serviceNotes: document.getElementById("serviceNotes"),
+
+  labourHours: document.getElementById("labourHours"),
+  hourlyRate: document.getElementById("hourlyRate"),
+  partsCost: document.getElementById("partsCost"),
+  vatRate: document.getElementById("vatRate"),
+  paymentStatus: document.getElementById("paymentStatus"),
+  calculateInvoiceBtn: document.getElementById("calculateInvoiceBtn"),
+
+  labourTotal: document.getElementById("labourTotal"),
+  subTotal: document.getElementById("subTotal"),
+  vatTotal: document.getElementById("vatTotal"),
+  grandTotal: document.getElementById("grandTotal"),
+  invoiceStatus: document.getElementById("invoiceStatus"),
 
   fault: document.getElementById("fault"),
   result: document.getElementById("result"),
@@ -37,6 +51,14 @@ const el = {
   reportSort: document.getElementById("reportSort"),
   reportList: document.getElementById("reportList"),
 
+  totalReports: document.getElementById("totalReports"),
+  totalCustomers: document.getElementById("totalCustomers"),
+  totalVehicles: document.getElementById("totalVehicles"),
+  avgConfidence: document.getElementById("avgConfidence"),
+  topFault: document.getElementById("topFault"),
+  totalRevenue: document.getElementById("totalRevenue"),
+  recentActivity: document.getElementById("recentActivity"),
+
   loginBtn: document.getElementById("loginBtn"),
   signupBtn: document.getElementById("signupBtn"),
   runAiBtn: document.getElementById("runAiBtn"),
@@ -47,6 +69,7 @@ const el = {
 };
 
 let lastReport = null;
+let lastInvoice = null;
 let allReports = [];
 
 const diagnostics = {
@@ -95,13 +118,13 @@ const obdCodes = {
   P0500: "Vehicle Speed Sensor Fault"
 };
 
-function msg(target, text, type = "") {
+function setMessage(target, text, type = "") {
   target.className = "message";
   if (type) target.classList.add(type);
   target.textContent = text;
 }
 
-function loading(btn, state, text = "Loading...") {
+function setLoading(btn, state, text = "Loading...") {
   if (state) {
     btn.dataset.old = btn.textContent;
     btn.textContent = text;
@@ -132,9 +155,12 @@ function formatDate(value) {
     return new Date(value.seconds * 1000).toLocaleString();
   }
 
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return "Unknown date";
-  return d.toLocaleString();
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? "Unknown date" : parsed.toLocaleString();
+}
+
+function money(value) {
+  return `£${Number(value || 0).toFixed(2)}`;
 }
 
 function getProfileData() {
@@ -150,21 +176,49 @@ function getProfileData() {
 }
 
 function validateProfile(profile) {
-  if (!profile.customerName) {
-    throw new Error("Customer name is required.");
-  }
+  if (!profile.customerName) throw new Error("Customer name is required.");
+  if (!profile.vehicleMake) throw new Error("Vehicle make is required.");
+  if (!profile.vehicleModel) throw new Error("Vehicle model is required.");
+  if (!profile.vehicleReg) throw new Error("Registration number is required.");
+}
 
-  if (!profile.vehicleMake) {
-    throw new Error("Vehicle make is required.");
-  }
+function getInvoiceData() {
+  const labourHours = Number(el.labourHours.value || 0);
+  const hourlyRate = Number(el.hourlyRate.value || 0);
+  const partsCost = Number(el.partsCost.value || 0);
+  const vatRate = Number(el.vatRate.value || 0);
 
-  if (!profile.vehicleModel) {
-    throw new Error("Vehicle model is required.");
-  }
+  const labourTotal = labourHours * hourlyRate;
+  const subTotal = labourTotal + partsCost;
+  const vatTotal = subTotal * (vatRate / 100);
+  const grandTotal = subTotal + vatTotal;
 
-  if (!profile.vehicleReg) {
-    throw new Error("Registration number is required.");
-  }
+  return {
+    labourHours,
+    hourlyRate,
+    partsCost,
+    vatRate,
+    labourTotal,
+    subTotal,
+    vatTotal,
+    grandTotal,
+    paymentStatus: el.paymentStatus.value
+  };
+}
+
+function updateInvoiceUI(invoice) {
+  el.labourTotal.textContent = money(invoice.labourTotal);
+  el.subTotal.textContent = money(invoice.subTotal);
+  el.vatTotal.textContent = money(invoice.vatTotal);
+  el.grandTotal.textContent = money(invoice.grandTotal);
+  el.invoiceStatus.textContent = invoice.paymentStatus;
+  el.invoiceStatus.style.color = invoice.paymentStatus === "Paid" ? "#22c55e" : "#f59e0b";
+}
+
+function calculateInvoice() {
+  lastInvoice = getInvoiceData();
+  updateInvoiceUI(lastInvoice);
+  setMessage(el.invoiceMessage, "Invoice calculated.", "success");
 }
 
 function runAI() {
@@ -172,83 +226,88 @@ function runAI() {
   if (!item) return;
 
   lastReport = item;
-
   el.result.textContent = item.fault;
-  el.confidence.textContent = item.confidence + "%";
+  el.confidence.textContent = `${item.confidence}%`;
   el.aiExplain.textContent = item.explanation;
   el.steps.textContent = item.steps;
-
   el.saveReportBtn.disabled = false;
-  msg(el.reportMessage, "Analysis complete. Ready to save.", "success");
+
+  setMessage(el.reportMessage, "Analysis complete. Ready to save.", "success");
 }
 
 async function login() {
-  loading(el.loginBtn, true, "Logging in...");
+  setLoading(el.loginBtn, true, "Logging in...");
 
   try {
     await loginUser(el.email.value, el.password.value);
-    msg(el.authMessage, "Logged in successfully.", "success");
+    setMessage(el.authMessage, "Logged in successfully.", "success");
   } catch (error) {
-    msg(el.authMessage, error.message, "error");
+    setMessage(el.authMessage, error.message, "error");
   }
 
-  loading(el.loginBtn, false);
+  setLoading(el.loginBtn, false);
 }
 
 async function signup() {
-  loading(el.signupBtn, true, "Creating...");
+  setLoading(el.signupBtn, true, "Creating...");
 
   try {
     await signupUser(el.email.value, el.password.value);
-    msg(el.authMessage, "Account created.", "success");
+    setMessage(el.authMessage, "Account created.", "success");
   } catch (error) {
-    msg(el.authMessage, error.message, "error");
+    setMessage(el.authMessage, error.message, "error");
   }
 
-  loading(el.signupBtn, false);
+  setLoading(el.signupBtn, false);
 }
 
 async function logout() {
   try {
     await logoutUser();
-    msg(el.authMessage, "Logged out.", "success");
+    setMessage(el.authMessage, "Logged out.", "success");
   } catch (error) {
-    msg(el.authMessage, error.message, "error");
+    setMessage(el.authMessage, error.message, "error");
   }
 }
 
 async function save() {
   if (!lastReport) {
-    msg(el.reportMessage, "Run analysis first.", "error");
+    setMessage(el.reportMessage, "Run analysis first.", "error");
     return;
   }
 
-  loading(el.saveReportBtn, true, "Saving...");
+  setLoading(el.saveReportBtn, true, "Saving...");
 
   try {
     const profile = getProfileData();
     validateProfile(profile);
 
+    const invoice = lastInvoice || getInvoiceData();
+    lastInvoice = invoice;
+    updateInvoiceUI(invoice);
+
     await saveReport({
       ...lastReport,
-      ...profile
+      ...profile,
+      ...invoice
     });
 
-    msg(el.profileMessage, "Customer and vehicle profile attached.", "success");
-    msg(el.reportMessage, "Saved to cloud.", "success");
+    setMessage(el.profileMessage, "Customer and vehicle profile attached.", "success");
+    setMessage(el.invoiceMessage, "Invoice attached.", "success");
+    setMessage(el.reportMessage, "Saved to cloud.", "success");
   } catch (error) {
     if (
       error.message.includes("Customer") ||
       error.message.includes("Vehicle") ||
       error.message.includes("Registration")
     ) {
-      msg(el.profileMessage, error.message, "error");
+      setMessage(el.profileMessage, error.message, "error");
     } else {
-      msg(el.reportMessage, error.message, "error");
+      setMessage(el.reportMessage, error.message, "error");
     }
   }
 
-  loading(el.saveReportBtn, false);
+  setLoading(el.saveReportBtn, false);
 }
 
 function createProfileHtml(report) {
@@ -259,6 +318,20 @@ function createProfileHtml(report) {
     <div class="report-meta"><strong>Registration:</strong> ${escapeHtml(report.vehicleReg || "N/A")}</div>
     <div class="report-meta"><strong>Mileage:</strong> ${escapeHtml(report.vehicleMileage || "N/A")}</div>
     <div class="report-meta"><strong>Service Notes:</strong> ${escapeHtml(report.serviceNotes || "N/A")}</div>
+  `;
+}
+
+function createInvoiceHtml(report) {
+  return `
+    <div class="report-meta"><strong>Labour Hours:</strong> ${escapeHtml(report.labourHours ?? 0)}</div>
+    <div class="report-meta"><strong>Hourly Rate:</strong> ${money(report.hourlyRate)}</div>
+    <div class="report-meta"><strong>Parts Cost:</strong> ${money(report.partsCost)}</div>
+    <div class="report-meta"><strong>VAT Rate:</strong> ${escapeHtml(report.vatRate ?? 0)}%</div>
+    <div class="report-meta"><strong>Labour Total:</strong> ${money(report.labourTotal)}</div>
+    <div class="report-meta"><strong>Subtotal:</strong> ${money(report.subTotal)}</div>
+    <div class="report-meta"><strong>VAT Total:</strong> ${money(report.vatTotal)}</div>
+    <div class="report-meta"><strong>Grand Total:</strong> ${money(report.grandTotal)}</div>
+    <div class="report-meta"><strong>Payment Status:</strong> ${escapeHtml(report.paymentStatus || "Unpaid")}</div>
   `;
 }
 
@@ -277,6 +350,7 @@ function renderReports(list) {
     card.innerHTML = `
       <h3>${escapeHtml(report.fault)}</h3>
       ${createProfileHtml(report)}
+      ${createInvoiceHtml(report)}
       <div class="report-meta"><strong>Confidence:</strong> ${escapeHtml(report.confidence)}%</div>
       <div class="report-meta"><strong>Explanation:</strong> ${escapeHtml(report.explanation)}</div>
       <div class="report-meta"><strong>Saved:</strong> ${escapeHtml(formatDate(report.createdAt))}</div>
@@ -287,18 +361,93 @@ function renderReports(list) {
   });
 }
 
+function updateDashboardStats(list) {
+  const totalReports = list.length;
+  const customers = new Set();
+  const vehicles = new Set();
+  const faultCount = {};
+  let confidenceTotal = 0;
+  let revenueTotal = 0;
+
+  for (const report of list) {
+    if (report.customerName) customers.add(report.customerName.trim().toLowerCase());
+    if (report.vehicleReg) vehicles.add(report.vehicleReg.trim().toLowerCase());
+
+    confidenceTotal += Number(report.confidence || 0);
+    revenueTotal += Number(report.grandTotal || 0);
+
+    const key = report.fault || "Unknown";
+    faultCount[key] = (faultCount[key] || 0) + 1;
+  }
+
+  let topFault = "N/A";
+  let topCount = 0;
+
+  for (const [fault, count] of Object.entries(faultCount)) {
+    if (count > topCount) {
+      topCount = count;
+      topFault = fault;
+    }
+  }
+
+  const avg = totalReports ? Math.round(confidenceTotal / totalReports) : 0;
+
+  el.totalReports.textContent = String(totalReports);
+  el.totalCustomers.textContent = String(customers.size);
+  el.totalVehicles.textContent = String(vehicles.size);
+  el.avgConfidence.textContent = `${avg}%`;
+  el.topFault.textContent = topFault;
+  el.totalRevenue.textContent = money(revenueTotal);
+}
+
+function renderRecentActivity(list) {
+  el.recentActivity.innerHTML = "";
+
+  if (!list.length) {
+    el.recentActivity.innerHTML = "<p>No recent activity yet.</p>";
+    return;
+  }
+
+  const recent = [...list]
+    .sort((a, b) => {
+      const aTime = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : new Date(a.createdAt || 0).getTime();
+      const bTime = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : new Date(b.createdAt || 0).getTime();
+      return bTime - aTime;
+    })
+    .slice(0, 5);
+
+  for (const report of recent) {
+    const card = document.createElement("div");
+    card.className = "activity-card";
+
+    card.innerHTML = `
+      <h3>${escapeHtml(report.fault)}</h3>
+      <div class="report-meta"><strong>Customer:</strong> ${escapeHtml(report.customerName || "N/A")}</div>
+      <div class="report-meta"><strong>Vehicle:</strong> ${escapeHtml(report.vehicleMake || "")} ${escapeHtml(report.vehicleModel || "")}</div>
+      <div class="report-meta"><strong>Registration:</strong> ${escapeHtml(report.vehicleReg || "N/A")}</div>
+      <div class="report-meta"><strong>Total:</strong> ${money(report.grandTotal)}</div>
+      <div class="report-meta"><strong>Status:</strong> ${escapeHtml(report.paymentStatus || "Unpaid")}</div>
+      <div class="report-meta"><strong>Saved:</strong> ${escapeHtml(formatDate(report.createdAt))}</div>
+    `;
+
+    el.recentActivity.appendChild(card);
+  }
+}
+
 async function loadReports() {
-  loading(el.loadReportsBtn, true, "Loading...");
+  setLoading(el.loadReportsBtn, true, "Loading...");
 
   try {
     allReports = await getMyReports();
     applyFilters();
-    msg(el.reportMessage, "Reports loaded.", "success");
+    updateDashboardStats(allReports);
+    renderRecentActivity(allReports);
+    setMessage(el.reportMessage, "Reports loaded.", "success");
   } catch (error) {
-    msg(el.reportMessage, error.message, "error");
+    setMessage(el.reportMessage, error.message, "error");
   }
 
-  loading(el.loadReportsBtn, false);
+  setLoading(el.loadReportsBtn, false);
 }
 
 function applyFilters() {
@@ -316,24 +465,25 @@ function applyFilters() {
         (r.vehicleMake || "").toLowerCase().includes(q) ||
         (r.vehicleModel || "").toLowerCase().includes(q) ||
         (r.vehicleReg || "").toLowerCase().includes(q) ||
-        (r.serviceNotes || "").toLowerCase().includes(q)
+        (r.serviceNotes || "").toLowerCase().includes(q) ||
+        (r.paymentStatus || "").toLowerCase().includes(q)
     );
   }
 
   if (el.reportSort.value === "confidence") {
     list.sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
   } else if (el.reportSort.value === "oldest") {
-    list.sort(
-      (a, b) =>
-        new Date(a.createdAt?.seconds ? a.createdAt.seconds * 1000 : a.createdAt || 0) -
-        new Date(b.createdAt?.seconds ? b.createdAt.seconds * 1000 : b.createdAt || 0)
-    );
+    list.sort((a, b) => {
+      const aTime = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : new Date(a.createdAt || 0).getTime();
+      const bTime = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : new Date(b.createdAt || 0).getTime();
+      return aTime - bTime;
+    });
   } else {
-    list.sort(
-      (a, b) =>
-        new Date(b.createdAt?.seconds ? b.createdAt.seconds * 1000 : b.createdAt || 0) -
-        new Date(a.createdAt?.seconds ? a.createdAt.seconds * 1000 : a.createdAt || 0)
-    );
+    list.sort((a, b) => {
+      const aTime = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : new Date(a.createdAt || 0).getTime();
+      const bTime = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : new Date(b.createdAt || 0).getTime();
+      return bTime - aTime;
+    });
   }
 
   renderReports(list);
@@ -352,25 +502,27 @@ function lookup() {
 
   let out = "";
 
-  codes.forEach((c) => {
-    out += c + " = " + (obdCodes[c] || "Unknown code") + "\n";
-  });
+  for (const code of codes) {
+    out += `${code} = ${obdCodes[code] || "Unknown code"}\n`;
+  }
 
   el.codeOut.textContent = out.trim();
 }
 
 function exportPDF() {
   if (!allReports.length) {
-    msg(el.reportMessage, "Load reports first.", "error");
+    setMessage(el.reportMessage, "Load reports first.", "error");
     return;
   }
 
   const printWindow = window.open("", "_blank");
 
   if (!printWindow) {
-    msg(el.reportMessage, "Popup blocked. Allow popups and try again.", "error");
+    setMessage(el.reportMessage, "Popup blocked. Allow popups and try again.", "error");
     return;
   }
+
+  const revenue = allReports.reduce((sum, report) => sum + Number(report.grandTotal || 0), 0);
 
   const cards = allReports
     .map(
@@ -383,6 +535,15 @@ function exportPDF() {
         <p><strong>Registration:</strong> ${escapeHtml(report.vehicleReg || "N/A")}</p>
         <p><strong>Mileage:</strong> ${escapeHtml(report.vehicleMileage || "N/A")}</p>
         <p><strong>Service Notes:</strong> ${escapeHtml(report.serviceNotes || "N/A")}</p>
+        <p><strong>Labour Hours:</strong> ${escapeHtml(report.labourHours ?? 0)}</p>
+        <p><strong>Hourly Rate:</strong> ${money(report.hourlyRate)}</p>
+        <p><strong>Parts Cost:</strong> ${money(report.partsCost)}</p>
+        <p><strong>VAT Rate:</strong> ${escapeHtml(report.vatRate ?? 0)}%</p>
+        <p><strong>Labour Total:</strong> ${money(report.labourTotal)}</p>
+        <p><strong>Subtotal:</strong> ${money(report.subTotal)}</p>
+        <p><strong>VAT Total:</strong> ${money(report.vatTotal)}</p>
+        <p><strong>Grand Total:</strong> ${money(report.grandTotal)}</p>
+        <p><strong>Payment Status:</strong> ${escapeHtml(report.paymentStatus || "Unpaid")}</p>
         <p><strong>Confidence:</strong> ${escapeHtml(report.confidence)}%</p>
         <p><strong>Saved:</strong> ${escapeHtml(formatDate(report.createdAt))}</p>
         <p><strong>Explanation:</strong> ${escapeHtml(report.explanation)}</p>
@@ -400,52 +561,14 @@ function exportPDF() {
       <meta charset="UTF-8">
       <title>AutoKnowledge Pro AI Report Export</title>
       <style>
-        body{
-          font-family:Arial,sans-serif;
-          color:#0f172a;
-          background:#ffffff;
-          margin:0;
-          padding:24px;
-        }
-        .header{
-          margin-bottom:20px;
-          padding-bottom:12px;
-          border-bottom:2px solid #0ea5e9;
-        }
-        h1{
-          margin:0 0 8px 0;
-          font-size:28px;
-          color:#0369a1;
-        }
-        .meta{
-          font-size:14px;
-          color:#475569;
-          margin:4px 0;
-        }
-        .pdf-card{
-          border:1px solid #cbd5e1;
-          border-radius:12px;
-          padding:16px;
-          margin-bottom:16px;
-          break-inside:avoid;
-          page-break-inside:avoid;
-        }
-        .pdf-card h2{
-          margin:0 0 10px 0;
-          font-size:18px;
-          color:#0f172a;
-        }
-        .pdf-card p{
-          margin:6px 0;
-          line-height:1.5;
-        }
-        .pdf-card pre{
-          white-space:pre-wrap;
-          background:#f8fafc;
-          padding:12px;
-          border-radius:8px;
-          line-height:1.6;
-        }
+        body{font-family:Arial,sans-serif;color:#0f172a;background:#ffffff;margin:0;padding:24px;}
+        .header{margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #0ea5e9;}
+        h1{margin:0 0 8px 0;font-size:28px;color:#0369a1;}
+        .meta{font-size:14px;color:#475569;margin:4px 0;}
+        .pdf-card{border:1px solid #cbd5e1;border-radius:12px;padding:16px;margin-bottom:16px;break-inside:avoid;page-break-inside:avoid;}
+        .pdf-card h2{margin:0 0 10px 0;font-size:18px;color:#0f172a;}
+        .pdf-card p{margin:6px 0;line-height:1.5;}
+        .pdf-card pre{white-space:pre-wrap;background:#f8fafc;padding:12px;border-radius:8px;line-height:1.6;}
       </style>
     </head>
     <body>
@@ -455,24 +578,23 @@ function exportPDF() {
         <div class="meta">Generated: ${escapeHtml(new Date().toLocaleString())}</div>
         <div class="meta">User: ${escapeHtml(el.userStatus.textContent)}</div>
         <div class="meta">Total Reports: ${allReports.length}</div>
+        <div class="meta">Estimated Revenue: ${money(revenue)}</div>
       </div>
       ${cards}
       <script>
-        window.onload = function(){
-          window.print();
-        };
+        window.onload = function(){ window.print(); };
       <\/script>
     </body>
     </html>
   `);
   printWindow.document.close();
 
-  msg(el.reportMessage, "Print dialog opened. Choose Save as PDF.", "success");
+  setMessage(el.reportMessage, "Print dialog opened. Choose Save as PDF.", "success");
 }
 
 watchAuthState((user) => {
   if (user) {
-    el.userStatus.textContent = "Logged in: " + user.email;
+    el.userStatus.textContent = `Logged in: ${user.email}`;
     el.logoutBtn.hidden = false;
   } else {
     el.userStatus.textContent = "Not logged in";
@@ -483,14 +605,18 @@ watchAuthState((user) => {
 el.loginBtn.onclick = login;
 el.signupBtn.onclick = signup;
 el.logoutBtn.onclick = logout;
+el.calculateInvoiceBtn.onclick = calculateInvoice;
 el.runAiBtn.onclick = runAI;
 el.saveReportBtn.onclick = save;
 el.lookupBtn.onclick = lookup;
 el.loadReportsBtn.onclick = loadReports;
 el.exportPdfBtn.onclick = exportPDF;
-
 el.reportSearch.oninput = applyFilters;
 el.reportSort.onchange = applyFilters;
+el.paymentStatus.onchange = calculateInvoice;
 
 el.saveReportBtn.disabled = true;
+calculateInvoice();
+updateDashboardStats([]);
+renderRecentActivity([]);
 runAI();
