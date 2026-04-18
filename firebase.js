@@ -48,9 +48,7 @@ export function watchAuthState(callback) {
 
 export async function saveReport(report) {
   const user = auth.currentUser;
-  if (!user) {
-    throw new Error("You must be logged in to save a report.");
-  }
+  if (!user) throw new Error("You must be logged in to save a report.");
 
   await addDoc(collection(db, "reports"), {
     userId: user.uid,
@@ -65,9 +63,7 @@ export async function saveReport(report) {
 
 export async function getMyReports() {
   const user = auth.currentUser;
-  if (!user) {
-    throw new Error("You must be logged in to view reports.");
-  }
+  if (!user) throw new Error("You must be logged in to view reports.");
 
   const reportsQuery = query(
     collection(db, "reports"),
@@ -76,9 +72,6 @@ export async function getMyReports() {
   );
 
   const snapshot = await getDocs(reportsQuery);
-
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data()
-  }));
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
 }
