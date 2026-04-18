@@ -1,258 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta
-    name="description"
-    content="AutoKnowledge Pro AI - premium vehicle diagnostics dashboard with cloud reports, OBD insights, and workshop-ready analysis."
-  />
-  <title>AutoKnowledge Pro AI</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="./styles.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoKnowledge Pro AI</title>
+<link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-  <div class="bg-orb orb-1"></div>
-  <div class="bg-orb orb-2"></div>
-  <div class="bg-grid"></div>
 
-  <header class="topbar">
-    <div class="brand-wrap">
-      <div class="brand-badge">AI Workshop Suite</div>
-      <h1 class="brand">AutoKnowledge Pro AI</h1>
-      <p class="tagline">Premium smart diagnostics for modern garages and independent mechanics.</p>
-    </div>
+<header class="topbar">
+<h1>AutoKnowledge Pro AI</h1>
+<div id="userStatus">Not logged in</div>
+<button id="logoutBtn" hidden>Logout</button>
+</header>
 
-    <div class="topbar-actions">
-      <span id="userStatus" class="user-status">Not logged in</span>
-      <button id="logoutBtn" class="btn btn-secondary btn-small" type="button" hidden>
-        Logout
-      </button>
-    </div>
-  </header>
+<div class="container">
 
-  <div class="layout">
-    <aside class="sidebar" aria-label="Sidebar navigation">
-      <nav class="nav">
-        <a href="#heroPanel">Overview</a>
-        <a href="#authPanel">Account</a>
-        <a href="#diagPanel">Diagnostics</a>
-        <a href="#obdPanel">OBD Scanner</a>
-        <a href="#reportsPanel">Reports</a>
-      </nav>
+<section class="panel">
+<h2>Login</h2>
 
-      <div class="sidebar-card">
-        <p class="sidebar-label">System status</p>
-        <h3>Workshop cloud ready</h3>
-        <p>Save reports, review history, and build a cleaner workflow for customer diagnostics.</p>
-      </div>
-    </aside>
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
 
-    <main class="main">
-      <section id="heroPanel" class="hero-panel">
-        <div class="hero-copy">
-          <span class="eyebrow">Premium diagnostics experience</span>
-          <h2>Turn workshop symptoms into cleaner fault analysis, faster.</h2>
-          <p>
-            Run guided AI-style analysis, check OBD codes, and save workshop reports to the cloud with a dashboard that feels production ready.
-          </p>
+<button id="loginBtn">Login</button>
+<button id="signupBtn">Sign Up</button>
 
-          <div class="hero-actions">
-            <a class="btn hero-link" href="#diagPanel">Start Diagnosis</a>
-            <a class="btn btn-secondary hero-link" href="#reportsPanel">Open Reports</a>
-          </div>
-        </div>
+<p id="authMessage"></p>
+</section>
 
-        <div class="hero-stats">
-          <article class="stat-card">
-            <p class="stat-label">Reports loaded</p>
-            <h3 id="reportsCount">0</h3>
-            <span class="stat-foot">Cloud report history</span>
-          </article>
+<section class="panel">
+<h2>AI Diagnostic Engine</h2>
 
-          <article class="stat-card">
-            <p class="stat-label">Selected symptom</p>
-            <h3 id="selectedFaultLabel">Overheating</h3>
-            <span class="stat-foot">Current analysis target</span>
-          </article>
+<select id="fault">
+<option value="overheat">Overheating</option>
+<option value="no_start">No Start</option>
+<option value="misfire">Misfire</option>
+<option value="battery">Battery Drain</option>
+<option value="rough_idle">Rough Idle</option>
+</select>
 
-          <article class="stat-card">
-            <p class="stat-label">Confidence score</p>
-            <h3 id="heroConfidence">--</h3>
-            <span class="stat-foot">Latest diagnostic run</span>
-          </article>
-        </div>
-      </section>
+<button id="runAiBtn">Run Analysis</button>
+<button id="saveReportBtn">Save Report</button>
 
-      <section id="authPanel" class="panel glass">
-        <div class="panel-header">
-          <div>
-            <span class="panel-kicker">Secure account access</span>
-            <h2>Workshop Account</h2>
-            <p>Sign in to save reports, load your history, and keep every diagnosis linked to your account.</p>
-          </div>
-        </div>
+<h3 id="result">Awaiting analysis...</h3>
+<p id="confidence">--</p>
+<p id="aiExplain"></p>
+<pre id="steps"></pre>
 
-        <form id="authForm" class="form-grid" novalidate>
-          <div class="field-row">
-            <div class="field">
-              <label for="email">Email</label>
-              <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
-            </div>
+<p id="reportMessage"></p>
+</section>
 
-            <div class="field">
-              <label for="password">Password</label>
-              <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Minimum 6 characters" required />
-            </div>
-          </div>
+<section class="panel">
+<h2>OBD Scanner</h2>
 
-          <div class="button-row">
-            <button id="loginBtn" class="btn" type="button">Login</button>
-            <button id="signupBtn" class="btn btn-secondary" type="button">Sign Up</button>
-          </div>
+<input id="code" placeholder="P0300,P0171">
 
-          <p id="authMessage" class="message" aria-live="polite"></p>
-        </form>
-      </section>
+<button id="lookupBtn">Analyse</button>
 
-      <section id="diagPanel" class="panel glass">
-        <div class="panel-header split">
-          <div>
-            <span class="panel-kicker">Core engine</span>
-            <h2>AI Diagnostic Engine</h2>
-            <p>Select a workshop symptom, run analysis, and generate a cleaner guided result.</p>
-          </div>
+<pre id="codeOut"></pre>
+</section>
 
-          <div class="confidence-ring-wrap">
-            <div class="confidence-ring" id="confidenceRing">
-              <span id="confidenceRingValue">--</span>
-            </div>
-            <small>Confidence</small>
-          </div>
-        </div>
+<section class="panel">
+<h2>Workshop Reports</h2>
 
-        <div class="field">
-          <label for="fault">Fault symptom</label>
-          <select id="fault" name="fault">
-            <option value="overheat">Overheating</option>
-            <option value="no_start">No Start</option>
-            <option value="misfire">Misfire</option>
-            <option value="battery">Battery Drain</option>
-            <option value="rough_idle">Rough Idle</option>
-          </select>
-        </div>
+<input id="reportSearch" placeholder="Search reports">
 
-        <div class="button-row">
-          <button id="runAiBtn" class="btn" type="button">Run Analysis</button>
-          <button id="saveReportBtn" class="btn btn-secondary" type="button">Save Report</button>
-        </div>
+<select id="reportSort">
+<option value="newest">Newest</option>
+<option value="oldest">Oldest</option>
+<option value="confidence">Highest Confidence</option>
+</select>
 
-        <div class="result-grid">
-          <article class="result-box highlight-box">
-            <h3>Primary Diagnosis</h3>
-            <p id="result">Awaiting analysis...</p>
-          </article>
+<button id="loadReportsBtn">Load Reports</button>
+<button id="exportPdfBtn">Export PDF</button>
 
-          <article class="result-box">
-            <h3>Confidence</h3>
-            <p id="confidence">--</p>
-          </article>
+<div id="reportList"></div>
 
-          <article class="result-box">
-            <h3>AI Explanation</h3>
-            <p id="aiExplain" class="muted-text">Run an analysis to see likely causes.</p>
-          </article>
+</section>
 
-          <article class="result-box">
-            <h3>Workshop Recommendation</h3>
-            <p id="workshopAdvice" class="muted-text">Use the fault selector to generate the next recommended workshop action.</p>
-          </article>
-        </div>
+</div>
 
-        <div class="result-box">
-          <h3>Recommended Inspection Steps</h3>
-          <pre id="steps" class="steps-box">No steps generated yet.</pre>
-        </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-        <p id="reportMessage" class="message" aria-live="polite"></p>
-      </section>
+<script type="module" src="app.js"></script>
 
-      <section id="obdPanel" class="panel glass">
-        <div class="panel-header">
-          <div>
-            <span class="panel-kicker">Fast code lookup</span>
-            <h2>OBD Scanner</h2>
-            <p>Enter one or more diagnostic trouble codes separated by commas for a quick workshop lookup.</p>
-          </div>
-        </div>
-
-        <div class="field-row">
-          <div class="field field-grow">
-            <label for="code">OBD codes</label>
-            <input id="code" name="code" type="text" placeholder="Example: P0300, P0171" />
-          </div>
-
-          <div class="field field-fixed">
-            <label>&nbsp;</label>
-            <button id="lookupBtn" class="btn" type="button">Analyze Codes</button>
-          </div>
-        </div>
-
-        <div class="result-grid result-grid-2">
-          <article class="result-box">
-            <h3>Code Analysis</h3>
-            <pre id="codeOut" class="steps-box">No code analysis yet.</pre>
-          </article>
-
-          <article class="result-box">
-            <h3>Workshop Tip</h3>
-            <p id="obdTip" class="muted-text">
-              Multiple codes can point to one root cause. Start with the most upstream system fault before replacing parts.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section id="reportsPanel" class="panel glass">
-        <div class="panel-header">
-          <div>
-            <span class="panel-kicker">Cloud history</span>
-            <h2>Workshop Reports</h2>
-            <p>Review saved reports, search them fast, and keep your diagnosis history organized.</p>
-          </div>
-        </div>
-
-        <div class="reports-toolbar">
-          <div class="field field-grow">
-            <label for="reportSearch">Search reports</label>
-            <input id="reportSearch" type="text" placeholder="Search by diagnosis, explanation, or steps" />
-          </div>
-
-          <div class="field field-fixed filter-field">
-            <label for="reportSort">Sort</label>
-            <select id="reportSort">
-              <option value="newest">Newest first</option>
-              <option value="oldest">Oldest first</option>
-              <option value="confidence">Highest confidence</option>
-            </select>
-          </div>
-
-          <div class="field field-fixed load-field">
-            <label>&nbsp;</label>
-            <button id="loadReportsBtn" class="btn" type="button">Load My Reports</button>
-          </div>
-        </div>
-
-        <div id="reportList" class="report-list" aria-live="polite"></div>
-      </section>
-    </main>
-  </div>
-
-  <script type="module" src="./app.js"></script>
 </body>
 </html>
