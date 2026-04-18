@@ -1,409 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AutoKnowledge Pro AI</title>
-
-<style>
-:root{
---bg:#060913;
---panel:#0f172a;
---accent:#38bdf8;
---accent2:#0ea5e9;
---text:#e2e8f0;
---muted:#94a3b8;
---danger:#ef4444;
---ok:#22c55e;
---warn:#f59e0b;
-}
-
-body{
-margin:0;
-font-family:Segoe UI;
-background:radial-gradient(circle at top,#0f172a,#020617);
-color:var(--text);
-}
-
-/* TOP BAR */
-.topbar{
-position:fixed;
-top:0;
-left:0;
-right:0;
-height:60px;
-background:#020617;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 20px;
-border-bottom:1px solid #1f2937;
-z-index:1000;
-}
-
-.brand{
-color:var(--accent);
-font-weight:bold;
-}
-
-/* SIDEBAR */
-.sidebar{
-position:fixed;
-top:60px;
-left:0;
-width:230px;
-height:100%;
-background:#020617;
-padding:15px;
-}
-
-.sidebar a{
-display:block;
-padding:10px;
-margin:5px 0;
-color:var(--muted);
-text-decoration:none;
-border-radius:6px;
-}
-.sidebar a:hover{
-background:#0f172a;
-color:var(--accent);
-}
-
-/* MAIN */
-.main{
-margin-left:230px;
-padding-top:70px;
-}
-
-/* DASHBOARD */
-.dashboard{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:12px;
-padding:20px;
-}
-
-.card{
-background:var(--panel);
-padding:15px;
-border-radius:10px;
-}
-
-.card h3{
-margin:0;
-color:var(--accent2);
-font-size:13px;
-}
-
-.card p{
-font-size:18px;
-font-weight:bold;
-}
-
-/* PANEL */
-.panel{
-background:var(--panel);
-margin:20px;
-padding:20px;
-border-radius:12px;
-}
-
-input,select{
-width:100%;
-padding:10px;
-margin:8px 0;
-background:#020617;
-border:none;
-color:white;
-border-radius:6px;
-}
-
-button{
-width:100%;
-padding:12px;
-background:var(--accent);
-border:none;
-border-radius:6px;
-font-weight:bold;
-cursor:pointer;
-}
-
-pre{
-background:#020617;
-padding:10px;
-border-radius:8px;
-white-space:pre-wrap;
-}
-
-.aiBox{
-background:#020617;
-padding:10px;
-border-radius:8px;
-margin-top:10px;
-color:var(--muted);
-font-size:13px;
-}
-
-.badge{
-background:var(--warn);
-padding:3px 8px;
-border-radius:6px;
-font-size:11px;
-}
-
-.report{
-display:none;
-margin-top:10px;
-border-top:1px solid #1f2937;
-padding-top:10px;
-}
-
-/* LOGIN BOX */
-.loginBox{
-background:#0f172a;
-padding:15px;
-margin:20px;
-border-radius:12px;
-border:1px solid #1f2937;
-}
-
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="AutoKnowledge Pro AI - smart vehicle diagnostics, OBD analysis, and cloud-based report history."
+  />
+  <title>AutoKnowledge Pro AI</title>
+  <link rel="stylesheet" href="./styles.css" />
 </head>
-
 <body>
+  <header class="topbar">
+    <div class="brand-wrap">
+      <h1 class="brand">AutoKnowledge Pro AI</h1>
+      <p class="tagline">Smart Diagnostic System</p>
+    </div>
 
-<div class="topbar">
-<div class="brand">AutoKnowledge Pro AI</div>
-<div>Smart Diagnostic System</div>
-</div>
+    <div class="topbar-actions">
+      <span id="userStatus" class="user-status">Not logged in</span>
+      <button id="logoutBtn" class="btn btn-secondary btn-small" type="button" hidden>
+        Logout
+      </button>
+    </div>
+  </header>
 
-<div class="sidebar">
-<a href="#dash">Dashboard</a>
-<a href="#diag">Diagnostics</a>
-<a href="#obd">OBD</a>
-</div>
+  <div class="layout">
+    <aside class="sidebar" aria-label="Sidebar navigation">
+      <nav class="nav">
+        <a href="#authPanel">Account</a>
+        <a href="#diagPanel">Diagnostics</a>
+        <a href="#obdPanel">OBD Scanner</a>
+        <a href="#reportsPanel">Reports History</a>
+      </nav>
+    </aside>
 
-<div class="main">
+    <main class="main">
+      <section id="authPanel" class="panel">
+        <div class="panel-header">
+          <h2>Account Access</h2>
+          <p>Sign in to save and review your workshop reports.</p>
+        </div>
 
-<!-- 🔐 LOGIN (FIREBASE CONNECTED) -->
-<div class="loginBox">
-<h2>Login System</h2>
+        <form id="authForm" class="form-grid" novalidate>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+          </div>
 
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Minimum 6 characters" required />
+          </div>
 
-<button onclick="login()">Login</button>
-<button onclick="signup()">Sign Up</button>
+          <div class="button-row">
+            <button id="loginBtn" class="btn" type="button">Login</button>
+            <button id="signupBtn" class="btn btn-secondary" type="button">Sign Up</button>
+          </div>
 
-<p id="userStatus">Not logged in</p>
-</div>
+          <p id="authMessage" class="message" aria-live="polite"></p>
+        </form>
+      </section>
 
-<!-- DASHBOARD -->
-<div id="dash" class="dashboard">
-<div class="card"><h3>Engine</h3><p id="eng">OK</p></div>
-<div class="card"><h3>RPM</h3><p id="rpm">0</p></div>
-<div class="card"><h3>Temp</h3><p id="temp">90°C</p></div>
-<div class="card"><h3>Fuel Trim</h3><p id="trim">0%</p></div>
-</div>
+      <section id="diagPanel" class="panel">
+        <div class="panel-header">
+          <h2>AI Diagnostic Engine</h2>
+          <p>Select a common fault and generate a diagnostic summary.</p>
+        </div>
 
-<!-- DIAGNOSTICS -->
-<div id="diag" class="panel">
-<h2>AI Diagnostic Engine</h2>
+        <div class="field">
+          <label for="fault">Fault symptom</label>
+          <select id="fault" name="fault">
+            <option value="overheat">Overheating</option>
+            <option value="no_start">No Start</option>
+            <option value="misfire">Misfire</option>
+            <option value="battery">Battery Drain</option>
+            <option value="rough_idle">Rough Idle</option>
+          </select>
+        </div>
 
-<select id="fault">
-<option value="overheat">Overheating</option>
-<option value="no_start">No Start</option>
-<option value="misfire">Misfire</option>
-<option value="power_loss">Power Loss</option>
-<option value="smoke">Excess Smoke</option>
-</select>
+        <div class="button-row">
+          <button id="runAiBtn" class="btn" type="button">Run Analysis</button>
+          <button id="saveReportBtn" class="btn btn-secondary" type="button">Save Report</button>
+        </div>
 
-<button onclick="runAI()">RUN AI ANALYSIS</button>
+        <div class="result-grid">
+          <div class="result-box">
+            <h3>Primary Diagnosis</h3>
+            <p id="result">Awaiting analysis...</p>
+          </div>
 
-<h3 id="result"></h3>
-<p id="confidence"></p>
+          <div class="result-box">
+            <h3>Confidence</h3>
+            <p id="confidence">--</p>
+          </div>
+        </div>
 
-<div class="aiBox" id="aiExplain">Awaiting analysis...</div>
+        <div class="result-box">
+          <h3>AI Explanation</h3>
+          <p id="aiExplain" class="muted-text">Run an analysis to see likely causes.</p>
+        </div>
 
-<pre id="steps"></pre>
+        <div class="result-box">
+          <h3>Recommended Inspection Steps</h3>
+          <pre id="steps" class="steps-box">No steps generated yet.</pre>
+        </div>
 
-<button onclick="generateReport()">Generate Report</button>
+        <p id="reportMessage" class="message" aria-live="polite"></p>
+      </section>
 
-<div id="report" class="report">
-<pre id="reportText"></pre>
-<button onclick="window.print()">Print Report</button>
-</div>
+      <section id="obdPanel" class="panel">
+        <div class="panel-header">
+          <h2>OBD Scanner</h2>
+          <p>Enter one or more diagnostic trouble codes separated by commas.</p>
+        </div>
 
-</div>
+        <div class="field">
+          <label for="code">OBD codes</label>
+          <input id="code" name="code" type="text" placeholder="Example: P0300, P0171" />
+        </div>
 
-<!-- OBD -->
-<div id="obd" class="panel">
-<h2>OBD Smart Scanner</h2>
+        <button id="lookupBtn" class="btn" type="button">Analyze Codes</button>
 
-<input id="code" placeholder="Enter codes e.g. P0300,P0171">
-<button onclick="lookup()">Analyse Codes</button>
+        <div class="result-box">
+          <h3>Code Analysis</h3>
+          <pre id="codeOut" class="steps-box">No code analysis yet.</pre>
+        </div>
+      </section>
 
-<pre id="codeOut"></pre>
-<div class="aiBox" id="combo"></div>
-</div>
+      <section id="reportsPanel" class="panel">
+        <div class="panel-header">
+          <h2>Workshop Report History</h2>
+          <p>Load your saved reports from Firestore.</p>
+        </div>
 
-</div>
+        <div class="button-row">
+          <button id="loadReportsBtn" class="btn" type="button">Load My Reports</button>
+        </div>
 
-<!-- ================= FIREBASE ================= -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        <div id="reportList" class="report-list" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBD1TFfCDnqP1VYwskBu-Qd9AROWL0TOSk",
-  authDomain: "autoknowledge-pro.firebaseapp.com",
-  projectId: "autoknowledge-pro",
-  storageBucket: "autoknowledge-pro.firebasestorage.app",
-  messagingSenderId: "476847258960",
-  appId: "1:476847258960:web:2898e7d7968d8ba84b8055"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-/* LOGIN */
-window.login = function(){
-const email=document.getElementById("email").value;
-const pass=document.getElementById("password").value;
-
-signInWithEmailAndPassword(auth,email,pass)
-.then(()=>alert("Logged in"))
-.catch(e=>alert(e.message));
-}
-
-/* SIGNUP */
-window.signup = function(){
-const email=document.getElementById("email").value;
-const pass=document.getElementById("password").value;
-
-createUserWithEmailAndPassword(auth,email,pass)
-.then(()=>alert("Account created"))
-.catch(e=>alert(e.message));
-}
-
-/* STATUS */
-onAuthStateChanged(auth,user=>{
-document.getElementById("userStatus").innerText =
-user ? "Logged in: "+user.email : "Not logged in";
-});
-
-/* SAVE REPORT */
-window.saveReport = async function(data){
-const user=auth.currentUser;
-if(!user) return;
-
-await addDoc(collection(db,"reports"),{
-userId:user.uid,
-email:user.email,
-...data,
-date:new Date().toISOString()
-});
-}
-
-</script>
-
-<!-- YOUR ORIGINAL SCRIPT -->
-<script>
-
-let last={};
-
-function runAI(){
-let f=document.getElementById('fault').value;
-let score=Math.floor(Math.random()*15)+85;
-
-let root="", explain="", steps="", severity="";
-
-if(f=="overheat"){
-root="Cooling System Failure";
-severity="HIGH";
-explain="Temperature instability detected.";
-steps=`1. Coolant
-2. Thermostat
-3. Radiator
-4. Pump
-5. Fan`;
-}
-else if(f=="no_start"){
-root="Starting System Failure";
-severity="CRITICAL";
-explain="No crank / fuel / spark detected.";
-steps=`1. Battery
-2. Starter
-3. ECU
-4. Fuel
-5. Spark`;
-}
-else{
-root="Fuel/Air Imbalance";
-severity="MEDIUM";
-explain="Mixture irregularity detected.";
-steps=`1. MAF
-2. Intake leaks
-3. Fuel system`;
-}
-
-last={root,score,steps,severity};
-
-document.getElementById('result').innerHTML=root+" <span class='badge'>"+severity+"</span>";
-document.getElementById('confidence').innerText="AI Confidence: "+score+"%";
-document.getElementById('steps').innerText=steps;
-document.getElementById('aiExplain').innerText=explain;
-}
-
-function generateReport(){
-
-document.getElementById('report').style.display="block";
-
-saveReport({
-fault:last.root,
-confidence:last.score,
-steps:last.steps
-});
-
-document.getElementById('reportText').innerText=
-`FAULT: ${last.root}
-SEVERITY: ${last.severity}
-CONFIDENCE: ${last.score}%
-
-STEPS:
-${last.steps}`;
-}
-
-function lookup(){
-
-let raw=document.getElementById('code').value;
-
-let db={
-"P0300":"Misfire detected",
-"P0171":"Lean mixture",
-"P0299":"Turbo underboost"
-};
-
-let out="";
-
-raw.split(",").forEach(c=>{
-c=c.trim();
-out+=db[c] || (c+" unknown") +"\n";
-});
-
-document.getElementById('codeOut').innerText=out;
-}
-
-setInterval(()=>{
-document.getElementById('rpm').innerText=Math.floor(Math.random()*6000);
-document.getElementById('temp').innerText=(85+Math.random()*20).toFixed(0)+"°C";
-document.getElementById('trim').innerText=(Math.random()*10-5).toFixed(1)+"%";
-},1000);
-
-</script>
-
+  <script type="module" src="./app.js"></script>
 </body>
 </html>

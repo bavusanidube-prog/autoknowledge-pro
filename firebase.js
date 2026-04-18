@@ -1,90 +1,89 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
   onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
 import {
   getFirestore,
   collection,
-  addDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  addDoc,
+  getDocs,
+  orderBy,
+  query,
+  serverTimestamp,
+  where
+} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-// ========================
-// 🔥 YOUR FIREBASE CONFIG
-// ========================
 const firebaseConfig = {
-  apiKey: "AIzaSyBD1TFfCDnqP1VYwskBu-Qd9AROWL0TOSk",
-  authDomain: "autoknowledge-pro.firebaseapp.com",
-  projectId: "autoknowledge-pro",
-  storageBucket: "autoknowledge-pro.firebasestorage.app",
-  messagingSenderId: "476847258960",
-  appId: "1:476847258960:web:2898e7d7968d8ba84b8055"
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.firebasestorage.app",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
 
-// ========================
-// INIT FIREBASE
-// ========================
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ========================
-// 🔐 AUTH FUNCTIONS
-// ========================
-window.signup = function () {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+export { auth, db };
 
-  createUserWithEmailAndPassword(auth, email, password)
-    .then(() => alert("Account created successfully"))
-    .catch(err => alert(err.message));
-};
+export async function loginUser(email, password) {
+  return signInWithEmailAndPassword(auth, email, password);
+}
 
-window.login = function () {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+export async function signupUser(email, password) {
+  return createUserWithEmailAndPassword(auth, email, password);
+}
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => alert("Login successful"))
-    .catch(err => alert(err.message));
-};
+export async function logoutUser() {
+  return signOut(auth);
+}
 
-// Show login status
-onAuthStateChanged(auth, user => {
-  const status = document.getElementById("userStatus");
-  if (status) {
-    status.innerText = user
-      ? "Logged in: " + user.email
-      : "Not logged in";
-  }
-});
+export function watchAuthState(callback) {
+  return onAuthStateChanged(auth, callback);
+}
 
-// ========================
-// 💾 SAVE DIAGNOSTIC REPORT
-// ========================
-window.saveReport = async function (report) {
+export async function saveReport(report) {
   const user = auth.currentUser;
 
   if (!user) {
-    alert("Please login first");
-    return;
+    throw new Error("You must be logged in to save a report.");
   }
 
-  try {
-    await addDoc(collection(db, "reports"), {
-      userId: user.uid,
-      email: user.email,
-      fault: report.fault,
-      confidence: report.confidence,
-      steps: report.steps,
-      created: new Date().toISOString()
-    });
+  await addDoc(collection(db, "reports"), {
+    userId: user.uid,
+    email: user.email,
+    fault: report.fault,
+    confidence: report.confidence,
+    explanation: report.explanation,
+    steps: report.steps,
+    createdAt: serverTimestamp()
+  });
+}
 
-    alert("Report saved to Firebase ☁️");
-  } catch (e) {
-    alert("Error saving report: " + e.message);
+export async function getMyReports() {
+  const user = auth.currentUser;
+
+  if (!user) {
+    throw new Error("You must be logged in to view reports.");
   }
-};
+
+  const reportsQuery = query(
+    collection(db, "reports"),
+    where("userId", "==", user.uid),
+    orderBy("createdAt", "desc")
+  );
+
+  const snapshot = await getDocs(reportsQuery);
+
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+}
