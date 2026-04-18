@@ -1,164 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AutoKnowledge Pro AI</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutoKnowledge Pro AI</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
 
-<header class="topbar">
-<h1>AutoKnowledge Pro AI</h1>
-<div id="userStatus">Not logged in</div>
-<button id="logoutBtn" hidden>Logout</button>
-</header>
+  <header class="topbar">
+    <h1>AutoKnowledge Pro AI</h1>
+    <div id="userStatus">Not logged in</div>
+    <button id="logoutBtn" hidden>Logout</button>
+  </header>
 
-<div class="container">
+  <div class="container">
 
-<section class="panel">
-<h2>Workshop Dashboard</h2>
+    <section class="panel">
+      <h2>Login</h2>
 
-<div class="dashboard-grid">
-  <div class="stat-card">
-    <h3>Total Reports</h3>
-    <p id="totalReports">0</p>
+      <input id="email" placeholder="Email" autocomplete="email" />
+      <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+
+      <button id="loginBtn">Login</button>
+      <button id="signupBtn">Sign Up</button>
+
+      <p id="authMessage"></p>
+    </section>
+
+    <section class="panel">
+      <h2>AI Diagnostic Engine</h2>
+
+      <select id="fault">
+        <option value="overheat">Overheating</option>
+        <option value="no_start">No Start</option>
+        <option value="misfire">Misfire</option>
+        <option value="battery">Battery Drain</option>
+        <option value="rough_idle">Rough Idle</option>
+      </select>
+
+      <button id="runAiBtn">Run Analysis</button>
+      <button id="saveReportBtn">Save Report</button>
+
+      <h3 id="result">Awaiting analysis...</h3>
+      <p id="confidence">--</p>
+      <p id="aiExplain"></p>
+      <pre id="steps"></pre>
+
+      <p id="reportMessage"></p>
+    </section>
+
+    <section class="panel">
+      <h2>OBD Scanner</h2>
+
+      <input id="code" placeholder="P0300,P0171" />
+
+      <button id="lookupBtn">Analyse</button>
+
+      <pre id="codeOut"></pre>
+    </section>
+
+    <section class="panel">
+      <h2>Workshop Reports</h2>
+
+      <input id="reportSearch" placeholder="Search reports" />
+
+      <select id="reportSort">
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+        <option value="confidence">Highest Confidence</option>
+      </select>
+
+      <button id="loadReportsBtn">Load Reports</button>
+      <button id="exportPdfBtn">Export PDF</button>
+
+      <div id="reportList"></div>
+    </section>
+
   </div>
 
-  <div class="stat-card">
-    <h3>Total Customers</h3>
-    <p id="totalCustomers">0</p>
-  </div>
-
-  <div class="stat-card">
-    <h3>Total Vehicles</h3>
-    <p id="totalVehicles">0</p>
-  </div>
-
-  <div class="stat-card">
-    <h3>Average Confidence</h3>
-    <p id="avgConfidence">0%</p>
-  </div>
-
-  <div class="stat-card">
-    <h3>Top Fault</h3>
-    <p id="topFault">N/A</p>
-  </div>
-
-  <div class="stat-card">
-    <h3>Estimated Revenue</h3>
-    <p id="totalRevenue">£0.00</p>
-  </div>
-</div>
-
-<h3 style="margin-top:20px;">Recent Activity</h3>
-<div id="recentActivity"></div>
-</section>
-
-<section class="panel">
-<h2>Login</h2>
-
-<input id="email" placeholder="Email" autocomplete="email">
-<input id="password" type="password" placeholder="Password" autocomplete="current-password">
-
-<button id="loginBtn">Login</button>
-<button id="signupBtn">Sign Up</button>
-
-<p id="authMessage"></p>
-</section>
-
-<section class="panel">
-<h2>Customer & Vehicle Profile</h2>
-
-<input id="customerName" placeholder="Customer Name">
-<input id="customerPhone" placeholder="Customer Phone">
-<input id="vehicleMake" placeholder="Vehicle Make">
-<input id="vehicleModel" placeholder="Vehicle Model">
-<input id="vehicleReg" placeholder="Registration Number">
-<input id="vehicleMileage" placeholder="Mileage">
-<textarea id="serviceNotes" placeholder="Service Notes / Complaint"></textarea>
-
-<p id="profileMessage"></p>
-</section>
-
-<section class="panel">
-<h2>Invoice Builder</h2>
-
-<input id="labourHours" type="number" step="0.1" min="0" placeholder="Labour Hours">
-<input id="hourlyRate" type="number" step="0.01" min="0" placeholder="Hourly Rate">
-<input id="partsCost" type="number" step="0.01" min="0" placeholder="Parts Cost">
-<input id="vatRate" type="number" step="0.01" min="0" placeholder="VAT %">
-<select id="paymentStatus">
-  <option value="Unpaid">Unpaid</option>
-  <option value="Paid">Paid</option>
-</select>
-
-<button id="calculateInvoiceBtn">Calculate Invoice</button>
-
-<div class="invoice-box">
-  <div class="report-meta"><strong>Labour Total:</strong> <span id="labourTotal">£0.00</span></div>
-  <div class="report-meta"><strong>Subtotal:</strong> <span id="subTotal">£0.00</span></div>
-  <div class="report-meta"><strong>VAT Total:</strong> <span id="vatTotal">£0.00</span></div>
-  <div class="report-meta"><strong>Grand Total:</strong> <span id="grandTotal">£0.00</span></div>
-  <div class="report-meta"><strong>Status:</strong> <span id="invoiceStatus">Unpaid</span></div>
-</div>
-
-<p id="invoiceMessage"></p>
-</section>
-
-<section class="panel">
-<h2>AI Diagnostic Engine</h2>
-
-<select id="fault">
-<option value="overheat">Overheating</option>
-<option value="no_start">No Start</option>
-<option value="misfire">Misfire</option>
-<option value="battery">Battery Drain</option>
-<option value="rough_idle">Rough Idle</option>
-</select>
-
-<button id="runAiBtn">Run Analysis</button>
-<button id="saveReportBtn">Save Report</button>
-
-<h3 id="result">Awaiting analysis...</h3>
-<p id="confidence">--</p>
-<p id="aiExplain"></p>
-<pre id="steps"></pre>
-
-<p id="reportMessage"></p>
-</section>
-
-<section class="panel">
-<h2>OBD Scanner</h2>
-
-<input id="code" placeholder="P0300,P0171">
-
-<button id="lookupBtn">Analyse</button>
-
-<pre id="codeOut"></pre>
-</section>
-
-<section class="panel">
-<h2>Workshop Reports</h2>
-
-<input id="reportSearch" placeholder="Search reports">
-
-<select id="reportSort">
-<option value="newest">Newest</option>
-<option value="oldest">Oldest</option>
-<option value="confidence">Highest Confidence</option>
-</select>
-
-<button id="loadReportsBtn">Load Reports</button>
-<button id="exportPdfBtn">Export PDF</button>
-
-<div id="reportList"></div>
-</section>
-
-</div>
-
-<script type="module" src="app.js"></script>
-
+  <script type="module" src="app.js"></script>
 </body>
 </html>
