@@ -13,7 +13,16 @@ password: document.getElementById("password"),
 userStatus: document.getElementById("userStatus"),
 logoutBtn: document.getElementById("logoutBtn"),
 authMessage: document.getElementById("authMessage"),
+profileMessage: document.getElementById("profileMessage"),
 reportMessage: document.getElementById("reportMessage"),
+
+customerName: document.getElementById("customerName"),
+customerPhone: document.getElementById("customerPhone"),
+vehicleMake: document.getElementById("vehicleMake"),
+vehicleModel: document.getElementById("vehicleModel"),
+vehicleReg: document.getElementById("vehicleReg"),
+vehicleMileage: document.getElementById("vehicleMileage"),
+serviceNotes: document.getElementById("serviceNotes"),
 
 fault: document.getElementById("fault"),
 result: document.getElementById("result"),
@@ -114,9 +123,40 @@ if(typeof value.toDate === "function"){
 return value.toDate().toLocaleString();
 }
 
+if(value?.seconds){
+return new Date(value.seconds * 1000).toLocaleString();
+}
+
 const d = new Date(value);
 if(Number.isNaN(d.getTime())) return "Unknown date";
 return d.toLocaleString();
+}
+
+function getProfileData(){
+return {
+customerName: el.customerName.value.trim(),
+customerPhone: el.customerPhone.value.trim(),
+vehicleMake: el.vehicleMake.value.trim(),
+vehicleModel: el.vehicleModel.value.trim(),
+vehicleReg: el.vehicleReg.value.trim(),
+vehicleMileage: el.vehicleMileage.value.trim(),
+serviceNotes: el.serviceNotes.value.trim()
+};
+}
+
+function validateProfile(profile){
+if(!profile.customerName){
+throw new Error("Customer name is required.");
+}
+if(!profile.vehicleMake){
+throw new Error("Vehicle make is required.");
+}
+if(!profile.vehicleModel){
+throw new Error("Vehicle model is required.");
+}
+if(!profile.vehicleReg){
+throw new Error("Registration number is required.");
+}
 }
 
 function runAI(){
@@ -180,13 +220,40 @@ return;
 loading(el.saveReportBtn,true,"Saving...");
 
 try{
-await saveReport(lastReport);
+const profile = getProfileData();
+validateProfile(profile);
+
+await saveReport({
+...lastReport,
+...profile
+});
+
+msg(el.profileMessage,"Customer and vehicle profile attached to report.","success");
 msg(el.reportMessage,"Saved to cloud.","success");
 }catch(error){
+if(
+error.message.includes("Customer") ||
+error.message.includes("Vehicle") ||
+error.message.includes("Registration")
+){
+msg(el.profileMessage,error.message,"error");
+}else{
 msg(el.reportMessage,error.message,"error");
+}
 }
 
 loading(el.saveReportBtn,false);
+}
+
+function createProfileHtml(r){
+return `
+<div class="report-meta"><strong>Customer:</strong> ${escapeHtml(r.customerName || "N/A")}</div>
+<div class="report-meta"><strong>Phone:</strong> ${escapeHtml(r.customerPhone || "N/A")}</div>
+<div class="report-meta"><strong>Vehicle:</strong> ${escapeHtml(r.vehicleMake || "")} ${escapeHtml(r.vehicleModel || "")}</div>
+<div class="report-meta"><strong>Registration:</strong> ${escapeHtml(r.vehicleReg || "N/A")}</div>
+<div class="report-meta"><strong>Mileage:</strong> ${escapeHtml(r.vehicleMileage || "N/A")}</div>
+<div class="report-meta"><strong>Service Notes:</strong> ${escapeHtml(r.serviceNotes || "N/A")}</div>
+`;
 }
 
 function renderReports(list){
@@ -203,8 +270,10 @@ card.className="report-card";
 
 card.innerHTML=`
 <h3>${escapeHtml(r.fault)}</h3>
-<div class="report-meta">Confidence: ${escapeHtml(r.confidence)}%</div>
-<div class="report-meta">${escapeHtml(r.explanation)}</div>
+${createProfileHtml(r)}
+<div class="report-meta"><strong>Confidence:</strong> ${escapeHtml(r.confidence)}%</div>
+<div class="report-meta"><strong>Explanation:</strong> ${escapeHtml(r.explanation)}</div>
+<div class="report-meta"><strong>Saved:</strong> ${escapeHtml(formatDate(r.createdAt))}</div>
 <pre>${escapeHtml(r.steps)}</pre>
 `;
 
@@ -234,7 +303,13 @@ if(q){
 list=list.filter(r =>
 (r.fault || "").toLowerCase().includes(q) ||
 (r.explanation || "").toLowerCase().includes(q) ||
-(r.steps || "").toLowerCase().includes(q)
+(r.steps || "").toLowerCase().includes(q) ||
+(r.customerName || "").toLowerCase().includes(q) ||
+(r.customerPhone || "").toLowerCase().includes(q) ||
+(r.vehicleMake || "").toLowerCase().includes(q) ||
+(r.vehicleModel || "").toLowerCase().includes(q) ||
+(r.vehicleReg || "").toLowerCase().includes(q) ||
+(r.serviceNotes || "").toLowerCase().includes(q)
 );
 }
 
@@ -285,6 +360,12 @@ return;
 const cards = allReports.map((r, index) => `
 <div class="pdf-card">
 <h2>${index + 1}. ${escapeHtml(r.fault)}</h2>
+<p><strong>Customer:</strong> ${escapeHtml(r.customerName || "N/A")}</p>
+<p><strong>Phone:</strong> ${escapeHtml(r.customerPhone || "N/A")}</p>
+<p><strong>Vehicle:</strong> ${escapeHtml(r.vehicleMake || "")} ${escapeHtml(r.vehicleModel || "")}</p>
+<p><strong>Registration:</strong> ${escapeHtml(r.vehicleReg || "N/A")}</p>
+<p><strong>Mileage:</strong> ${escapeHtml(r.vehicleMileage || "N/A")}</p>
+<p><strong>Service Notes:</strong> ${escapeHtml(r.serviceNotes || "N/A")}</p>
 <p><strong>Confidence:</strong> ${escapeHtml(r.confidence)}%</p>
 <p><strong>Saved:</strong> ${escapeHtml(formatDate(r.createdAt))}</p>
 <p><strong>Explanation:</strong> ${escapeHtml(r.explanation)}</p>
