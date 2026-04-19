@@ -2,17 +2,84 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /reports/{reportId} {
-      allow create: if request.auth != null
-        && request.resource.data.userId == request.auth.uid
-        && request.resource.data.email is string
-        && request.resource.data.fault is string
-        && request.resource.data.confidence is number
-        && request.resource.data.explanation is string
-        && request.resource.data.steps is string;
 
-      allow read, update, delete: if request.auth != null
-        && resource.data.userId == request.auth.uid;
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function ownsDocument(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function allowedReportKeys() {
+      return [
+        'userId',
+        'email',
+        'fault',
+        'confidence',
+        'explanation',
+        'steps',
+        'customerName',
+        'customerPhone',
+        'vehicleMake',
+        'vehicleModel',
+        'vehicleReg',
+        'vehicleMileage',
+        'serviceNotes',
+        'labourHours',
+        'hourlyRate',
+        'partsCost',
+        'vatRate',
+        'labourTotal',
+        'subTotal',
+        'vatTotal',
+        'grandTotal',
+        'paymentStatus',
+        'createdAt'
+      ];
+    }
+
+    function validPaymentStatus() {
+      return request.resource.data.paymentStatus in ['Paid', 'Unpaid'];
+    }
+
+    function validReportCreate() {
+      return request.resource.data.keys().hasOnly(allowedReportKeys()) &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.email == request.auth.token.email &&
+
+        request.resource.data.fault is string &&
+        request.resource.data.confidence is number &&
+        request.resource.data.explanation is string &&
+        request.resource.data.steps is string &&
+
+        request.resource.data.customerName is string &&
+        request.resource.data.customerPhone is string &&
+        request.resource.data.vehicleMake is string &&
+        request.resource.data.vehicleModel is string &&
+        request.resource.data.vehicleReg is string &&
+        request.resource.data.vehicleMileage is string &&
+        request.resource.data.serviceNotes is string &&
+
+        request.resource.data.labourHours is number &&
+        request.resource.data.hourlyRate is number &&
+        request.resource.data.partsCost is number &&
+        request.resource.data.vatRate is number &&
+        request.resource.data.labourTotal is number &&
+        request.resource.data.subTotal is number &&
+        request.resource.data.vatTotal is number &&
+        request.resource.data.grandTotal is number &&
+
+        validPaymentStatus() &&
+        request.resource.data.createdAt is timestamp;
+    }
+
+    match /reports/{reportId} {
+      allow create: if signedIn() && validReportCreate();
+
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+
+      allow update, delete: if false;
     }
   }
 }
