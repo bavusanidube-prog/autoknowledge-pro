@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AutoKnowledge Pro AI</title>
+
+  <title>AutoKnowledge Pro AI | Automotive Diagnostics & Workshop Software</title>
+  <meta name="description" content="AutoKnowledge Pro AI is a lightweight UK automotive diagnostics, customer intake, invoice and workshop reporting app for garages and vehicle technicians." />
+  <meta name="theme-color" content="#0f172a" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="icon" type="image/png" href="favicon.png">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
 
   <div class="bg-orb orb-1"></div>
@@ -17,15 +22,19 @@
   <div class="bg-grid"></div>
 
   <header class="topbar">
-    <div class="brand-wrap">
-      <div class="brand-badge">Workshop Intelligence Suite</div>
-      <h1>AutoKnowledge Pro AI</h1>
-      <p class="brand-subtitle">Premium vehicle diagnostics, workflow, and reporting for modern garages.</p>
-    </div>
+    <div class="topbar-inner">
+      <div class="brand-identity">
+        <div class="logo-mark">AK</div>
+        <div>
+          <div class="brand-badge">UK Workshop Intelligence Suite</div>
+          <h1>AutoKnowledge Pro AI</h1>
+        </div>
+      </div>
 
-    <div class="topbar-right">
-      <div id="userStatus" class="user-chip">Not logged in</div>
-      <button id="logoutBtn" hidden>Logout</button>
+      <div class="topbar-right">
+        <div id="userStatus" class="user-chip">Not logged in</div>
+        <button id="logoutBtn" class="logout-btn" hidden>Logout</button>
+      </div>
     </div>
   </header>
 
@@ -33,29 +42,53 @@
 
     <section class="hero-panel">
       <div class="hero-copy">
-        <span class="eyebrow">10/10 premium workflow</span>
-        <h2>Diagnose faster. Track customers better. Turn workshop data into decisions.</h2>
+        <span class="eyebrow">Built for modern garages and vehicle technicians</span>
+
+        <h2>Professional diagnostics, customer intake, invoices and workshop reports in one lightweight app.</h2>
+
         <p>
-          AutoKnowledge Pro AI combines diagnostics, workshop intake, invoicing, and reporting into one clean software experience.
+          AutoKnowledge Pro AI helps garages work faster, keep customer and vehicle details organised,
+          run common diagnostic checks, build invoices and review workshop activity from one clean dashboard.
         </p>
+
+        <div class="hero-actions">
+          <a href="#diagnostics" class="primary-link">Start Diagnostic Check</a>
+          <a href="#reports" class="secondary-link">View Workshop Reports</a>
+        </div>
+
+        <div class="trust-row">
+          <span>✓ Fast browser-based workflow</span>
+          <span>✓ Firebase powered</span>
+          <span>✓ Mobile friendly</span>
+        </div>
       </div>
 
-      <div class="hero-mini-stats">
-        <div class="mini-stat">
-          <span>Reports</span>
-          <strong id="totalReports">0</strong>
+      <div class="hero-card">
+        <div class="hero-card-top">
+          <span>Workshop Overview</span>
+          <strong>Live Dashboard</strong>
         </div>
-        <div class="mini-stat">
-          <span>Customers</span>
-          <strong id="totalCustomers">0</strong>
-        </div>
-        <div class="mini-stat">
-          <span>Vehicles</span>
-          <strong id="totalVehicles">0</strong>
-        </div>
-        <div class="mini-stat">
-          <span>Revenue</span>
-          <strong id="totalRevenue">£0.00</strong>
+
+        <div class="hero-mini-stats">
+          <div class="mini-stat">
+            <span>Reports</span>
+            <strong id="totalReports">0</strong>
+          </div>
+
+          <div class="mini-stat">
+            <span>Customers</span>
+            <strong id="totalCustomers">0</strong>
+          </div>
+
+          <div class="mini-stat">
+            <span>Vehicles</span>
+            <strong id="totalVehicles">0</strong>
+          </div>
+
+          <div class="mini-stat">
+            <span>Revenue</span>
+            <strong id="totalRevenue">£0.00</strong>
+          </div>
         </div>
       </div>
     </section>
@@ -65,6 +98,7 @@
         <div>
           <span class="section-kicker">Analytics</span>
           <h2>Workshop Dashboard</h2>
+          <p>Track reports, confidence levels, common faults and estimated revenue.</p>
         </div>
       </div>
 
@@ -98,19 +132,20 @@
 
     <div class="content-grid">
 
-      <section class="panel">
+      <section class="panel access-panel">
         <div class="section-head">
           <div>
-            <span class="section-kicker">Access</span>
+            <span class="section-kicker">Secure Access</span>
             <h2>Login</h2>
+            <p>Access your workshop dashboard and saved reports.</p>
           </div>
         </div>
 
-        <input id="email" placeholder="Email" autocomplete="email" />
+        <input id="email" placeholder="Email address" autocomplete="email" />
         <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
 
-        <button id="loginBtn">Login</button>
-        <button id="signupBtn" class="secondary-btn">Sign Up</button>
+        <button id="loginBtn">Login to Dashboard</button>
+        <button id="signupBtn" class="secondary-btn">Create Account</button>
 
         <p id="authMessage"></p>
       </section>
@@ -118,18 +153,19 @@
       <section class="panel">
         <div class="section-head">
           <div>
-            <span class="section-kicker">Intake</span>
+            <span class="section-kicker">Customer Intake</span>
             <h2>Customer & Vehicle Profile</h2>
+            <p>Record the customer complaint, vehicle details and service notes.</p>
           </div>
         </div>
 
-        <input id="customerName" placeholder="Customer Name" />
-        <input id="customerPhone" placeholder="Customer Phone" />
-        <input id="vehicleMake" placeholder="Vehicle Make" />
-        <input id="vehicleModel" placeholder="Vehicle Model" />
-        <input id="vehicleReg" placeholder="Registration Number" />
+        <input id="customerName" placeholder="Customer name" />
+        <input id="customerPhone" placeholder="Customer phone" />
+        <input id="vehicleMake" placeholder="Vehicle make" />
+        <input id="vehicleModel" placeholder="Vehicle model" />
+        <input id="vehicleReg" placeholder="Registration number" />
         <input id="vehicleMileage" placeholder="Mileage" />
-        <textarea id="serviceNotes" placeholder="Service Notes / Complaint"></textarea>
+        <textarea id="serviceNotes" placeholder="Service notes / customer complaint"></textarea>
 
         <p id="profileMessage"></p>
       </section>
@@ -137,14 +173,15 @@
       <section class="panel">
         <div class="section-head">
           <div>
-            <span class="section-kicker">Commercials</span>
+            <span class="section-kicker">Invoice Tool</span>
             <h2>Invoice Builder</h2>
+            <p>Calculate labour, parts, VAT and invoice totals quickly.</p>
           </div>
         </div>
 
-        <input id="labourHours" type="number" step="0.1" min="0" placeholder="Labour Hours" />
-        <input id="hourlyRate" type="number" step="0.01" min="0" placeholder="Hourly Rate" />
-        <input id="partsCost" type="number" step="0.01" min="0" placeholder="Parts Cost" />
+        <input id="labourHours" type="number" step="0.1" min="0" placeholder="Labour hours" />
+        <input id="hourlyRate" type="number" step="0.01" min="0" placeholder="Hourly rate" />
+        <input id="partsCost" type="number" step="0.01" min="0" placeholder="Parts cost" />
         <input id="vatRate" type="number" step="0.01" min="0" placeholder="VAT %" />
 
         <select id="paymentStatus">
@@ -165,11 +202,12 @@
         <p id="invoiceMessage"></p>
       </section>
 
-      <section class="panel panel-wide">
+      <section id="diagnostics" class="panel panel-wide">
         <div class="section-head">
           <div>
             <span class="section-kicker">Diagnostics</span>
             <h2>AI Diagnostic Engine</h2>
+            <p>Select a common fault symptom and generate a workshop-style diagnostic direction.</p>
           </div>
         </div>
 
@@ -182,7 +220,7 @@
         </select>
 
         <div class="button-row">
-          <button id="runAiBtn">Run Analysis</button>
+          <button id="runAiBtn">Run Diagnostic Analysis</button>
           <button id="saveReportBtn" class="secondary-btn">Save Report</button>
         </div>
 
@@ -210,21 +248,23 @@
       <section class="panel">
         <div class="section-head">
           <div>
-            <span class="section-kicker">Codes</span>
+            <span class="section-kicker">Fault Codes</span>
             <h2>OBD Scanner</h2>
+            <p>Check common OBD fault codes such as P0300 or P0171.</p>
           </div>
         </div>
 
-        <input id="code" placeholder="P0300,P0171" />
-        <button id="lookupBtn">Analyse</button>
+        <input id="code" placeholder="Example: P0300, P0171" />
+        <button id="lookupBtn">Analyse Fault Code</button>
         <pre id="codeOut"></pre>
       </section>
 
-      <section class="panel panel-wide">
+      <section id="reports" class="panel panel-wide">
         <div class="section-head">
           <div>
-            <span class="section-kicker">History</span>
+            <span class="section-kicker">Saved History</span>
             <h2>Workshop Reports</h2>
+            <p>Search, sort, load and export saved diagnostic reports.</p>
           </div>
         </div>
 
@@ -249,9 +289,15 @@
     </div>
   </main>
 
-  <script type="module" src="app.js"></script>
   <footer class="site-footer">
-  <p>© 2026 AutoKnowledge Pro AI • Built by Bavusani Otis Dube</p>
-</footer>
+    <div>
+      <strong>AutoKnowledge Pro AI</strong>
+      <p>Professional automotive diagnostics and workshop management software.</p>
+    </div>
+
+    <p>© 2026 AutoKnowledge Pro AI • Built by Bavusani Otis Dube</p>
+  </footer>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>
