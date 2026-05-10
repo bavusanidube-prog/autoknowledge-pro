@@ -81,7 +81,7 @@ let allReports = [];
 
 const symptomData = {
   overheating: {
-    title: "Overheating",
+    title: "Engine Overheating",
     summary: "Overheating should be treated seriously because continued driving can damage the engine.",
     severity: "High",
     driveClass: "drive-unsafe",
@@ -126,6 +126,54 @@ const symptomData = {
       "Test battery voltage",
       "Test alternator charging output",
       "Reduce electrical load if driving to a safe place"
+    ]
+  },
+
+  clicking_noise: {
+    title: "Clicking Noise",
+    summary: "Clicking can be electrical, starting-system related, suspension related or drivetrain related.",
+    severity: "Medium",
+    driveClass: "drive-caution",
+    safe: "Depends where the noise comes from. Avoid driving if it comes from wheels, brakes or steering.",
+    mot: "Can affect MOT if linked to suspension, steering, CV joints, wheel bearings or braking components.",
+    causes: [
+      "Weak battery or starter clicking",
+      "CV joint wear",
+      "Loose wheel component",
+      "Brake hardware movement",
+      "Suspension joint wear",
+      "Relay or electrical clicking"
+    ],
+    checks: [
+      "Check if clicking happens when starting",
+      "Check if the noise changes when turning",
+      "Inspect tyres and wheel area",
+      "Check battery condition",
+      "Have suspension and steering checked"
+    ]
+  },
+
+  misfire: {
+    title: "Engine Misfire",
+    summary: "A misfire can cause rough running, shaking, poor fuel economy and catalytic converter damage.",
+    severity: "High",
+    driveClass: "drive-unsafe",
+    safe: "Avoid driving far. A misfire can damage the catalytic converter and increase emissions.",
+    mot: "Likely MOT issue if emissions are affected, the engine runs poorly or the engine warning light is on.",
+    causes: [
+      "Spark plug fault",
+      "Ignition coil failure",
+      "Injector issue",
+      "Vacuum leak",
+      "Low compression",
+      "Fuel delivery problem"
+    ],
+    checks: [
+      "Scan for fault codes such as P0300",
+      "Check spark plugs",
+      "Check ignition coils",
+      "Listen for rough idle",
+      "Avoid hard acceleration"
     ]
   },
 
@@ -178,54 +226,6 @@ const symptomData = {
     ]
   },
 
-  clicking_noise: {
-    title: "Clicking Noise",
-    summary: "Clicking can be electrical, starting-system related, suspension related or drivetrain related.",
-    severity: "Medium",
-    driveClass: "drive-caution",
-    safe: "Depends where the noise comes from. Avoid driving if it comes from wheels, brakes or steering.",
-    mot: "Can affect MOT if linked to suspension, steering, CV joints, wheel bearings or braking components.",
-    causes: [
-      "Weak battery or starter clicking",
-      "CV joint wear",
-      "Loose wheel component",
-      "Brake hardware movement",
-      "Suspension joint wear",
-      "Relay or electrical clicking"
-    ],
-    checks: [
-      "Check if clicking happens when starting",
-      "Check if the noise changes when turning",
-      "Inspect tyres and wheel area",
-      "Check battery condition",
-      "Have suspension and steering checked"
-    ]
-  },
-
-  misfire: {
-    title: "Engine Misfire",
-    summary: "A misfire can cause rough running, shaking, poor fuel economy and catalytic converter damage.",
-    severity: "High",
-    driveClass: "drive-unsafe",
-    safe: "Avoid driving far. A misfire can damage the catalytic converter and increase emissions.",
-    mot: "Likely MOT issue if emissions are affected, the engine runs poorly or the engine warning light is on.",
-    causes: [
-      "Spark plug fault",
-      "Ignition coil failure",
-      "Injector issue",
-      "Vacuum leak",
-      "Low compression",
-      "Fuel delivery problem"
-    ],
-    checks: [
-      "Scan for fault codes such as P0300",
-      "Check spark plugs",
-      "Check ignition coils",
-      "Listen for rough idle",
-      "Avoid hard acceleration"
-    ]
-  },
-
   wont_start: {
     title: "Car Won't Start",
     summary: "A non-start fault usually needs basic checks before deeper diagnosis.",
@@ -247,6 +247,54 @@ const symptomData = {
       "Try a jump start if the battery is flat",
       "Check fuel level",
       "Scan for fault codes if possible"
+    ]
+  },
+
+  rough_idle: {
+    title: "Rough Idle",
+    summary: "A rough idle means the engine is not running smoothly when stationary. It may shake, dip in revs or feel like it wants to stall.",
+    severity: "Medium",
+    driveClass: "drive-caution",
+    safe: "Short driving may be possible if the car is stable, but avoid driving if it stalls, shakes heavily or warning lights appear.",
+    mot: "May affect MOT if emissions are high, the engine warning light is on or the idle is unstable.",
+    causes: [
+      "Vacuum leak",
+      "Dirty throttle body",
+      "MAF sensor fault",
+      "Ignition fault",
+      "Injector issue",
+      "EGR valve fault"
+    ],
+    checks: [
+      "Scan for fault codes",
+      "Check for air leaks",
+      "Clean throttle body",
+      "Check spark plugs and coils",
+      "Check idle speed behaviour"
+    ]
+  },
+
+  brake_warning: {
+    title: "Brake Warning Light",
+    summary: "A brake warning light should be taken seriously because it may relate to brake fluid, the handbrake, ABS or the braking system.",
+    severity: "High",
+    driveClass: "drive-unsafe",
+    safe: "No. Do not continue driving until brake fluid level and brake operation have been checked.",
+    mot: "Very likely to affect MOT if brake warning lights, low brake fluid or braking faults are present.",
+    causes: [
+      "Low brake fluid",
+      "Handbrake switch issue",
+      "Worn brake pads",
+      "ABS fault",
+      "Brake fluid leak",
+      "Brake sensor fault"
+    ],
+    checks: [
+      "Check brake fluid level",
+      "Check if handbrake is fully released",
+      "Look for brake fluid leaks",
+      "Check brake pedal feel",
+      "Book brake inspection immediately"
     ]
   }
 };
