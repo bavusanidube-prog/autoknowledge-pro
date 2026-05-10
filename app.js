@@ -38,6 +38,10 @@ const el = {
   grandTotal: document.getElementById("grandTotal"),
   invoiceStatus: document.getElementById("invoiceStatus"),
 
+  symptomSelect: document.getElementById("symptomSelect"),
+  checkSymptomBtn: document.getElementById("checkSymptomBtn"),
+  symptomResult: document.getElementById("symptomResult"),
+
   fault: document.getElementById("fault"),
   result: document.getElementById("result"),
   confidence: document.getElementById("confidence"),
@@ -75,46 +79,208 @@ let lastReport = null;
 let lastInvoice = null;
 let allReports = [];
 
+const symptomData = {
+  overheating: {
+    title: "Overheating",
+    summary: "Overheating should be treated seriously because continued driving can damage the engine.",
+    severity: "High",
+    driveClass: "drive-unsafe",
+    safe: "Usually not safe to keep driving. Stop when safe, switch the engine off and allow it to cool.",
+    mot: "May cause MOT issues if there are coolant leaks, warning lights, emissions problems or visible engine faults.",
+    causes: [
+      "Low coolant level",
+      "Coolant leak",
+      "Faulty thermostat",
+      "Radiator fan not working",
+      "Blocked radiator",
+      "Weak water pump",
+      "Possible head gasket fault"
+    ],
+    checks: [
+      "Check coolant level only when the engine is cold",
+      "Look for coolant leaks under the car",
+      "Check if the radiator fan comes on",
+      "Watch the temperature gauge behaviour",
+      "Do not remove the coolant cap when hot"
+    ]
+  },
+
+  battery_warning: {
+    title: "Battery Warning Light",
+    summary: "A battery warning light normally means the vehicle may not be charging correctly.",
+    severity: "Medium",
+    driveClass: "drive-caution",
+    safe: "Short driving may be possible, but the vehicle may cut out if the alternator is not charging.",
+    mot: "The light itself is not always a direct MOT failure, but related electrical problems may affect the test.",
+    causes: [
+      "Failing alternator",
+      "Weak battery",
+      "Loose auxiliary belt",
+      "Corroded battery terminals",
+      "Charging system fault",
+      "Poor earth connection"
+    ],
+    checks: [
+      "Check battery terminals for corrosion",
+      "Check if the auxiliary belt is fitted and turning",
+      "Test battery voltage",
+      "Test alternator charging output",
+      "Reduce electrical load if driving to a safe place"
+    ]
+  },
+
+  loss_power: {
+    title: "Loss of Power",
+    summary: "Loss of power can come from fuel, air, ignition, turbo or emissions system faults.",
+    severity: "Medium",
+    driveClass: "drive-caution",
+    safe: "Drive carefully only if the vehicle feels stable. Avoid motorways if power loss is severe.",
+    mot: "May affect MOT if emissions are high, smoke is present or engine warning lights are showing.",
+    causes: [
+      "Turbo boost leak",
+      "Blocked fuel filter",
+      "MAF sensor fault",
+      "EGR valve fault",
+      "DPF restriction",
+      "Fuel delivery issue",
+      "Ignition fault"
+    ],
+    checks: [
+      "Check for engine warning lights",
+      "Scan for fault codes",
+      "Check air filter condition",
+      "Listen for boost leaks",
+      "Check for smoke under acceleration"
+    ]
+  },
+
+  smoke_exhaust: {
+    title: "Smoke From Exhaust",
+    summary: "Smoke colour gives useful clues. Blue, white and black smoke normally point to different faults.",
+    severity: "High",
+    driveClass: "drive-unsafe",
+    safe: "Not recommended if smoke is heavy, constant or smells strongly of oil, fuel or coolant.",
+    mot: "Excessive visible smoke can cause an MOT emissions failure.",
+    causes: [
+      "Blue smoke: burning oil",
+      "White smoke: coolant entering the combustion chamber",
+      "Black smoke: over-fuelling or air restriction",
+      "Turbo seal wear",
+      "Injector fault",
+      "DPF or EGR issue"
+    ],
+    checks: [
+      "Note the smoke colour",
+      "Check oil level",
+      "Check coolant level",
+      "Look for warning lights",
+      "Book an emissions and diagnostic check"
+    ]
+  },
+
+  clicking_noise: {
+    title: "Clicking Noise",
+    summary: "Clicking can be electrical, starting-system related, suspension related or drivetrain related.",
+    severity: "Medium",
+    driveClass: "drive-caution",
+    safe: "Depends where the noise comes from. Avoid driving if it comes from wheels, brakes or steering.",
+    mot: "Can affect MOT if linked to suspension, steering, CV joints, wheel bearings or braking components.",
+    causes: [
+      "Weak battery or starter clicking",
+      "CV joint wear",
+      "Loose wheel component",
+      "Brake hardware movement",
+      "Suspension joint wear",
+      "Relay or electrical clicking"
+    ],
+    checks: [
+      "Check if clicking happens when starting",
+      "Check if the noise changes when turning",
+      "Inspect tyres and wheel area",
+      "Check battery condition",
+      "Have suspension and steering checked"
+    ]
+  },
+
+  misfire: {
+    title: "Engine Misfire",
+    summary: "A misfire can cause rough running, shaking, poor fuel economy and catalytic converter damage.",
+    severity: "High",
+    driveClass: "drive-unsafe",
+    safe: "Avoid driving far. A misfire can damage the catalytic converter and increase emissions.",
+    mot: "Likely MOT issue if emissions are affected, the engine runs poorly or the engine warning light is on.",
+    causes: [
+      "Spark plug fault",
+      "Ignition coil failure",
+      "Injector issue",
+      "Vacuum leak",
+      "Low compression",
+      "Fuel delivery problem"
+    ],
+    checks: [
+      "Scan for fault codes such as P0300",
+      "Check spark plugs",
+      "Check ignition coils",
+      "Listen for rough idle",
+      "Avoid hard acceleration"
+    ]
+  },
+
+  wont_start: {
+    title: "Car Won't Start",
+    summary: "A non-start fault usually needs basic checks before deeper diagnosis.",
+    severity: "Medium",
+    driveClass: "drive-unsafe",
+    safe: "Vehicle is not driveable until the starting fault is found.",
+    mot: "A vehicle that cannot start cannot complete an MOT test.",
+    causes: [
+      "Flat battery",
+      "Starter motor fault",
+      "Fuel pump issue",
+      "Immobiliser problem",
+      "Bad earth connection",
+      "Crankshaft sensor fault"
+    ],
+    checks: [
+      "Check dashboard lights",
+      "Listen for clicking when turning the key",
+      "Try a jump start if the battery is flat",
+      "Check fuel level",
+      "Scan for fault codes if possible"
+    ]
+  }
+};
+
 const diagnostics = {
   overheat: {
     fault: "Cooling System Failure",
     confidence: 92,
-    explanation:
-      "Likely thermostat, coolant loss, blocked radiator or weak water pump.",
-    steps:
-      "1. Check coolant level\n2. Check leaks\n3. Test thermostat\n4. Inspect radiator fan\n5. Test water pump"
+    explanation: "Likely thermostat, coolant loss, blocked radiator or weak water pump.",
+    steps: "1. Check coolant level\n2. Check leaks\n3. Test thermostat\n4. Inspect radiator fan\n5. Test water pump"
   },
   no_start: {
     fault: "Starting / Fuel Delivery Fault",
     confidence: 89,
-    explanation:
-      "Likely battery voltage issue, starter fault, immobilizer or no fuel.",
-    steps:
-      "1. Check battery voltage\n2. Inspect starter relay\n3. Verify spark\n4. Verify fuel pressure"
+    explanation: "Likely battery voltage issue, starter fault, immobilizer or no fuel.",
+    steps: "1. Check battery voltage\n2. Inspect starter relay\n3. Verify spark\n4. Verify fuel pressure"
   },
   misfire: {
     fault: "Ignition or Fuel Misfire",
     confidence: 94,
-    explanation:
-      "Likely spark plugs, coils, injectors, vacuum leak or compression issue.",
-    steps:
-      "1. Check plugs\n2. Test coils\n3. Check injector pulse\n4. Compression test"
+    explanation: "Likely spark plugs, coils, injectors, vacuum leak or compression issue.",
+    steps: "1. Check plugs\n2. Test coils\n3. Check injector pulse\n4. Compression test"
   },
   battery: {
     fault: "Battery Drain / Charging Fault",
     confidence: 87,
-    explanation:
-      "Likely parasitic drain, battery wear or alternator issue.",
-    steps:
-      "1. Test battery health\n2. Check alternator output\n3. Perform drain test"
+    explanation: "Likely parasitic drain, battery wear or alternator issue.",
+    steps: "1. Test battery health\n2. Check alternator output\n3. Perform drain test"
   },
   rough_idle: {
     fault: "Idle Air/Fuel Imbalance",
     confidence: 88,
-    explanation:
-      "Likely vacuum leak, dirty throttle body, MAF issue or weak ignition.",
-    steps:
-      "1. Inspect vacuum leaks\n2. Clean throttle body\n3. Test MAF\n4. Inspect ignition"
+    explanation: "Likely vacuum leak, dirty throttle body, MAF issue or weak ignition.",
+    steps: "1. Inspect vacuum leaks\n2. Clean throttle body\n3. Test MAF\n4. Inspect ignition"
   }
 };
 
@@ -176,6 +342,63 @@ function money(value) {
 
 function setText(target, value) {
   if (target) target.textContent = value;
+}
+
+function severityClass(level) {
+  if (level === "High") return "severity-high";
+  if (level === "Medium") return "severity-medium";
+  return "severity-low";
+}
+
+function renderSymptomResult() {
+  if (!el.symptomSelect || !el.symptomResult) return;
+
+  const selectedSymptom = el.symptomSelect.value;
+  const data = symptomData[selectedSymptom];
+
+  if (!data) {
+    el.symptomResult.className = "symptom-result empty-state";
+    el.symptomResult.textContent =
+      "Select a symptom to see possible causes, severity, MOT impact and next checks.";
+    return;
+  }
+
+  el.symptomResult.className = "symptom-result";
+
+  el.symptomResult.innerHTML = `
+    <div class="symptom-card">
+      <h3>${escapeHtml(data.title)}</h3>
+      <p class="symptom-summary">${escapeHtml(data.summary)}</p>
+
+      <div class="symptom-badges">
+        <span class="symptom-badge ${severityClass(data.severity)}">Severity: ${escapeHtml(data.severity)}</span>
+        <span class="symptom-badge ${escapeHtml(data.driveClass)}">Safe to drive guidance</span>
+        <span class="symptom-badge">UK MOT aware</span>
+      </div>
+
+      <div class="symptom-info-grid">
+        <div class="symptom-info">
+          <h4>Possible Causes</h4>
+          <ul>${data.causes.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        </div>
+
+        <div class="symptom-info">
+          <h4>Safe To Drive?</h4>
+          <p>${escapeHtml(data.safe)}</p>
+        </div>
+
+        <div class="symptom-info">
+          <h4>MOT Implications</h4>
+          <p>${escapeHtml(data.mot)}</p>
+        </div>
+
+        <div class="symptom-info">
+          <h4>Recommended Next Checks</h4>
+          <ul>${data.checks.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 function getProfileData() {
@@ -591,7 +814,7 @@ function exportPDF() {
   printWindow.document.open();
   printWindow.document.write(`
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="en-GB">
     <head>
       <meta charset="UTF-8">
       <title>AutoKnowledge Pro AI Report Export</title>
@@ -650,9 +873,13 @@ if (el.reportSearch) el.reportSearch.oninput = applyFilters;
 if (el.reportSort) el.reportSort.onchange = applyFilters;
 if (el.paymentStatus) el.paymentStatus.onchange = calculateInvoice;
 
+if (el.checkSymptomBtn) el.checkSymptomBtn.onclick = renderSymptomResult;
+if (el.symptomSelect) el.symptomSelect.onchange = renderSymptomResult;
+
 if (el.saveReportBtn) el.saveReportBtn.disabled = true;
 
 calculateInvoice();
 updateDashboardStats([]);
 renderRecentActivity([]);
+renderSymptomResult();
 runAI();
