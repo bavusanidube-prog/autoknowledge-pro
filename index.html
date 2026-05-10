@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>AutoKnowledge Pro AI | Automotive Diagnostics & Workshop Software</title>
-  <meta name="description" content="AutoKnowledge Pro AI is a lightweight UK automotive diagnostics, customer intake, invoice and workshop reporting app for garages and vehicle technicians." />
+  <meta name="description" content="AutoKnowledge Pro AI is a lightweight UK automotive diagnostics, symptom checker, customer intake, invoice and workshop reporting app for garages and vehicle technicians." />
   <meta name="theme-color" content="#0f172a" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,27 +42,26 @@
 
     <section class="hero-panel">
       <div class="hero-copy">
-        <span class="eyebrow">Built for modern garages and vehicle technicians</span>
+        <span class="eyebrow">Built for modern garages, technicians and UK drivers</span>
 
-        <h2>Professional diagnostics, customer intake, invoices and workshop reports in one lightweight app.</h2>
+        <h2>Professional vehicle diagnostics, symptom checks, invoices and workshop reports in one lightweight app.</h2>
 
         <p>
-          AutoKnowledge Pro AI helps garages work faster, keep customer and vehicle details organised,
-          check vehicle symptoms, run common diagnostic checks, build invoices and review workshop activity
-          from one clean dashboard.
+          AutoKnowledge Pro AI helps garages and drivers understand vehicle symptoms, organise customer and vehicle details,
+          run common diagnostic checks, calculate invoices and review workshop activity from one clean dashboard.
         </p>
 
         <div class="hero-actions">
           <a href="#symptom-checker" class="primary-link">Check Vehicle Symptom</a>
-          <a href="#diagnostics" class="secondary-link">Start Diagnostic Check</a>
+          <a href="#diagnostics" class="secondary-link">Run Diagnostic Check</a>
           <a href="#reports" class="secondary-link">View Reports</a>
         </div>
 
         <div class="trust-row">
           <span>✓ UK driver focused</span>
-          <span>✓ Fast browser-based workflow</span>
-          <span>✓ Firebase powered</span>
           <span>✓ Mobile friendly</span>
+          <span>✓ Fast browser-based workflow</span>
+          <span>✓ Workshop-ready layout</span>
         </div>
       </div>
 
@@ -210,34 +209,36 @@
           <div>
             <span class="section-kicker">Symptom Checker</span>
             <h2>Vehicle Symptom Checker</h2>
-            <p>Select a symptom and get possible causes, severity, safe-to-drive guidance, MOT implications and recommended next checks.</p>
+            <p>Choose a vehicle symptom and get plain-English UK driver guidance before deeper diagnosis.</p>
           </div>
         </div>
 
         <div class="symptom-layout">
           <div class="symptom-control-card">
-            <label class="field-label" for="symptomSelect">Choose vehicle symptom</label>
+            <label class="field-label" for="symptomSelect">Select vehicle symptom</label>
 
             <select id="symptomSelect">
-              <option value="">Select a symptom</option>
-              <option value="overheating">Overheating</option>
+              <option value="">Choose a symptom</option>
+              <option value="overheating">Engine overheating</option>
               <option value="battery_warning">Battery warning light</option>
-              <option value="loss_power">Loss of power</option>
-              <option value="smoke_exhaust">Smoke from exhaust</option>
               <option value="clicking_noise">Clicking noise</option>
               <option value="misfire">Engine misfire</option>
+              <option value="loss_power">Loss of power</option>
+              <option value="smoke_exhaust">Smoke from exhaust</option>
               <option value="wont_start">Car won't start</option>
+              <option value="rough_idle">Rough idle</option>
+              <option value="brake_warning">Brake warning light</option>
             </select>
 
             <button id="checkSymptomBtn">Check Symptom</button>
 
             <p class="symptom-note">
-              Guidance is for early checks only. Serious faults should be inspected by a qualified mechanic.
+              This checker gives general guidance only. Serious faults should be checked by a qualified mechanic.
             </p>
           </div>
 
           <div id="symptomResult" class="symptom-result empty-state">
-            Select a symptom to see possible causes, severity, MOT impact and next checks.
+            Select a symptom to view possible causes, urgency, MOT impact, safe-to-drive advice and next checks.
           </div>
         </div>
       </section>
