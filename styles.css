@@ -616,6 +616,148 @@ pre{
   color:var(--warning);
 }
 
+/* Symptom Checker */
+.field-label{
+  display:block;
+  margin-bottom:8px;
+  color:var(--soft);
+  font-size:14px;
+  font-weight:800;
+}
+
+.symptom-layout{
+  display:grid;
+  grid-template-columns:.75fr 1.25fr;
+  gap:18px;
+  align-items:start;
+}
+
+.symptom-control-card{
+  padding:18px;
+  border-radius:18px;
+  background:rgba(2,6,23,.48);
+  border:1px solid var(--border);
+}
+
+.symptom-note{
+  color:var(--muted);
+  line-height:1.7;
+  font-size:13px;
+}
+
+.symptom-result{
+  display:grid;
+  gap:14px;
+}
+
+.empty-state{
+  min-height:220px;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  color:var(--muted);
+  padding:24px;
+  border-radius:18px;
+  border:1px dashed rgba(148,163,184,.28);
+  background:rgba(255,255,255,.025);
+}
+
+.symptom-card{
+  padding:20px;
+  border-radius:20px;
+  background:
+    linear-gradient(135deg, rgba(56,189,248,.06), transparent 36%),
+    rgba(255,255,255,.035);
+  border:1px solid var(--border);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.symptom-card h3{
+  color:white;
+  font-size:24px;
+  margin-bottom:10px;
+  letter-spacing:-.04em;
+}
+
+.symptom-summary{
+  color:var(--muted);
+  line-height:1.7;
+  margin-bottom:14px;
+  font-size:14px;
+}
+
+.symptom-badges{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:12px 0 16px;
+}
+
+.symptom-badge{
+  padding:7px 10px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:900;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.045);
+}
+
+.severity-low{
+  color:var(--success);
+}
+
+.severity-medium{
+  color:var(--warning);
+}
+
+.severity-high{
+  color:var(--danger);
+}
+
+.drive-safe{
+  color:var(--success);
+}
+
+.drive-caution{
+  color:var(--warning);
+}
+
+.drive-unsafe{
+  color:var(--danger);
+}
+
+.symptom-info-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+
+.symptom-info{
+  padding:16px;
+  border-radius:16px;
+  background:rgba(2,6,23,.55);
+  border:1px solid var(--border);
+}
+
+.symptom-info h4{
+  color:var(--accent);
+  margin-bottom:8px;
+  font-size:14px;
+}
+
+.symptom-info ul{
+  padding-left:18px;
+  color:var(--muted);
+  line-height:1.7;
+  font-size:14px;
+}
+
+.symptom-info p{
+  color:var(--muted);
+  line-height:1.7;
+  font-size:14px;
+}
+
 .site-footer{
   margin-top:26px;
   padding:28px 18px;
@@ -731,7 +873,9 @@ pre{
   .hero-mini-stats,
   .dashboard-grid,
   .result-grid,
-  .toolbar{
+  .toolbar,
+  .symptom-layout,
+  .symptom-info-grid{
     grid-template-columns:1fr;
   }
 
@@ -750,5 +894,9 @@ pre{
   .panel{
     padding:20px;
     border-radius:20px;
+  }
+
+  .empty-state{
+    min-height:160px;
   }
 }
