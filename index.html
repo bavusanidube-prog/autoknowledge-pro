@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>AutoKnowledge Pro AI | Automotive Diagnostics & Workshop Software</title>
-  <meta name="description" content="AutoKnowledge Pro AI is a lightweight UK automotive diagnostics, symptom checker, customer intake, invoice and workshop reporting app for garages and vehicle technicians." />
+  <meta name="description" content="AutoKnowledge Pro AI is a lightweight UK automotive diagnostics, warning light lookup, symptom checker, customer intake, invoice and workshop reporting app for garages and vehicle technicians." />
   <meta name="theme-color" content="#0f172a" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,24 +44,25 @@
       <div class="hero-copy">
         <span class="eyebrow">Built for modern garages, technicians and UK drivers</span>
 
-        <h2>Professional vehicle diagnostics, symptom checks, invoices and workshop reports in one lightweight app.</h2>
+        <h2>Professional diagnostics, warning light lookup, symptom checks, invoices and reports in one lightweight app.</h2>
 
         <p>
-          AutoKnowledge Pro AI helps garages and drivers understand vehicle symptoms, organise customer and vehicle details,
-          run common diagnostic checks, calculate invoices and review workshop activity from one clean dashboard.
+          AutoKnowledge Pro AI helps garages and drivers understand dashboard warning lights,
+          check vehicle symptoms, organise customer details, run diagnostic checks,
+          calculate invoices and review workshop activity from one clean dashboard.
         </p>
 
         <div class="hero-actions">
-          <a href="#symptom-checker" class="primary-link">Check Vehicle Symptom</a>
+          <a href="#warning-light-lookup" class="primary-link">Lookup Warning Light</a>
+          <a href="#symptom-checker" class="secondary-link">Check Vehicle Symptom</a>
           <a href="#diagnostics" class="secondary-link">Run Diagnostic Check</a>
-          <a href="#reports" class="secondary-link">View Reports</a>
         </div>
 
         <div class="trust-row">
           <span>✓ UK driver focused</span>
           <span>✓ Mobile friendly</span>
-          <span>✓ Fast browser-based workflow</span>
           <span>✓ Workshop-ready layout</span>
+          <span>✓ Fast browser-based workflow</span>
         </div>
       </div>
 
@@ -240,6 +241,42 @@
           <div id="symptomResult" class="symptom-result empty-state">
             Select a symptom to view possible causes, urgency, MOT impact, safe-to-drive advice and next checks.
           </div>
+        </div>
+      </section>
+
+      <section id="warning-light-lookup" class="panel panel-wide">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Warning Lights</span>
+            <h2>Dashboard Warning Light Lookup</h2>
+            <p>Search common dashboard warning lights and get UK-focused safe-to-drive, MOT and next-check guidance.</p>
+          </div>
+        </div>
+
+        <div class="warning-layout">
+          <div class="warning-control-card">
+            <label class="field-label" for="warningSearch">Search warning light</label>
+            <input id="warningSearch" placeholder="Search engine, ABS, oil, coolant..." />
+
+            <label class="field-label" for="warningCategory">Category</label>
+            <select id="warningCategory">
+              <option value="all">All categories</option>
+              <option value="engine">Engine</option>
+              <option value="battery">Battery</option>
+              <option value="brakes">Brakes</option>
+              <option value="oil">Oil</option>
+              <option value="coolant">Coolant</option>
+              <option value="tyre">Tyre Pressure</option>
+              <option value="abs">ABS</option>
+              <option value="airbag">Airbag</option>
+            </select>
+
+            <p class="warning-note">
+              Red warnings usually mean stop safely. Amber warnings usually mean the car needs checking soon.
+            </p>
+          </div>
+
+          <div id="warningLightResults" class="warning-results"></div>
         </div>
       </section>
 
