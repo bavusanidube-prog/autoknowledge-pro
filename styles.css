@@ -625,14 +625,16 @@ pre{
   font-weight:800;
 }
 
-.symptom-layout{
+.symptom-layout,
+.warning-layout{
   display:grid;
   grid-template-columns:.75fr 1.25fr;
   gap:18px;
   align-items:start;
 }
 
-.symptom-control-card{
+.symptom-control-card,
+.warning-control-card{
   padding:18px;
   border-radius:18px;
   background:rgba(2,6,23,.48);
@@ -640,19 +642,22 @@ pre{
   box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
 }
 
-.symptom-note{
+.symptom-note,
+.warning-note{
   color:var(--muted);
   line-height:1.7;
   font-size:13px;
 }
 
-.symptom-result{
+.symptom-result,
+.warning-results{
   display:grid;
   gap:14px;
   animation:fadeUp .25s ease;
 }
 
-.empty-state{
+.empty-state,
+.no-warning-results{
   min-height:230px;
   display:grid;
   place-items:center;
@@ -664,7 +669,8 @@ pre{
   background:rgba(255,255,255,.025);
 }
 
-.symptom-card{
+.symptom-card,
+.warning-card{
   padding:20px;
   border-radius:20px;
   background:
@@ -673,30 +679,41 @@ pre{
   border:1px solid var(--border);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
   animation:fadeUp .28s ease;
+  transition:.22s ease;
 }
 
-.symptom-card h3{
+.symptom-card:hover,
+.warning-card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(56,189,248,.26);
+}
+
+.symptom-card h3,
+.warning-card h3{
   color:white;
   font-size:24px;
   margin-bottom:10px;
   letter-spacing:-.04em;
 }
 
-.symptom-summary{
+.symptom-summary,
+.warning-desc{
   color:var(--muted);
   line-height:1.7;
   margin-bottom:14px;
   font-size:14px;
 }
 
-.symptom-badges{
+.symptom-badges,
+.warning-badges{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
   margin:12px 0 16px;
 }
 
-.symptom-badge{
+.symptom-badge,
+.warning-badge{
   padding:7px 10px;
   border-radius:999px;
   font-size:13px;
@@ -705,15 +722,18 @@ pre{
   background:rgba(255,255,255,.045);
 }
 
-.severity-low{
+.severity-low,
+.warning-green{
   color:var(--success);
 }
 
-.severity-medium{
+.severity-medium,
+.warning-amber{
   color:var(--warning);
 }
 
-.severity-high{
+.severity-high,
+.warning-red{
   color:var(--danger);
 }
 
@@ -729,33 +749,39 @@ pre{
   color:var(--danger);
 }
 
-.symptom-info-grid{
+.symptom-info-grid,
+.warning-info-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:14px;
 }
 
-.symptom-info{
+.symptom-info,
+.warning-info{
   padding:16px;
   border-radius:16px;
   background:rgba(2,6,23,.55);
   border:1px solid var(--border);
 }
 
-.symptom-info h4{
+.symptom-info h4,
+.warning-info h4{
   color:var(--accent);
   margin-bottom:8px;
   font-size:14px;
 }
 
-.symptom-info ul{
+.symptom-info ul,
+.warning-info ul{
   padding-left:18px;
   color:var(--muted);
   line-height:1.7;
   font-size:14px;
 }
 
-.symptom-info p{
+.symptom-info p,
+.warning-info p,
+.warning-info li{
   color:var(--muted);
   line-height:1.7;
   font-size:14px;
@@ -889,7 +915,9 @@ pre{
   .result-grid,
   .toolbar,
   .symptom-layout,
-  .symptom-info-grid{
+  .symptom-info-grid,
+  .warning-layout,
+  .warning-info-grid{
     grid-template-columns:1fr;
   }
 
@@ -910,7 +938,8 @@ pre{
     border-radius:20px;
   }
 
-  .empty-state{
+  .empty-state,
+  .no-warning-results{
     min-height:160px;
   }
 }
