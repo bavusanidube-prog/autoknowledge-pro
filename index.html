@@ -271,7 +271,7 @@
         <div>
           <span class="section-kicker">Step 03</span>
           <h2>Live Diagnostic Analysis</h2>
-          <p>Select a fault pattern and generate a workshop-style diagnostic report.</p>
+          <p>Select a fault pattern and run a live workshop-style diagnostic scan.</p>
         </div>
       </div>
 
@@ -288,7 +288,7 @@
           </select>
 
           <div class="button-row">
-            <button id="runAiBtn">Run Diagnostic Analysis</button>
+            <button id="runAiBtn">Run Live Diagnostic Scan</button>
             <button id="saveReportBtn" class="secondary-btn">Save Report</button>
           </div>
 
@@ -303,14 +303,49 @@
           </div>
         </div>
 
-        <div class="diagnostic-console-ui">
+        <div class="diagnostic-console-ui live-console">
           <div class="console-header">
-            <span class="live-dot"></span>
-            <strong>Diagnostic Engine</strong>
-            <small>Analysis Console</small>
+            <div>
+              <span class="live-dot"></span>
+              <strong>Diagnostic Engine</strong>
+            </div>
+            <small id="scanState">STANDBY</small>
           </div>
 
-          <div class="result-grid">
+          <div class="scan-panel">
+            <div class="scan-topline">
+              <span id="scanPhase">Awaiting diagnostic command</span>
+              <strong id="scanPercent">0%</strong>
+            </div>
+
+            <div class="scan-track">
+              <div id="scanProgress" class="scan-progress-live"></div>
+            </div>
+          </div>
+
+          <div class="module-grid">
+            <div class="module-row" id="moduleEngine">
+              <span>Engine Control</span>
+              <strong>Waiting</strong>
+            </div>
+
+            <div class="module-row" id="moduleIgnition">
+              <span>Ignition System</span>
+              <strong>Waiting</strong>
+            </div>
+
+            <div class="module-row" id="moduleFuel">
+              <span>Fuel Delivery</span>
+              <strong>Waiting</strong>
+            </div>
+
+            <div class="module-row" id="moduleEmissions">
+              <span>Emissions System</span>
+              <strong>Waiting</strong>
+            </div>
+          </div>
+
+          <div class="result-grid live-result-grid">
             <div class="result-card">
               <h3>Primary Diagnosis</h3>
               <p id="result">Awaiting analysis...</p>
@@ -322,12 +357,17 @@
             </div>
 
             <div class="result-card result-card-wide">
-              <h3>AI Explanation</h3>
+              <h3>Diagnostic Explanation</h3>
               <p id="aiExplain"></p>
             </div>
           </div>
 
           <div class="steps-console">
+            <h3>Live Diagnostic Feed</h3>
+            <div id="liveFeed" class="live-feed-box">
+              <div class="feed-line muted-feed">System ready. Select a fault pattern and run analysis.</div>
+            </div>
+
             <h3>Recommended Diagnostic Steps</h3>
             <pre id="steps"></pre>
           </div>
