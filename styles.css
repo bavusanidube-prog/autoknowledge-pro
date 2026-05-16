@@ -41,7 +41,6 @@ html{
   max-width:100%;
   overflow-x:hidden;
   background:#07111f;
-  overscroll-behavior-y:none;
 }
 
 body{
@@ -58,7 +57,6 @@ body{
   max-width:100%;
   padding:28px;
   overflow-x:hidden;
-  overscroll-behavior-y:none;
   -webkit-font-smoothing:antialiased;
 }
 
@@ -1270,7 +1268,6 @@ pre{
 @media (max-width:760px){
   html{
     background:#07111f !important;
-    overscroll-behavior-y:none !important;
   }
 
   body{
@@ -1281,7 +1278,6 @@ pre{
     max-width:100% !important;
     overflow-x:hidden !important;
     padding:12px !important;
-    overscroll-behavior-y:none !important;
   }
 
   body::before{
