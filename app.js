@@ -236,6 +236,7 @@ const diagnosticRules = {
       "Check radiator fan operation"
     ]
   },
+
   misfire: {
     title: "Ignition / Fuel Misfire",
     confidence: 88,
@@ -256,6 +257,7 @@ const diagnosticRules = {
       "Check injector pulse"
     ]
   },
+
   no_start: {
     title: "Starting System Fault",
     confidence: 81,
@@ -276,6 +278,7 @@ const diagnosticRules = {
       "Verify fuel pressure"
     ]
   },
+
   battery: {
     title: "Charging System Fault",
     confidence: 83,
@@ -296,6 +299,7 @@ const diagnosticRules = {
       "Test battery condition"
     ]
   },
+
   rough_idle: {
     title: "Idle Stability Fault",
     confidence: 74,
@@ -344,6 +348,7 @@ function generateDiagnosis(key) {
   return {
     sessionId: activeSessionId,
     diagnosticKey: key,
+    faultGroup: key,
     fault: rule.title,
     title: rule.title,
     confidence: rule.confidence,
@@ -599,6 +604,11 @@ async function saveCurrentReport() {
     setMessage(el.reportMessage, "Report saved successfully.", "success");
 
     activeSessionId = createSessionId();
+    lastReport = null;
+
+    if (el.saveReportBtn) {
+      el.saveReportBtn.disabled = true;
+    }
   } catch (err) {
     setMessage(el.reportMessage, err.message || "Save failed.", "error");
   }
@@ -697,7 +707,7 @@ function updateStats() {
 }
 
 function exportPDF() {
-  window.print();
+  alert("Open a saved report and use Print / Save PDF there for professional export.");
 }
 
 async function login() {
