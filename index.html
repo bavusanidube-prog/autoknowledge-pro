@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>AutoKnowledge Pro AI | Workshop Diagnostics Platform</title>
-  <meta name="description" content="AutoKnowledge Pro AI is a UK workshop diagnostics platform for customer intake, vehicle symptoms, warning light lookup, OBD checks, diagnostic reports, invoices and workshop history." />
-  <meta name="theme-color" content="#050914" />
+  <title>Motor Vehicle Expert Diagnostics | AI Vehicle Diagnostic App</title>
+  <meta name="description" content="Motor Vehicle Expert Diagnostics helps UK drivers and garages check symptoms, warning lights, OBD fault codes, safe-to-drive guidance, MOT risks, invoices and diagnostic reports." />
+  <meta name="theme-color" content="#07111f" />
 
+  <link rel="icon" type="image/png" href="favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="icon" type="image/png" href="favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -24,10 +24,10 @@
 <header class="topbar app-topbar">
   <div class="topbar-inner">
     <div class="brand-identity">
-      <div class="logo-mark">AK</div>
+      <div class="logo-mark">MVE</div>
       <div>
-        <div class="brand-badge">UK Workshop Intelligence Suite</div>
-        <h1>AutoKnowledge Pro AI</h1>
+        <div class="brand-badge">UK Vehicle Diagnostic Platform</div>
+        <h1>Motor Vehicle Expert Diagnostics</h1>
       </div>
     </div>
 
@@ -42,33 +42,34 @@
 
   <section class="hero-panel session-hero">
     <div class="hero-copy">
-      <span class="eyebrow">Active vehicle diagnostic workflow</span>
+      <span class="eyebrow">AI-powered vehicle diagnostic workspace</span>
 
-      <h2>Open a vehicle session, analyse the fault, generate a report and build the invoice.</h2>
+      <h2>Diagnose symptoms, warning lights and fault codes in one professional vehicle session.</h2>
 
       <p>
-        AutoKnowledge Pro AI connects customer intake, vehicle symptoms, warning lights,
-        OBD codes, diagnostic direction, invoice totals and saved workshop reports into one cleaner workflow.
+        Built for UK drivers, mobile mechanics and garages. Start with the customer complaint,
+        check symptoms and warning lights, run a live diagnostic scan, calculate invoice totals
+        and save a professional customer report.
       </p>
 
       <div class="hero-actions">
-        <a href="#vehicle-session" class="primary-link">Start Vehicle Session</a>
-        <a href="#live-diagnostics" class="secondary-link">Run Diagnostic Analysis</a>
-        <a href="#reports" class="secondary-link">View Reports</a>
+        <a href="#vehicle-session" class="primary-link">Start Diagnostic Session</a>
+        <a href="#live-diagnostics" class="secondary-link">Run Live Scan</a>
+        <a href="#reports" class="secondary-link">Open Reports</a>
       </div>
 
       <div class="trust-row">
-        <span>✓ Session-based workflow</span>
-        <span>✓ Warning light lookup</span>
-        <span>✓ OBD fault code support</span>
-        <span>✓ Invoice + report history</span>
+        <span>✓ UK-focused guidance</span>
+        <span>✓ MOT-aware results</span>
+        <span>✓ Safe-to-drive advice</span>
+        <span>✓ Customer-ready reports</span>
       </div>
     </div>
 
     <aside class="hero-card session-status-card">
       <div class="hero-card-top">
         <span>Current Workspace</span>
-        <strong>Workshop Command Centre</strong>
+        <strong>Diagnostic Command Centre</strong>
       </div>
 
       <div class="hero-mini-stats">
@@ -97,26 +98,26 @@
 
   <section class="panel session-strip" id="vehicle-session">
     <div class="session-strip-main">
-      <span class="section-kicker">Live Session</span>
+      <span class="section-kicker">Session Workflow</span>
       <h2>Vehicle Diagnostic Session</h2>
-      <p>Use this workspace from left to right: customer profile, symptom/warning light, diagnostic analysis, invoice, then saved report.</p>
+      <p>Follow the workflow from customer intake to symptom checks, live diagnostics, invoice and saved report.</p>
     </div>
 
     <div class="session-pills">
       <span>01 Intake</span>
       <span>02 Symptoms</span>
-      <span>03 Diagnostics</span>
+      <span>03 Scan</span>
       <span>04 Invoice</span>
-      <span>05 Save</span>
+      <span>05 Report</span>
     </div>
   </section>
 
   <section class="panel dashboard-panel">
     <div class="section-head">
       <div>
-        <span class="section-kicker">Workshop Overview</span>
-        <h2>Dashboard</h2>
-        <p>Track reports, confidence levels, common faults and estimated revenue.</p>
+        <span class="section-kicker">Overview</span>
+        <h2>Diagnostic Dashboard</h2>
+        <p>Monitor saved reports, diagnostic confidence, common faults and estimated revenue.</p>
       </div>
     </div>
 
@@ -155,17 +156,17 @@
         <div>
           <span class="section-kicker">Secure Access</span>
           <h2>Login</h2>
-          <p>Access your workshop dashboard and saved reports.</p>
+          <p>Sign in to save reports, view customer sessions and open printable diagnostic documents.</p>
         </div>
       </div>
 
-      <input id="email" placeholder="Email address" autocomplete="email" />
+      <input id="email" type="email" placeholder="Email address" autocomplete="email" />
       <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
 
-      <button id="loginBtn">Login to Dashboard</button>
+      <button id="loginBtn">Login</button>
       <button id="signupBtn" class="secondary-btn">Create Account</button>
 
-      <p id="authMessage"></p>
+      <p id="authMessage" class="message"></p>
     </section>
 
     <section class="panel session-card">
@@ -173,7 +174,7 @@
         <div>
           <span class="section-kicker">Step 01</span>
           <h2>Customer & Vehicle Intake</h2>
-          <p>Record the customer complaint and vehicle details before starting diagnosis.</p>
+          <p>Record the vehicle details and customer complaint before starting the diagnostic process.</p>
         </div>
       </div>
 
@@ -188,7 +189,7 @@
 
       <textarea id="serviceNotes" placeholder="Customer complaint / service notes"></textarea>
 
-      <p id="profileMessage"></p>
+      <p id="profileMessage" class="message"></p>
     </section>
 
     <section id="symptom-checker" class="panel panel-wide session-card">
@@ -196,7 +197,7 @@
         <div>
           <span class="section-kicker">Step 02</span>
           <h2>Vehicle Symptom Checker</h2>
-          <p>Start with what the vehicle is doing before deeper diagnostic analysis.</p>
+          <p>Start with what the vehicle is doing. The app will suggest possible causes, urgency and next checks.</p>
         </div>
       </div>
 
@@ -220,7 +221,7 @@
           <button id="checkSymptomBtn">Check Symptom</button>
 
           <p class="symptom-note">
-            This checker gives general guidance only. Serious faults should be inspected by a qualified mechanic.
+            This is guidance only. Serious warning lights, brake faults, overheating or unsafe symptoms should be inspected professionally.
           </p>
         </div>
 
@@ -235,7 +236,7 @@
         <div>
           <span class="section-kicker">Warning Light Intelligence</span>
           <h2>Dashboard Warning Light Lookup</h2>
-          <p>Search common dashboard warning lights and get safe-to-drive, MOT and next-check guidance.</p>
+          <p>Search common dashboard warning lights and check likely severity, MOT impact and safe-to-drive guidance.</p>
         </div>
       </div>
 
@@ -271,7 +272,7 @@
         <div>
           <span class="section-kicker">Step 03</span>
           <h2>Live Diagnostic Analysis</h2>
-          <p>Select a fault pattern and run a live workshop-style diagnostic scan.</p>
+          <p>Select the fault pattern and run a workshop-style diagnostic scan with live progress and module checks.</p>
         </div>
       </div>
 
@@ -292,7 +293,7 @@
             <button id="saveReportBtn" class="secondary-btn">Save Report</button>
           </div>
 
-          <p id="reportMessage"></p>
+          <p id="reportMessage" class="message"></p>
 
           <div class="obd-mini-panel">
             <span class="section-kicker">OBD Scanner</span>
@@ -406,15 +407,15 @@
         <div class="report-meta"><strong>Status:</strong> <span id="invoiceStatus">Unpaid</span></div>
       </div>
 
-      <p id="invoiceMessage"></p>
+      <p id="invoiceMessage" class="message"></p>
     </section>
 
     <section id="reports" class="panel panel-wide session-card">
       <div class="section-head">
         <div>
           <span class="section-kicker">Step 05</span>
-          <h2>Workshop Reports</h2>
-          <p>Search, sort, load and export saved diagnostic reports.</p>
+          <h2>Saved Diagnostic Reports</h2>
+          <p>Load saved sessions and open professional customer-facing diagnostic reports.</p>
         </div>
       </div>
 
@@ -441,11 +442,11 @@
 
 <footer class="site-footer">
   <div>
-    <strong>AutoKnowledge Pro AI</strong>
-    <p>Workshop diagnostics, vehicle session reports, warning light lookup, OBD support and invoice tools for modern UK garages.</p>
+    <strong>Motor Vehicle Expert Diagnostics</strong>
+    <p>AI vehicle diagnostics, warning light guidance, OBD lookup, safe-to-drive advice, MOT-aware reports and invoice tools.</p>
   </div>
 
-  <p>© 2026 AutoKnowledge Pro AI • Built by Bavusani Otis Dube</p>
+  <p>© 2026 Motor Vehicle Expert Diagnostics • UK vehicle diagnostic platform</p>
 </footer>
 
 <script type="module" src="app.js"></script>
