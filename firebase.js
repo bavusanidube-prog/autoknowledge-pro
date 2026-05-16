@@ -16,7 +16,9 @@ import {
   orderBy,
   query,
   serverTimestamp,
-  where
+  where,
+  doc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -112,4 +114,30 @@ export async function getMyReports() {
     id: doc.id,
     ...doc.data()
   }));
+}
+
+export async function getReportById(reportId) {
+  const user = auth.currentUser;
+
+  if (!user) {
+    throw new Error("You must be logged in to view this report.");
+  }
+
+  const reportRef = doc(db, "reports", reportId);
+  const snapshot = await getDoc(reportRef);
+
+  if (!snapshot.exists()) {
+    throw new Error("Report not found.");
+  }
+
+  const report = {
+    id: snapshot.id,
+    ...snapshot.data()
+  };
+
+  if (report.userId !== user.uid) {
+    throw new Error("You do not have permission to view this report.");
+  }
+
+  return report;
 }
