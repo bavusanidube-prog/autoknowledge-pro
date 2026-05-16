@@ -15,38 +15,36 @@
   <link rel="stylesheet" href="styles.css" />
 
   <style>
-    html,
-    body {
-      min-height: 100%;
-      background-color: #07111f !important;
-      overscroll-behavior-y: none;
-    }
+   html,
+   body {
+     min-height: 100%;
+     background-color: #07111f !important;
+   }
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -10;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at top right, rgba(245,158,11,.16), transparent 30%),
-        radial-gradient(circle at left center, rgba(56,189,248,.12), transparent 26%),
-        linear-gradient(180deg,#08121f 0%,#0b1727 48%,#0d1321 100%);
-    }
+   body::before {
+     content: "";
+     position: fixed;
+     inset: 0;
+     z-index: -10;
+     pointer-events: none;
+     background:
+      radial-gradient(circle at top right, rgba(245,158,11,.16), transparent 30%),
+      radial-gradient(circle at left center, rgba(56,189,248,.12), transparent 26%),
+      linear-gradient(180deg,#08121f 0%,#0b1727 48%,#0d1321 100%);
+   }
 
-    @media (max-width: 760px) {
-      html,
-      body {
-        background: #07111f !important;
-        overscroll-behavior: none;
-      }
+   @media (max-width: 760px) {
+     html,
+     body {
+       background: #07111f !important;
+     }
 
-      .bg-orb,
-      .bg-grid {
-        position: absolute !important;
-      }
-    }
-  </style>
+     .bg-orb,
+     .bg-grid {
+       position: absolute !important;
+     }
+   }
+ </style>
 </head>
 
 <body>
