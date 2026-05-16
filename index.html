@@ -13,6 +13,40 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    html,
+    body {
+      min-height: 100%;
+      background-color: #07111f !important;
+      overscroll-behavior-y: none;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -10;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at top right, rgba(245,158,11,.16), transparent 30%),
+        radial-gradient(circle at left center, rgba(56,189,248,.12), transparent 26%),
+        linear-gradient(180deg,#08121f 0%,#0b1727 48%,#0d1321 100%);
+    }
+
+    @media (max-width: 760px) {
+      html,
+      body {
+        background: #07111f !important;
+        overscroll-behavior: none;
+      }
+
+      .bg-orb,
+      .bg-grid {
+        position: absolute !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -77,17 +111,14 @@
           <span>Reports</span>
           <strong id="totalReports">0</strong>
         </div>
-
         <div class="mini-stat">
           <span>Customers</span>
           <strong id="totalCustomers">0</strong>
         </div>
-
         <div class="mini-stat">
           <span>Vehicles</span>
           <strong id="totalVehicles">0</strong>
         </div>
-
         <div class="mini-stat">
           <span>Revenue</span>
           <strong id="totalRevenue">£0.00</strong>
@@ -126,17 +157,14 @@
         <h3>Total Reports</h3>
         <p id="totalReportsMirror">0</p>
       </div>
-
       <div class="stat-card">
         <h3>Average Confidence</h3>
         <p id="avgConfidence">0%</p>
       </div>
-
       <div class="stat-card">
         <h3>Top Fault</h3>
         <p id="topFault">N/A</p>
       </div>
-
       <div class="stat-card">
         <h3>Estimated Revenue</h3>
         <p id="totalRevenueMirror">£0.00</p>
@@ -329,17 +357,14 @@
               <span>Engine Control</span>
               <strong>Waiting</strong>
             </div>
-
             <div class="module-row" id="moduleIgnition">
               <span>Ignition System</span>
               <strong>Waiting</strong>
             </div>
-
             <div class="module-row" id="moduleFuel">
               <span>Fuel Delivery</span>
               <strong>Waiting</strong>
             </div>
-
             <div class="module-row" id="moduleEmissions">
               <span>Emissions System</span>
               <strong>Waiting</strong>
