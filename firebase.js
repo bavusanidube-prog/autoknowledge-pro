@@ -1,4 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -6,6 +7,7 @@ import {
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
 import {
   getFirestore,
   collection,
@@ -53,15 +55,42 @@ export async function saveReport(report) {
     throw new Error("You must be logged in to save a report.");
   }
 
-  await addDoc(collection(db, "reports"), {
+  const safeReport = {
     userId: user.uid,
     email: user.email,
-    fault: report.fault,
-    confidence: report.confidence,
-    explanation: report.explanation,
-    steps: report.steps,
+
+    sessionId: report.sessionId || "",
+    diagnosticKey: report.diagnosticKey || "",
+    title: report.title || "",
+    fault: report.fault || report.title || "Diagnostic Report",
+    faultGroup: report.faultGroup || "",
+    confidence: Number(report.confidence || 0),
+    urgency: report.urgency || "",
+    severity: report.severity || "",
+    safe: report.safe || "",
+    mot: report.mot || "",
+    explanation: report.explanation || "",
+    steps: report.steps || "",
+
+    customerName: report.customerName || "",
+    customerPhone: report.customerPhone || "",
+
+    vehicleMake: report.vehicleMake || "",
+    vehicleModel: report.vehicleModel || "",
+    vehicleReg: report.vehicleReg || "",
+    vehicleMileage: report.vehicleMileage || "",
+    serviceNotes: report.serviceNotes || "",
+
+    labourTotal: Number(report.labourTotal || 0),
+    subTotal: Number(report.subTotal || 0),
+    vatTotal: Number(report.vatTotal || 0),
+    grandTotal: Number(report.grandTotal || 0),
+    paymentStatus: report.paymentStatus || "Unpaid",
+
     createdAt: serverTimestamp()
-  });
+  };
+
+  return addDoc(collection(db, "reports"), safeReport);
 }
 
 export async function getMyReports() {
