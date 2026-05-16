@@ -29,24 +29,61 @@
   box-sizing:border-box;
 }
 
+*::before,
+*::after{
+  box-sizing:border-box;
+}
+
 html{
   scroll-behavior:smooth;
+  min-height:100%;
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+  background:#07111f;
+  overscroll-behavior-y:none;
 }
 
 body{
   font-family:"Inter",Segoe UI,Arial,sans-serif;
+  background-color:#07111f;
   background:
     radial-gradient(circle at top right, rgba(245,158,11,.16), transparent 30%),
     radial-gradient(circle at left center, rgba(56,189,248,.12), transparent 26%),
     linear-gradient(180deg,#08121f 0%,#0b1727 48%,#0d1321 100%);
   color:var(--text);
   min-height:100vh;
+  min-height:100dvh;
+  width:100%;
+  max-width:100%;
   padding:28px;
   overflow-x:hidden;
+  overscroll-behavior-y:none;
+  -webkit-font-smoothing:antialiased;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at top right, rgba(245,158,11,.16), transparent 30%),
+    radial-gradient(circle at left center, rgba(56,189,248,.12), transparent 26%),
+    linear-gradient(180deg,#08121f 0%,#0b1727 48%,#0d1321 100%);
 }
 
 a{
   color:inherit;
+}
+
+img,
+svg,
+video,
+iframe{
+  max-width:100%;
+  height:auto;
 }
 
 .bg-orb{
@@ -57,7 +94,8 @@ a{
   filter:blur(100px);
   pointer-events:none;
   z-index:0;
-  opacity:.26;
+  opacity:.22;
+  transform:translateZ(0);
 }
 
 .orb-1{
@@ -82,6 +120,7 @@ a{
   mask-image:radial-gradient(circle at center, black, transparent 86%);
   pointer-events:none;
   z-index:0;
+  transform:translateZ(0);
 }
 
 .topbar,
@@ -168,6 +207,9 @@ a{
 .page-shell{
   display:grid;
   gap:22px;
+  width:100%;
+  max-width:100%;
+  min-width:0;
 }
 
 .hero-panel{
@@ -1218,5 +1260,208 @@ pre{
   .empty-state,
   .no-warning-results{
     min-height:160px;
+  }
+}
+
+/* =========================================================
+   FINAL MOBILE STABILITY FIX — prevents white scroll flash
+   and keeps the app steady on phones
+========================================================= */
+@media (max-width:760px){
+  html{
+    background:#07111f !important;
+    overscroll-behavior-y:none !important;
+  }
+
+  body{
+    background-color:#07111f !important;
+    min-height:100vh !important;
+    min-height:100dvh !important;
+    width:100% !important;
+    max-width:100% !important;
+    overflow-x:hidden !important;
+    padding:12px !important;
+    overscroll-behavior-y:none !important;
+  }
+
+  body::before{
+    position:fixed !important;
+    inset:-2px !important;
+    background:
+      radial-gradient(circle at top right, rgba(245,158,11,.14), transparent 32%),
+      radial-gradient(circle at left center, rgba(56,189,248,.10), transparent 28%),
+      linear-gradient(180deg,#08121f 0%,#0b1727 48%,#0d1321 100%) !important;
+  }
+
+  .bg-orb,
+  .bg-grid{
+    display:none !important;
+  }
+
+  .topbar,
+  .page-shell,
+  .hero-panel,
+  .panel,
+  .live-console,
+  .site-footer,
+  .content-grid,
+  .diagnostic-workflow-grid,
+  .symptom-layout,
+  .warning-layout{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    overflow-x:hidden !important;
+  }
+
+  .topbar{
+    padding:14px !important;
+    border-radius:20px !important;
+    margin-bottom:16px !important;
+  }
+
+  .topbar-inner{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:14px !important;
+  }
+
+  .brand-identity,
+  .topbar-right{
+    width:100% !important;
+    min-width:0 !important;
+  }
+
+  .topbar-right{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:10px !important;
+  }
+
+  .user-chip{
+    width:100% !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+  }
+
+  #logoutBtn,
+  .logout-btn{
+    width:100% !important;
+  }
+
+  .hero-panel{
+    grid-template-columns:1fr !important;
+    padding:18px !important;
+    border-radius:22px !important;
+  }
+
+  .hero-copy h2{
+    font-size:clamp(1.9rem,9vw,2.35rem) !important;
+    line-height:1.05 !important;
+    overflow-wrap:anywhere !important;
+  }
+
+  .hero-actions,
+  .button-row{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:10px !important;
+  }
+
+  .primary-link,
+  .secondary-link,
+  button,
+  .button-row button{
+    width:100% !important;
+    max-width:100% !important;
+  }
+
+  .hero-mini-stats,
+  .dashboard-grid,
+  .content-grid,
+  .result-grid,
+  .toolbar,
+  .symptom-layout,
+  .symptom-info-grid,
+  .warning-layout,
+  .warning-info-grid,
+  .form-grid,
+  .diagnostic-workflow-grid{
+    grid-template-columns:1fr !important;
+  }
+
+  .panel-wide,
+  .result-card-wide{
+    grid-column:auto !important;
+  }
+
+  .panel,
+  .live-console,
+  .diagnostic-control,
+  .obd-mini-panel,
+  .symptom-control-card,
+  .warning-control-card{
+    padding:18px !important;
+    border-radius:20px !important;
+  }
+
+  .console-header,
+  .scan-topline,
+  .module-row,
+  .session-strip,
+  .section-head{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    align-items:start !important;
+    gap:10px !important;
+  }
+
+  .console-header > div{
+    min-width:0 !important;
+    flex-wrap:wrap !important;
+  }
+
+  .console-header small,
+  .session-pills span,
+  .symptom-meta span,
+  .warning-meta span{
+    white-space:normal !important;
+    width:fit-content !important;
+    max-width:100% !important;
+  }
+
+  .live-feed-box{
+    max-height:210px !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  .feed-line,
+  .report-meta,
+  .symptom-info p,
+  .warning-info p,
+  pre{
+    overflow-wrap:anywhere !important;
+    word-break:normal !important;
+  }
+}
+
+@media (max-width:420px){
+  body{
+    padding:10px !important;
+  }
+
+  .logo-mark{
+    width:42px !important;
+    height:42px !important;
+  }
+
+  .topbar h1{
+    font-size:20px !important;
+  }
+
+  .panel,
+  .live-console,
+  .hero-panel{
+    padding:15px !important;
   }
 }
