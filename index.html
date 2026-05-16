@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>AutoKnowledge Pro AI | Automotive Diagnostics & Workshop Software</title>
-  <meta name="description" content="AutoKnowledge Pro AI is a lightweight UK automotive diagnostics, warning light lookup, symptom checker, customer intake, invoice and workshop reporting app for garages and vehicle technicians." />
-  <meta name="theme-color" content="#0f172a" />
+  <title>AutoKnowledge Pro AI | Workshop Diagnostics Platform</title>
+  <meta name="description" content="AutoKnowledge Pro AI is a UK workshop diagnostics platform for customer intake, vehicle symptoms, warning light lookup, OBD checks, diagnostic reports, invoices and workshop history." />
+  <meta name="theme-color" content="#050914" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,365 +17,397 @@
 
 <body>
 
-  <div class="bg-orb orb-1"></div>
-  <div class="bg-orb orb-2"></div>
-  <div class="bg-grid"></div>
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+<div class="bg-grid"></div>
 
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand-identity">
-        <div class="logo-mark">AK</div>
-        <div>
-          <div class="brand-badge">UK Workshop Intelligence Suite</div>
-          <h1>AutoKnowledge Pro AI</h1>
-        </div>
-      </div>
-
-      <div class="topbar-right">
-        <div id="userStatus" class="user-chip">Not logged in</div>
-        <button id="logoutBtn" class="logout-btn" hidden>Logout</button>
+<header class="topbar app-topbar">
+  <div class="topbar-inner">
+    <div class="brand-identity">
+      <div class="logo-mark">AK</div>
+      <div>
+        <div class="brand-badge">UK Workshop Intelligence Suite</div>
+        <h1>AutoKnowledge Pro AI</h1>
       </div>
     </div>
-  </header>
 
-  <main class="page-shell">
+    <div class="topbar-right">
+      <div id="userStatus" class="user-chip">Not logged in</div>
+      <button id="logoutBtn" class="logout-btn" hidden>Logout</button>
+    </div>
+  </div>
+</header>
 
-    <section class="hero-panel">
-      <div class="hero-copy">
-        <span class="eyebrow">Built for modern garages, technicians and UK drivers</span>
+<main class="page-shell ak-session-app">
 
-        <h2>Professional diagnostics, warning light lookup, symptom checks, invoices and reports in one lightweight app.</h2>
+  <section class="hero-panel session-hero">
+    <div class="hero-copy">
+      <span class="eyebrow">Active vehicle diagnostic workflow</span>
 
-        <p>
-          AutoKnowledge Pro AI helps garages and drivers understand dashboard warning lights,
-          check vehicle symptoms, organise customer details, run diagnostic checks,
-          calculate invoices and review workshop activity from one clean dashboard.
-        </p>
+      <h2>Open a vehicle session, analyse the fault, generate a report and build the invoice.</h2>
 
-        <div class="hero-actions">
-          <a href="#warning-light-lookup" class="primary-link">Lookup Warning Light</a>
-          <a href="#symptom-checker" class="secondary-link">Check Vehicle Symptom</a>
-          <a href="#diagnostics" class="secondary-link">Run Diagnostic Check</a>
-        </div>
+      <p>
+        AutoKnowledge Pro AI connects customer intake, vehicle symptoms, warning lights,
+        OBD codes, diagnostic direction, invoice totals and saved workshop reports into one cleaner workflow.
+      </p>
 
-        <div class="trust-row">
-          <span>✓ UK driver focused</span>
-          <span>✓ Mobile friendly</span>
-          <span>✓ Workshop-ready layout</span>
-          <span>✓ Fast browser-based workflow</span>
-        </div>
+      <div class="hero-actions">
+        <a href="#vehicle-session" class="primary-link">Start Vehicle Session</a>
+        <a href="#live-diagnostics" class="secondary-link">Run Diagnostic Analysis</a>
+        <a href="#reports" class="secondary-link">View Reports</a>
       </div>
 
-      <div class="hero-card">
-        <div class="hero-card-top">
-          <span>Workshop Overview</span>
-          <strong>Live Dashboard</strong>
+      <div class="trust-row">
+        <span>✓ Session-based workflow</span>
+        <span>✓ Warning light lookup</span>
+        <span>✓ OBD fault code support</span>
+        <span>✓ Invoice + report history</span>
+      </div>
+    </div>
+
+    <aside class="hero-card session-status-card">
+      <div class="hero-card-top">
+        <span>Current Workspace</span>
+        <strong>Workshop Command Centre</strong>
+      </div>
+
+      <div class="hero-mini-stats">
+        <div class="mini-stat">
+          <span>Reports</span>
+          <strong id="totalReports">0</strong>
         </div>
 
-        <div class="hero-mini-stats">
-          <div class="mini-stat">
-            <span>Reports</span>
-            <strong id="totalReports">0</strong>
-          </div>
+        <div class="mini-stat">
+          <span>Customers</span>
+          <strong id="totalCustomers">0</strong>
+        </div>
 
-          <div class="mini-stat">
-            <span>Customers</span>
-            <strong id="totalCustomers">0</strong>
-          </div>
+        <div class="mini-stat">
+          <span>Vehicles</span>
+          <strong id="totalVehicles">0</strong>
+        </div>
 
-          <div class="mini-stat">
-            <span>Vehicles</span>
-            <strong id="totalVehicles">0</strong>
-          </div>
-
-          <div class="mini-stat">
-            <span>Revenue</span>
-            <strong id="totalRevenue">£0.00</strong>
-          </div>
+        <div class="mini-stat">
+          <span>Revenue</span>
+          <strong id="totalRevenue">£0.00</strong>
         </div>
       </div>
-    </section>
+    </aside>
+  </section>
 
-    <section class="panel dashboard-panel">
+  <section class="panel session-strip" id="vehicle-session">
+    <div class="session-strip-main">
+      <span class="section-kicker">Live Session</span>
+      <h2>Vehicle Diagnostic Session</h2>
+      <p>Use this workspace from left to right: customer profile, symptom/warning light, diagnostic analysis, invoice, then saved report.</p>
+    </div>
+
+    <div class="session-pills">
+      <span>01 Intake</span>
+      <span>02 Symptoms</span>
+      <span>03 Diagnostics</span>
+      <span>04 Invoice</span>
+      <span>05 Save</span>
+    </div>
+  </section>
+
+  <section class="panel dashboard-panel">
+    <div class="section-head">
+      <div>
+        <span class="section-kicker">Workshop Overview</span>
+        <h2>Dashboard</h2>
+        <p>Track reports, confidence levels, common faults and estimated revenue.</p>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="stat-card">
+        <h3>Total Reports</h3>
+        <p id="totalReportsMirror">0</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>Average Confidence</h3>
+        <p id="avgConfidence">0%</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>Top Fault</h3>
+        <p id="topFault">N/A</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>Estimated Revenue</h3>
+        <p id="totalRevenueMirror">£0.00</p>
+      </div>
+    </div>
+
+    <div class="recent-block">
+      <h3>Recent Activity</h3>
+      <div id="recentActivity"></div>
+    </div>
+  </section>
+
+  <div class="content-grid session-grid">
+
+    <section class="panel access-panel">
       <div class="section-head">
         <div>
-          <span class="section-kicker">Analytics</span>
-          <h2>Workshop Dashboard</h2>
-          <p>Track reports, confidence levels, common faults and estimated revenue.</p>
+          <span class="section-kicker">Secure Access</span>
+          <h2>Login</h2>
+          <p>Access your workshop dashboard and saved reports.</p>
         </div>
       </div>
 
-      <div class="dashboard-grid">
-        <div class="stat-card">
-          <h3>Total Reports</h3>
-          <p id="totalReportsMirror">0</p>
-        </div>
+      <input id="email" placeholder="Email address" autocomplete="email" />
+      <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
 
-        <div class="stat-card">
-          <h3>Average Confidence</h3>
-          <p id="avgConfidence">0%</p>
-        </div>
+      <button id="loginBtn">Login to Dashboard</button>
+      <button id="signupBtn" class="secondary-btn">Create Account</button>
 
-        <div class="stat-card">
-          <h3>Top Fault</h3>
-          <p id="topFault">N/A</p>
-        </div>
-
-        <div class="stat-card">
-          <h3>Estimated Revenue</h3>
-          <p id="totalRevenueMirror">£0.00</p>
-        </div>
-      </div>
-
-      <div class="recent-block">
-        <h3>Recent Activity</h3>
-        <div id="recentActivity"></div>
-      </div>
+      <p id="authMessage"></p>
     </section>
 
-    <div class="content-grid">
-
-      <section class="panel access-panel">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">Secure Access</span>
-            <h2>Login</h2>
-            <p>Access your workshop dashboard and saved reports.</p>
-          </div>
+    <section class="panel session-card">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">Step 01</span>
+          <h2>Customer & Vehicle Intake</h2>
+          <p>Record the customer complaint and vehicle details before starting diagnosis.</p>
         </div>
+      </div>
 
-        <input id="email" placeholder="Email address" autocomplete="email" />
-        <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
-
-        <button id="loginBtn">Login to Dashboard</button>
-        <button id="signupBtn" class="secondary-btn">Create Account</button>
-
-        <p id="authMessage"></p>
-      </section>
-
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">Customer Intake</span>
-            <h2>Customer & Vehicle Profile</h2>
-            <p>Record the customer complaint, vehicle details and service notes.</p>
-          </div>
-        </div>
-
+      <div class="form-grid">
         <input id="customerName" placeholder="Customer name" />
         <input id="customerPhone" placeholder="Customer phone" />
         <input id="vehicleMake" placeholder="Vehicle make" />
         <input id="vehicleModel" placeholder="Vehicle model" />
         <input id="vehicleReg" placeholder="Registration number" />
         <input id="vehicleMileage" placeholder="Mileage" />
-        <textarea id="serviceNotes" placeholder="Service notes / customer complaint"></textarea>
+      </div>
 
-        <p id="profileMessage"></p>
-      </section>
+      <textarea id="serviceNotes" placeholder="Customer complaint / service notes"></textarea>
 
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">Invoice Tool</span>
-            <h2>Invoice Builder</h2>
-            <p>Calculate labour, parts, VAT and invoice totals quickly.</p>
+      <p id="profileMessage"></p>
+    </section>
+
+    <section id="symptom-checker" class="panel panel-wide session-card">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">Step 02</span>
+          <h2>Vehicle Symptom Checker</h2>
+          <p>Start with what the vehicle is doing before deeper diagnostic analysis.</p>
+        </div>
+      </div>
+
+      <div class="symptom-layout">
+        <div class="symptom-control-card">
+          <label class="field-label" for="symptomSelect">Select vehicle symptom</label>
+
+          <select id="symptomSelect">
+            <option value="">Choose a symptom</option>
+            <option value="overheating">Engine overheating</option>
+            <option value="battery_warning">Battery warning light</option>
+            <option value="clicking_noise">Clicking noise</option>
+            <option value="misfire">Engine misfire</option>
+            <option value="loss_power">Loss of power</option>
+            <option value="smoke_exhaust">Smoke from exhaust</option>
+            <option value="wont_start">Car won't start</option>
+            <option value="rough_idle">Rough idle</option>
+            <option value="brake_warning">Brake warning light</option>
+          </select>
+
+          <button id="checkSymptomBtn">Check Symptom</button>
+
+          <p class="symptom-note">
+            This checker gives general guidance only. Serious faults should be inspected by a qualified mechanic.
+          </p>
+        </div>
+
+        <div id="symptomResult" class="symptom-result empty-state">
+          Select a symptom to view possible causes, urgency, MOT impact, safe-to-drive advice and next checks.
+        </div>
+      </div>
+    </section>
+
+    <section id="warning-light-lookup" class="panel panel-wide session-card">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">Warning Light Intelligence</span>
+          <h2>Dashboard Warning Light Lookup</h2>
+          <p>Search common dashboard warning lights and get safe-to-drive, MOT and next-check guidance.</p>
+        </div>
+      </div>
+
+      <div class="warning-layout">
+        <div class="warning-control-card">
+          <label class="field-label" for="warningSearch">Search warning light</label>
+          <input id="warningSearch" placeholder="Search engine, ABS, oil, coolant..." />
+
+          <label class="field-label" for="warningCategory">Category</label>
+          <select id="warningCategory">
+            <option value="all">All categories</option>
+            <option value="engine">Engine</option>
+            <option value="battery">Battery</option>
+            <option value="brakes">Brakes</option>
+            <option value="oil">Oil</option>
+            <option value="coolant">Coolant</option>
+            <option value="tyre">Tyre Pressure</option>
+            <option value="abs">ABS</option>
+            <option value="airbag">Airbag</option>
+          </select>
+
+          <p class="warning-note">
+            Red warnings usually mean stop safely. Amber warnings usually mean the vehicle needs checking soon.
+          </p>
+        </div>
+
+        <div id="warningLightResults" class="warning-results"></div>
+      </div>
+    </section>
+
+    <section id="live-diagnostics" class="panel panel-wide diagnostic-workspace">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">Step 03</span>
+          <h2>Live Diagnostic Analysis</h2>
+          <p>Select a fault pattern and generate a workshop-style diagnostic report.</p>
+        </div>
+      </div>
+
+      <div class="diagnostic-workflow-grid">
+        <div class="diagnostic-control">
+          <label class="field-label" for="fault">Fault pattern</label>
+
+          <select id="fault">
+            <option value="overheat">Overheating</option>
+            <option value="no_start">No Start</option>
+            <option value="misfire">Misfire</option>
+            <option value="battery">Battery Drain</option>
+            <option value="rough_idle">Rough Idle</option>
+          </select>
+
+          <div class="button-row">
+            <button id="runAiBtn">Run Diagnostic Analysis</button>
+            <button id="saveReportBtn" class="secondary-btn">Save Report</button>
+          </div>
+
+          <p id="reportMessage"></p>
+
+          <div class="obd-mini-panel">
+            <span class="section-kicker">OBD Scanner</span>
+            <h3>Fault Code Lookup</h3>
+            <input id="code" placeholder="Example: P0300, P0171" />
+            <button id="lookupBtn">Analyse Fault Code</button>
+            <pre id="codeOut"></pre>
           </div>
         </div>
 
+        <div class="diagnostic-console-ui">
+          <div class="console-header">
+            <span class="live-dot"></span>
+            <strong>Diagnostic Engine</strong>
+            <small>Analysis Console</small>
+          </div>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <h3>Primary Diagnosis</h3>
+              <p id="result">Awaiting analysis...</p>
+            </div>
+
+            <div class="result-card">
+              <h3>Confidence</h3>
+              <p id="confidence">--</p>
+            </div>
+
+            <div class="result-card result-card-wide">
+              <h3>AI Explanation</h3>
+              <p id="aiExplain"></p>
+            </div>
+          </div>
+
+          <div class="steps-console">
+            <h3>Recommended Diagnostic Steps</h3>
+            <pre id="steps"></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel session-card">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">Step 04</span>
+          <h2>Invoice Builder</h2>
+          <p>Calculate labour, parts, VAT and payment status for this vehicle session.</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
         <input id="labourHours" type="number" step="0.1" min="0" placeholder="Labour hours" />
         <input id="hourlyRate" type="number" step="0.01" min="0" placeholder="Hourly rate" />
         <input id="partsCost" type="number" step="0.01" min="0" placeholder="Parts cost" />
         <input id="vatRate" type="number" step="0.01" min="0" placeholder="VAT %" />
+      </div>
 
-        <select id="paymentStatus">
-          <option value="Unpaid">Unpaid</option>
-          <option value="Paid">Paid</option>
+      <select id="paymentStatus">
+        <option value="Unpaid">Unpaid</option>
+        <option value="Paid">Paid</option>
+      </select>
+
+      <button id="calculateInvoiceBtn">Calculate Invoice</button>
+
+      <div class="invoice-box invoice-summary">
+        <div class="report-meta"><strong>Labour Total:</strong> <span id="labourTotal">£0.00</span></div>
+        <div class="report-meta"><strong>Subtotal:</strong> <span id="subTotal">£0.00</span></div>
+        <div class="report-meta"><strong>VAT Total:</strong> <span id="vatTotal">£0.00</span></div>
+        <div class="report-meta"><strong>Grand Total:</strong> <span id="grandTotal">£0.00</span></div>
+        <div class="report-meta"><strong>Status:</strong> <span id="invoiceStatus">Unpaid</span></div>
+      </div>
+
+      <p id="invoiceMessage"></p>
+    </section>
+
+    <section id="reports" class="panel panel-wide session-card">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">Step 05</span>
+          <h2>Workshop Reports</h2>
+          <p>Search, sort, load and export saved diagnostic reports.</p>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <input id="reportSearch" placeholder="Search reports" />
+
+        <select id="reportSort">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="confidence">Highest Confidence</option>
         </select>
+      </div>
 
-        <button id="calculateInvoiceBtn">Calculate Invoice</button>
+      <div class="button-row">
+        <button id="loadReportsBtn">Load Reports</button>
+        <button id="exportPdfBtn" class="secondary-btn">Export PDF</button>
+      </div>
 
-        <div class="invoice-box">
-          <div class="report-meta"><strong>Labour Total:</strong> <span id="labourTotal">£0.00</span></div>
-          <div class="report-meta"><strong>Subtotal:</strong> <span id="subTotal">£0.00</span></div>
-          <div class="report-meta"><strong>VAT Total:</strong> <span id="vatTotal">£0.00</span></div>
-          <div class="report-meta"><strong>Grand Total:</strong> <span id="grandTotal">£0.00</span></div>
-          <div class="report-meta"><strong>Status:</strong> <span id="invoiceStatus">Unpaid</span></div>
-        </div>
+      <div id="reportList"></div>
+    </section>
 
-        <p id="invoiceMessage"></p>
-      </section>
+  </div>
+</main>
 
-      <section id="symptom-checker" class="panel panel-wide">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">Symptom Checker</span>
-            <h2>Vehicle Symptom Checker</h2>
-            <p>Choose a vehicle symptom and get plain-English UK driver guidance before deeper diagnosis.</p>
-          </div>
-        </div>
+<footer class="site-footer">
+  <div>
+    <strong>AutoKnowledge Pro AI</strong>
+    <p>Workshop diagnostics, vehicle session reports, warning light lookup, OBD support and invoice tools for modern UK garages.</p>
+  </div>
 
-        <div class="symptom-layout">
-          <div class="symptom-control-card">
-            <label class="field-label" for="symptomSelect">Select vehicle symptom</label>
+  <p>© 2026 AutoKnowledge Pro AI • Built by Bavusani Otis Dube</p>
+</footer>
 
-            <select id="symptomSelect">
-              <option value="">Choose a symptom</option>
-              <option value="overheating">Engine overheating</option>
-              <option value="battery_warning">Battery warning light</option>
-              <option value="clicking_noise">Clicking noise</option>
-              <option value="misfire">Engine misfire</option>
-              <option value="loss_power">Loss of power</option>
-              <option value="smoke_exhaust">Smoke from exhaust</option>
-              <option value="wont_start">Car won't start</option>
-              <option value="rough_idle">Rough idle</option>
-              <option value="brake_warning">Brake warning light</option>
-            </select>
-
-            <button id="checkSymptomBtn">Check Symptom</button>
-
-            <p class="symptom-note">
-              This checker gives general guidance only. Serious faults should be checked by a qualified mechanic.
-            </p>
-          </div>
-
-          <div id="symptomResult" class="symptom-result empty-state">
-            Select a symptom to view possible causes, urgency, MOT impact, safe-to-drive advice and next checks.
-          </div>
-        </div>
-      </section>
-
-      <section id="warning-light-lookup" class="panel panel-wide">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">Warning Lights</span>
-            <h2>Dashboard Warning Light Lookup</h2>
-            <p>Search common dashboard warning lights and get UK-focused safe-to-drive, MOT and next-check guidance.</p>
-          </div>
-        </div>
-
-        <div class="warning-layout">
-          <div class="warning-control-card">
-            <label class="field-label" for="warningSearch">Search warning light</label>
-            <input id="warningSearch" placeholder="Search engine, ABS, oil, coolant..." />
-
-            <label class="field-label" for="warningCategory">Category</label>
-            <select id="warningCategory">
-              <option value="all">All categories</option>
-              <option value="engine">Engine</option>
-              <option value="battery">Battery</option>
-              <option value="brakes">Brakes</option>
-              <option value="oil">Oil</option>
-              <option value="coolant">Coolant</option>
-              <option value="tyre">Tyre Pressure</option>
-              <option value="abs">ABS</option>
-              <option value="airbag">Airbag</option>
-            </select>
-
-            <p class="warning-note">
-              Red warnings usually mean stop safely. Amber warnings usually mean the car needs checking soon.
-            </p>
-          </div>
-
-          <div id="warningLightResults" class="warning-results"></div>
-        </div>
-      </section>
-
-      <section id="diagnostics" class="panel panel-wide">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">Diagnostics</span>
-            <h2>AI Diagnostic Engine</h2>
-            <p>Select a common fault symptom and generate a workshop-style diagnostic direction.</p>
-          </div>
-        </div>
-
-        <select id="fault">
-          <option value="overheat">Overheating</option>
-          <option value="no_start">No Start</option>
-          <option value="misfire">Misfire</option>
-          <option value="battery">Battery Drain</option>
-          <option value="rough_idle">Rough Idle</option>
-        </select>
-
-        <div class="button-row">
-          <button id="runAiBtn">Run Diagnostic Analysis</button>
-          <button id="saveReportBtn" class="secondary-btn">Save Report</button>
-        </div>
-
-        <div class="result-grid">
-          <div class="result-card">
-            <h3>Primary Diagnosis</h3>
-            <p id="result">Awaiting analysis...</p>
-          </div>
-
-          <div class="result-card">
-            <h3>Confidence</h3>
-            <p id="confidence">--</p>
-          </div>
-
-          <div class="result-card result-card-wide">
-            <h3>AI Explanation</h3>
-            <p id="aiExplain"></p>
-          </div>
-        </div>
-
-        <pre id="steps"></pre>
-        <p id="reportMessage"></p>
-      </section>
-
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">Fault Codes</span>
-            <h2>OBD Scanner</h2>
-            <p>Check common OBD fault codes such as P0300 or P0171.</p>
-          </div>
-        </div>
-
-        <input id="code" placeholder="Example: P0300, P0171" />
-        <button id="lookupBtn">Analyse Fault Code</button>
-        <pre id="codeOut"></pre>
-      </section>
-
-      <section id="reports" class="panel panel-wide">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">Saved History</span>
-            <h2>Workshop Reports</h2>
-            <p>Search, sort, load and export saved diagnostic reports.</p>
-          </div>
-        </div>
-
-        <div class="toolbar">
-          <input id="reportSearch" placeholder="Search reports" />
-
-          <select id="reportSort">
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-            <option value="confidence">Highest Confidence</option>
-          </select>
-        </div>
-
-        <div class="button-row">
-          <button id="loadReportsBtn">Load Reports</button>
-          <button id="exportPdfBtn" class="secondary-btn">Export PDF</button>
-        </div>
-
-        <div id="reportList"></div>
-      </section>
-
-    </div>
-  </main>
-
-  <footer class="site-footer">
-    <div>
-      <strong>AutoKnowledge Pro AI</strong>
-      <p>Professional automotive diagnostics and workshop management software for UK drivers, garages and technicians.</p>
-    </div>
-
-    <p>© 2026 AutoKnowledge Pro AI • Built by Bavusani Otis Dube</p>
-  </footer>
-
-  <script type="module" src="app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
