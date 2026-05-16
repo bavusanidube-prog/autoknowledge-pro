@@ -82,98 +82,185 @@ const el = {
 let lastReport = null;
 let lastInvoice = null;
 let allReports = [];
+let activeSessionId = createSessionId();
 
-const symptomData = {
-  overheating: {
+const diagnosticRules = {
+  overheat: {
+    symptomKey: "overheating",
     title: "Engine Overheating",
-    summary: "Overheating should be treated seriously because continued driving can damage the engine.",
+    fault: "Cooling System Fault",
+    faultGroup: "Cooling System",
+    confidenceBase: 86,
+    urgency: "Critical",
     severity: "High",
     driveClass: "drive-unsafe",
-    safe: "Usually not safe to keep driving. Stop when safe, switch the engine off and allow it to cool.",
-    mot: "May cause MOT issues if there are coolant leaks, warning lights, emissions problems or visible engine faults.",
-    causes: ["Low coolant level", "Coolant leak", "Faulty thermostat", "Radiator fan not working", "Blocked radiator", "Weak water pump", "Possible head gasket fault"],
-    checks: ["Check coolant level only when the engine is cold", "Look for coolant leaks under the car", "Check if the radiator fan comes on", "Watch the temperature gauge behaviour", "Do not remove the coolant cap when hot"]
+    safe: "No. Stop safely, switch the engine off and allow it to cool. Do not remove the coolant cap while hot.",
+    mot: "May affect MOT if coolant leaks, warning lights, emissions problems or visible engine faults are present.",
+    explanation: "The symptoms suggest a cooling system issue such as low coolant, coolant leak, thermostat fault, radiator fan failure or weak water pump.",
+    causes: [
+      { name: "Low coolant level", confidence: 84 },
+      { name: "Coolant leak", confidence: 78 },
+      { name: "Thermostat stuck closed", confidence: 66 },
+      { name: "Radiator fan fault", confidence: 61 },
+      { name: "Water pump failure", confidence: 52 }
+    ],
+    checks: [
+      "Allow the engine to cool before inspection",
+      "Check coolant level when cold",
+      "Inspect for visible coolant leaks",
+      "Check radiator fan operation",
+      "Pressure test cooling system"
+    ],
+    repairSuggestions: [
+      { item: "Cooling system pressure test", labourHours: 1, partsCost: 0 },
+      { item: "Thermostat replacement", labourHours: 1.5, partsCost: 35 },
+      { item: "Coolant leak repair allowance", labourHours: 2, partsCost: 45 }
+    ]
   },
-  battery_warning: {
-    title: "Battery Warning Light",
-    summary: "A battery warning light normally means the vehicle may not be charging correctly.",
-    severity: "Medium",
-    driveClass: "drive-caution",
-    safe: "Short driving may be possible, but the vehicle may cut out if the alternator is not charging.",
-    mot: "The light itself is not always a direct MOT failure, but related electrical problems may affect the test.",
-    causes: ["Failing alternator", "Weak battery", "Loose auxiliary belt", "Corroded battery terminals", "Charging system fault", "Poor earth connection"],
-    checks: ["Check battery terminals for corrosion", "Check if the auxiliary belt is fitted and turning", "Test battery voltage", "Test alternator charging output", "Reduce electrical load if driving to a safe place"]
-  },
-  clicking_noise: {
-    title: "Clicking Noise",
-    summary: "Clicking can be electrical, starting-system related, suspension related or drivetrain related.",
-    severity: "Medium",
-    driveClass: "drive-caution",
-    safe: "Depends where the noise comes from. Avoid driving if it comes from wheels, brakes or steering.",
-    mot: "Can affect MOT if linked to suspension, steering, CV joints, wheel bearings or braking components.",
-    causes: ["Weak battery or starter clicking", "CV joint wear", "Loose wheel component", "Brake hardware movement", "Suspension joint wear", "Relay or electrical clicking"],
-    checks: ["Check if clicking happens when starting", "Check if the noise changes when turning", "Inspect tyres and wheel area", "Check battery condition", "Have suspension and steering checked"]
-  },
-  misfire: {
-    title: "Engine Misfire",
-    summary: "A misfire can cause rough running, shaking, poor fuel economy and catalytic converter damage.",
-    severity: "High",
-    driveClass: "drive-unsafe",
-    safe: "Avoid driving far. A misfire can damage the catalytic converter and increase emissions.",
-    mot: "Likely MOT issue if emissions are affected, the engine runs poorly or the engine warning light is on.",
-    causes: ["Spark plug fault", "Ignition coil failure", "Injector issue", "Vacuum leak", "Low compression", "Fuel delivery problem"],
-    checks: ["Scan for fault codes such as P0300", "Check spark plugs", "Check ignition coils", "Listen for rough idle", "Avoid hard acceleration"]
-  },
-  loss_power: {
-    title: "Loss of Power",
-    summary: "Loss of power can come from fuel, air, ignition, turbo or emissions system faults.",
-    severity: "Medium",
-    driveClass: "drive-caution",
-    safe: "Drive carefully only if the vehicle feels stable. Avoid motorways if power loss is severe.",
-    mot: "May affect MOT if emissions are high, smoke is present or engine warning lights are showing.",
-    causes: ["Turbo boost leak", "Blocked fuel filter", "MAF sensor fault", "EGR valve fault", "DPF restriction", "Fuel delivery issue", "Ignition fault"],
-    checks: ["Check for engine warning lights", "Scan for fault codes", "Check air filter condition", "Listen for boost leaks", "Check for smoke under acceleration"]
-  },
-  smoke_exhaust: {
-    title: "Smoke From Exhaust",
-    summary: "Smoke colour gives useful clues. Blue, white and black smoke normally point to different faults.",
-    severity: "High",
-    driveClass: "drive-unsafe",
-    safe: "Not recommended if smoke is heavy, constant or smells strongly of oil, fuel or coolant.",
-    mot: "Excessive visible smoke can cause an MOT emissions failure.",
-    causes: ["Blue smoke: burning oil", "White smoke: coolant entering the combustion chamber", "Black smoke: over-fuelling or air restriction", "Turbo seal wear", "Injector fault", "DPF or EGR issue"],
-    checks: ["Note the smoke colour", "Check oil level", "Check coolant level", "Look for warning lights", "Book an emissions and diagnostic check"]
-  },
-  wont_start: {
+
+  no_start: {
+    symptomKey: "wont_start",
     title: "Car Won't Start",
-    summary: "A non-start fault usually needs basic checks before deeper diagnosis.",
+    fault: "Starting System Fault",
+    faultGroup: "Starting / Electrical",
+    confidenceBase: 80,
+    urgency: "High",
     severity: "Medium",
     driveClass: "drive-unsafe",
     safe: "Vehicle is not driveable until the starting fault is found.",
     mot: "A vehicle that cannot start cannot complete an MOT test.",
-    causes: ["Flat battery", "Starter motor fault", "Fuel pump issue", "Immobiliser problem", "Bad earth connection", "Crankshaft sensor fault"],
-    checks: ["Check dashboard lights", "Listen for clicking when turning the key", "Try a jump start if the battery is flat", "Check fuel level", "Scan for fault codes if possible"]
+    explanation: "The fault pattern points towards battery condition, starter motor operation, immobiliser status, fuel delivery or crankshaft sensor signal.",
+    causes: [
+      { name: "Flat or weak battery", confidence: 84 },
+      { name: "Starter motor fault", confidence: 72 },
+      { name: "Immobiliser issue", confidence: 58 },
+      { name: "Fuel pump fault", confidence: 51 },
+      { name: "Crankshaft sensor fault", confidence: 45 }
+    ],
+    checks: [
+      "Check dashboard lights",
+      "Listen for clicking when key is turned",
+      "Test battery voltage",
+      "Check starter relay and starter feed",
+      "Scan for immobiliser or crank sensor codes"
+    ],
+    repairSuggestions: [
+      { item: "Battery test", labourHours: 0.3, partsCost: 0 },
+      { item: "Starter motor diagnostic check", labourHours: 1, partsCost: 0 },
+      { item: "Starter motor replacement allowance", labourHours: 1.5, partsCost: 120 }
+    ]
   },
+
+  misfire: {
+    symptomKey: "misfire",
+    title: "Engine Misfire",
+    fault: "Ignition or Fuel Misfire",
+    faultGroup: "Engine / Ignition",
+    confidenceBase: 88,
+    urgency: "High",
+    severity: "High",
+    driveClass: "drive-unsafe",
+    safe: "Avoid driving far. A misfire can damage the catalytic converter and increase emissions.",
+    mot: "Likely MOT issue if emissions are affected, the engine runs poorly or the engine warning light is on.",
+    explanation: "A misfire is commonly linked to spark plugs, ignition coils, injector issues, vacuum leaks or low compression.",
+    causes: [
+      { name: "Ignition coil failure", confidence: 82 },
+      { name: "Spark plug wear", confidence: 74 },
+      { name: "Fuel injector issue", confidence: 58 },
+      { name: "Vacuum leak", confidence: 44 },
+      { name: "Low compression", confidence: 35 }
+    ],
+    checks: [
+      "Scan for P0300/P0301-P0304 codes",
+      "Inspect spark plugs",
+      "Test ignition coils",
+      "Check injector pulse",
+      "Check for vacuum leaks"
+    ],
+    repairSuggestions: [
+      { item: "Diagnostic inspection", labourHours: 1, partsCost: 0 },
+      { item: "Spark plug replacement", labourHours: 1, partsCost: 45 },
+      { item: "Ignition coil replacement allowance", labourHours: 0.8, partsCost: 65 }
+    ]
+  },
+
+  battery: {
+    symptomKey: "battery_warning",
+    title: "Battery Warning Light",
+    fault: "Charging System Fault",
+    faultGroup: "Electrical / Charging",
+    confidenceBase: 82,
+    urgency: "Medium",
+    severity: "Medium",
+    driveClass: "drive-caution",
+    safe: "Short driving may be possible, but the vehicle may cut out if the alternator is not charging.",
+    mot: "May affect MOT if electrical systems, lamps or warning lights are not operating correctly.",
+    explanation: "A battery warning light normally means the charging system is not working correctly. Common areas include alternator output, auxiliary belt, battery health and wiring.",
+    causes: [
+      { name: "Alternator fault", confidence: 82 },
+      { name: "Weak battery", confidence: 68 },
+      { name: "Loose or broken auxiliary belt", confidence: 57 },
+      { name: "Corroded battery terminals", confidence: 45 },
+      { name: "Poor earth connection", confidence: 38 }
+    ],
+    checks: [
+      "Check battery terminals for corrosion",
+      "Check auxiliary belt condition",
+      "Test battery voltage",
+      "Test alternator charging output",
+      "Reduce electrical load if driving to a safe place"
+    ],
+    repairSuggestions: [
+      { item: "Battery and charging test", labourHours: 0.5, partsCost: 0 },
+      { item: "Battery replacement allowance", labourHours: 0.4, partsCost: 95 },
+      { item: "Alternator replacement allowance", labourHours: 1.5, partsCost: 180 }
+    ]
+  },
+
   rough_idle: {
+    symptomKey: "rough_idle",
     title: "Rough Idle",
-    summary: "A rough idle means the engine is not running smoothly when stationary. It may shake, dip in revs or feel like it wants to stall.",
+    fault: "Idle Air / Fuel Imbalance",
+    faultGroup: "Engine Management",
+    confidenceBase: 78,
+    urgency: "Medium",
     severity: "Medium",
     driveClass: "drive-caution",
     safe: "Short driving may be possible if the car is stable, but avoid driving if it stalls, shakes heavily or warning lights appear.",
-    mot: "May affect MOT if emissions are high, the engine warning light is on or the idle is unstable.",
-    causes: ["Vacuum leak", "Dirty throttle body", "MAF sensor fault", "Ignition fault", "Injector issue", "EGR valve fault"],
-    checks: ["Scan for fault codes", "Check for air leaks", "Clean throttle body", "Check spark plugs and coils", "Check idle speed behaviour"]
-  },
-  brake_warning: {
-    title: "Brake Warning Light",
-    summary: "A brake warning light should be taken seriously because it may relate to brake fluid, the handbrake, ABS or the braking system.",
-    severity: "High",
-    driveClass: "drive-unsafe",
-    safe: "No. Do not continue driving until brake fluid level and brake operation have been checked.",
-    mot: "Very likely to affect MOT if brake warning lights, low brake fluid or braking faults are present.",
-    causes: ["Low brake fluid", "Handbrake switch issue", "Worn brake pads", "ABS fault", "Brake fluid leak", "Brake sensor fault"],
-    checks: ["Check brake fluid level", "Check if handbrake is fully released", "Look for brake fluid leaks", "Check brake pedal feel", "Book brake inspection immediately"]
+    mot: "May affect MOT if emissions are high, the engine warning light is on or idle speed is unstable.",
+    explanation: "A rough idle usually means the engine is not receiving the correct air, fuel or ignition balance at idle.",
+    causes: [
+      { name: "Vacuum leak", confidence: 72 },
+      { name: "Dirty throttle body", confidence: 66 },
+      { name: "MAF sensor fault", confidence: 59 },
+      { name: "Ignition fault", confidence: 56 },
+      { name: "EGR valve fault", confidence: 48 }
+    ],
+    checks: [
+      "Scan for fault codes",
+      "Check for air leaks",
+      "Inspect and clean throttle body",
+      "Check spark plugs and coils",
+      "Check idle speed behaviour"
+    ],
+    repairSuggestions: [
+      { item: "Engine diagnostic inspection", labourHours: 1, partsCost: 0 },
+      { item: "Throttle body clean", labourHours: 0.8, partsCost: 10 },
+      { item: "MAF sensor test", labourHours: 0.5, partsCost: 0 }
+    ]
   }
+};
+
+const symptomToDiagnosticMap = {
+  overheating: "overheat",
+  battery_warning: "battery",
+  clicking_noise: "no_start",
+  misfire: "misfire",
+  loss_power: "rough_idle",
+  smoke_exhaust: "misfire",
+  wont_start: "no_start",
+  rough_idle: "rough_idle",
+  brake_warning: "battery"
 };
 
 const warningLightData = [
@@ -182,6 +269,7 @@ const warningLightData = [
     category: "engine",
     severity: "Amber",
     colourClass: "warning-amber",
+    diagnosticKey: "misfire",
     description: "The engine management light means the engine control system has detected a fault.",
     safe: "You may be able to drive carefully if the car feels normal, but avoid hard acceleration and get it checked soon.",
     mot: "May fail MOT if the light stays on, emissions are affected or the engine runs poorly.",
@@ -193,6 +281,7 @@ const warningLightData = [
     category: "battery",
     severity: "Red",
     colourClass: "warning-red",
+    diagnosticKey: "battery",
     description: "This usually means the battery is not charging correctly while the engine is running.",
     safe: "Not safe for long. The car may cut out once battery power drops.",
     mot: "May affect MOT if electrical systems or warning lights are not operating correctly.",
@@ -204,6 +293,7 @@ const warningLightData = [
     category: "brakes",
     severity: "Red",
     colourClass: "warning-red",
+    diagnosticKey: "battery",
     description: "A brake warning light can point to low brake fluid, handbrake issues or braking system faults.",
     safe: "Do not continue driving until brake fluid level and brake operation are checked.",
     mot: "Very likely to affect MOT if brake warning lights or braking faults are present.",
@@ -215,6 +305,7 @@ const warningLightData = [
     category: "oil",
     severity: "Red",
     colourClass: "warning-red",
+    diagnosticKey: "overheat",
     description: "This means the engine may not have enough oil pressure to protect internal parts.",
     safe: "Stop safely and switch off the engine. Continuing to drive can destroy the engine.",
     mot: "May affect MOT if there are oil leaks, warning lights or engine running issues.",
@@ -226,6 +317,7 @@ const warningLightData = [
     category: "coolant",
     severity: "Red",
     colourClass: "warning-red",
+    diagnosticKey: "overheat",
     description: "The engine is too hot or the coolant system has a serious issue.",
     safe: "Stop when safe and let the engine cool. Do not open the coolant cap while hot.",
     mot: "May affect MOT if leaks, overheating, emissions issues or warning lights are present.",
@@ -237,6 +329,7 @@ const warningLightData = [
     category: "tyre",
     severity: "Amber",
     colourClass: "warning-amber",
+    diagnosticKey: "rough_idle",
     description: "One or more tyres may be under-inflated or the tyre pressure monitoring system has detected a problem.",
     safe: "Drive carefully to a safe place to check tyre pressures. Avoid high speed if a tyre looks low.",
     mot: "May affect MOT if tyres are damaged, unsafe, below legal tread depth or TPMS fault applies on relevant vehicles.",
@@ -248,6 +341,7 @@ const warningLightData = [
     category: "abs",
     severity: "Amber",
     colourClass: "warning-amber",
+    diagnosticKey: "battery",
     description: "The anti-lock braking system may not work correctly, although normal braking may still remain.",
     safe: "Drive cautiously, but avoid harsh braking. Get it checked soon.",
     mot: "An ABS warning light is likely to fail MOT if it stays on.",
@@ -259,6 +353,7 @@ const warningLightData = [
     category: "airbag",
     severity: "Amber",
     colourClass: "warning-amber",
+    diagnosticKey: "battery",
     description: "The airbag or seatbelt restraint system has detected a fault.",
     safe: "The car may drive, but airbags or seatbelt pretensioners may not work correctly in a crash.",
     mot: "An airbag/SRS warning light is likely to fail MOT if it stays on.",
@@ -267,46 +362,37 @@ const warningLightData = [
   }
 ];
 
-const diagnostics = {
-  overheat: {
-    fault: "Cooling System Failure",
-    confidence: 92,
-    explanation: "Likely thermostat, coolant loss, blocked radiator or weak water pump.",
-    steps: "1. Check coolant level\n2. Check leaks\n3. Test thermostat\n4. Inspect radiator fan\n5. Test water pump"
+const obdCodes = {
+  P0300: {
+    title: "Random / Multiple Cylinder Misfire",
+    diagnosticKey: "misfire",
+    confidenceBoost: 7
   },
-  no_start: {
-    fault: "Starting / Fuel Delivery Fault",
-    confidence: 89,
-    explanation: "Likely battery voltage issue, starter fault, immobilizer or no fuel.",
-    steps: "1. Check battery voltage\n2. Inspect starter relay\n3. Verify spark\n4. Verify fuel pressure"
+  P0171: {
+    title: "System Too Lean Bank 1",
+    diagnosticKey: "rough_idle",
+    confidenceBoost: 6
   },
-  misfire: {
-    fault: "Ignition or Fuel Misfire",
-    confidence: 94,
-    explanation: "Likely spark plugs, coils, injectors, vacuum leak or compression issue.",
-    steps: "1. Check plugs\n2. Test coils\n3. Check injector pulse\n4. Compression test"
+  P0420: {
+    title: "Catalyst Efficiency Below Threshold",
+    diagnosticKey: "misfire",
+    confidenceBoost: 5
   },
-  battery: {
-    fault: "Battery Drain / Charging Fault",
-    confidence: 87,
-    explanation: "Likely parasitic drain, battery wear or alternator issue.",
-    steps: "1. Test battery health\n2. Check alternator output\n3. Perform drain test"
+  P0101: {
+    title: "MAF Range / Performance",
+    diagnosticKey: "rough_idle",
+    confidenceBoost: 6
   },
-  rough_idle: {
-    fault: "Idle Air/Fuel Imbalance",
-    confidence: 88,
-    explanation: "Likely vacuum leak, dirty throttle body, MAF issue or weak ignition.",
-    steps: "1. Inspect vacuum leaks\n2. Clean throttle body\n3. Test MAF\n4. Inspect ignition"
+  P0500: {
+    title: "Vehicle Speed Sensor Fault",
+    diagnosticKey: "battery",
+    confidenceBoost: 4
   }
 };
 
-const obdCodes = {
-  P0300: "Random/Multiple Cylinder Misfire",
-  P0171: "System Too Lean Bank 1",
-  P0420: "Catalyst Efficiency Below Threshold",
-  P0101: "MAF Range / Performance",
-  P0500: "Vehicle Speed Sensor Fault"
-};
+function createSessionId() {
+  return `AKP-${Math.floor(1000 + Math.random() * 9000)}`;
+}
 
 function setMessage(target, text, type = "") {
   if (!target) return;
@@ -352,58 +438,165 @@ function setText(target, value) {
   if (target) target.textContent = value;
 }
 
+function getProfileData() {
+  return {
+    customerName: el.customerName?.value.trim() || "",
+    customerPhone: el.customerPhone?.value.trim() || "",
+    vehicleMake: el.vehicleMake?.value.trim() || "",
+    vehicleModel: el.vehicleModel?.value.trim() || "",
+    vehicleReg: el.vehicleReg?.value.trim().toUpperCase() || "",
+    vehicleMileage: el.vehicleMileage?.value.trim() || "",
+    serviceNotes: el.serviceNotes?.value.trim() || ""
+  };
+}
+
+function validateProfile(profile) {
+  if (!profile.customerName) throw new Error("Customer name is required.");
+  if (!profile.vehicleMake) throw new Error("Vehicle make is required.");
+  if (!profile.vehicleModel) throw new Error("Vehicle model is required.");
+  if (!profile.vehicleReg) throw new Error("Registration number is required.");
+}
+
+function getSelectedObdCode() {
+  const raw = el.code?.value || "";
+  const first = raw.split(",").map((x) => x.trim().toUpperCase()).filter(Boolean)[0];
+  return first || "";
+}
+
+function getVehicleContext() {
+  const profile = getProfileData();
+  const mileage = Number(profile.vehicleMileage.replace(/[^\d]/g, "") || 0);
+  const obdCode = getSelectedObdCode();
+
+  return {
+    ...profile,
+    mileage,
+    obdCode,
+    hasObdCode: Boolean(obdCode),
+    symptomKey: el.symptomSelect?.value || "",
+    selectedFault: el.fault?.value || ""
+  };
+}
+
+function calculateConfidence(rule, context) {
+  let confidence = rule.confidenceBase;
+
+  if (context.hasObdCode && obdCodes[context.obdCode]?.diagnosticKey === context.selectedFault) {
+    confidence += obdCodes[context.obdCode].confidenceBoost;
+  } else if (context.hasObdCode) {
+    confidence += 3;
+  }
+
+  if (context.mileage > 100000) confidence += 3;
+  if (context.serviceNotes.length > 20) confidence += 2;
+  if (context.vehicleReg) confidence += 1;
+
+  return Math.min(confidence, 96);
+}
+
+function generateDiagnosis(diagnosticKey) {
+  const rule = diagnosticRules[diagnosticKey];
+
+  if (!rule) {
+    return null;
+  }
+
+  const context = getVehicleContext();
+  context.selectedFault = diagnosticKey;
+
+  const confidence = calculateConfidence(rule, context);
+  const likelyCauses = rule.causes.map((cause) => ({
+    ...cause,
+    confidence: Math.min(cause.confidence + Math.max(0, confidence - rule.confidenceBase), 96)
+  }));
+
+  return {
+    sessionId: activeSessionId,
+    diagnosticKey,
+    fault: rule.fault,
+    title: rule.title,
+    faultGroup: rule.faultGroup,
+    confidence,
+    urgency: rule.urgency,
+    severity: rule.severity,
+    safe: rule.safe,
+    mot: rule.mot,
+    explanation: rule.explanation,
+    causes: likelyCauses,
+    checks: rule.checks,
+    repairSuggestions: rule.repairSuggestions,
+    steps: rule.checks.map((step, index) => `${index + 1}. ${step}`).join("\n"),
+    generatedAt: new Date().toISOString()
+  };
+}
+
 function severityClass(level) {
   if (level === "High") return "severity-high";
   if (level === "Medium") return "severity-medium";
   return "severity-low";
 }
 
+function renderDiagnosisCard(diagnosis) {
+  if (!diagnosis) return "";
+
+  return `
+    <div class="symptom-card">
+      <h3>${escapeHtml(diagnosis.title)}</h3>
+      <p class="symptom-summary">${escapeHtml(diagnosis.explanation)}</p>
+
+      <div class="symptom-badges">
+        <span class="symptom-badge ${severityClass(diagnosis.severity)}">Severity: ${escapeHtml(diagnosis.severity)}</span>
+        <span class="symptom-badge">Confidence: ${escapeHtml(diagnosis.confidence)}%</span>
+        <span class="symptom-badge">MOT aware</span>
+      </div>
+
+      <div class="symptom-info-grid">
+        <div class="symptom-info">
+          <h4>Likely Causes</h4>
+          <ul>
+            ${diagnosis.causes.map((item) => `<li>${escapeHtml(item.name)} — ${escapeHtml(item.confidence)}%</li>`).join("")}
+          </ul>
+        </div>
+
+        <div class="symptom-info">
+          <h4>Safe To Drive?</h4>
+          <p>${escapeHtml(diagnosis.safe)}</p>
+        </div>
+
+        <div class="symptom-info">
+          <h4>MOT Implications</h4>
+          <p>${escapeHtml(diagnosis.mot)}</p>
+        </div>
+
+        <div class="symptom-info">
+          <h4>Recommended Next Checks</h4>
+          <ul>${diagnosis.checks.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function renderSymptomResult() {
   if (!el.symptomSelect || !el.symptomResult) return;
 
-  const data = symptomData[el.symptomSelect.value];
+  const symptomKey = el.symptomSelect.value;
 
-  if (!data) {
+  if (!symptomKey) {
     el.symptomResult.className = "symptom-result empty-state";
     el.symptomResult.textContent = "Select a symptom to see possible causes, severity, MOT impact and next checks.";
     return;
   }
 
+  const diagnosticKey = symptomToDiagnosticMap[symptomKey] || "rough_idle";
+  const diagnosis = generateDiagnosis(diagnosticKey);
+
   el.symptomResult.className = "symptom-result";
-  el.symptomResult.innerHTML = `
-    <div class="symptom-card">
-      <h3>${escapeHtml(data.title)}</h3>
-      <p class="symptom-summary">${escapeHtml(data.summary)}</p>
+  el.symptomResult.innerHTML = renderDiagnosisCard(diagnosis);
 
-      <div class="symptom-badges">
-        <span class="symptom-badge ${severityClass(data.severity)}">Severity: ${escapeHtml(data.severity)}</span>
-        <span class="symptom-badge ${escapeHtml(data.driveClass)}">Safe to drive guidance</span>
-        <span class="symptom-badge">UK MOT aware</span>
-      </div>
-
-      <div class="symptom-info-grid">
-        <div class="symptom-info">
-          <h4>Possible Causes</h4>
-          <ul>${data.causes.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-        </div>
-
-        <div class="symptom-info">
-          <h4>Safe To Drive?</h4>
-          <p>${escapeHtml(data.safe)}</p>
-        </div>
-
-        <div class="symptom-info">
-          <h4>MOT Implications</h4>
-          <p>${escapeHtml(data.mot)}</p>
-        </div>
-
-        <div class="symptom-info">
-          <h4>Recommended Next Checks</h4>
-          <ul>${data.checks.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-        </div>
-      </div>
-    </div>
-  `;
+  if (el.fault) {
+    el.fault.value = diagnosticKey;
+  }
 }
 
 function renderWarningLights() {
@@ -463,25 +656,6 @@ function renderWarningLights() {
   `).join("");
 }
 
-function getProfileData() {
-  return {
-    customerName: el.customerName?.value.trim() || "",
-    customerPhone: el.customerPhone?.value.trim() || "",
-    vehicleMake: el.vehicleMake?.value.trim() || "",
-    vehicleModel: el.vehicleModel?.value.trim() || "",
-    vehicleReg: el.vehicleReg?.value.trim() || "",
-    vehicleMileage: el.vehicleMileage?.value.trim() || "",
-    serviceNotes: el.serviceNotes?.value.trim() || ""
-  };
-}
-
-function validateProfile(profile) {
-  if (!profile.customerName) throw new Error("Customer name is required.");
-  if (!profile.vehicleMake) throw new Error("Vehicle make is required.");
-  if (!profile.vehicleModel) throw new Error("Vehicle model is required.");
-  if (!profile.vehicleReg) throw new Error("Registration number is required.");
-}
-
 function getInvoiceData() {
   const labourHours = Number(el.labourHours?.value || 0);
   const hourlyRate = Number(el.hourlyRate?.value || 0);
@@ -523,18 +697,80 @@ function calculateInvoice() {
   setMessage(el.invoiceMessage, "Invoice calculated.", "success");
 }
 
-function runAI() {
-  const item = diagnostics[el.fault?.value];
-  if (!item) return;
+function applyRecommendedInvoice(diagnosis) {
+  if (!diagnosis?.repairSuggestions?.length) return;
 
-  lastReport = item;
-  setText(el.result, item.fault);
-  setText(el.confidence, `${item.confidence}%`);
-  setText(el.aiExplain, item.explanation);
-  setText(el.steps, item.steps);
+  const diagnosticFee = diagnosis.repairSuggestions[0];
+  const suggestedLabour = diagnosis.repairSuggestions.reduce((sum, item) => sum + Number(item.labourHours || 0), 0);
+  const suggestedParts = diagnosis.repairSuggestions.reduce((sum, item) => sum + Number(item.partsCost || 0), 0);
+
+  if (el.labourHours && !el.labourHours.value) el.labourHours.value = suggestedLabour.toFixed(1);
+  if (el.hourlyRate && !el.hourlyRate.value) el.hourlyRate.value = "65";
+  if (el.partsCost && !el.partsCost.value) el.partsCost.value = suggestedParts.toFixed(2);
+  if (el.vatRate && !el.vatRate.value) el.vatRate.value = "20";
+
+  lastInvoice = getInvoiceData();
+  updateInvoiceUI(lastInvoice);
+
+  setMessage(el.invoiceMessage, `Invoice suggestion added from: ${diagnosticFee.item}.`, "success");
+}
+
+function renderAnalysisConsole(diagnosis) {
+  const causeLines = diagnosis.causes
+    .map((cause) => `${cause.name} probability: ${cause.confidence}%`)
+    .join("\n");
+
+  return [
+    `Session: ${diagnosis.sessionId}`,
+    `Fault group: ${diagnosis.faultGroup}`,
+    `Urgency: ${diagnosis.urgency}`,
+    "",
+    "System checks:",
+    ...diagnosis.checks.map((step) => `• ${step}`),
+    "",
+    "Probability map:",
+    causeLines
+  ].join("\n");
+}
+
+async function runAI() {
+  const diagnosticKey = el.fault?.value || "misfire";
+  const diagnosis = generateDiagnosis(diagnosticKey);
+
+  if (!diagnosis) {
+    setMessage(el.reportMessage, "No diagnostic rule found.", "error");
+    return;
+  }
+
+  setLoading(el.runAiBtn, true, "Analysing...");
+  setMessage(el.reportMessage, "Running diagnostic analysis...", "");
+
+  setText(el.result, "Scanning vehicle systems...");
+  setText(el.confidence, "Calculating...");
+  setText(el.aiExplain, "Analysing symptoms, vehicle context and known fault patterns...");
+  setText(el.steps, "Initialising diagnostic workflow...");
+
+  await new Promise((resolve) => setTimeout(resolve, 450));
+  setText(el.steps, "Checking symptom pattern...\nAnalysing likely fault group...");
+
+  await new Promise((resolve) => setTimeout(resolve, 450));
+  setText(el.steps, "Comparing diagnostic rules...\nBuilding confidence score...\nGenerating next checks...");
+
+  await new Promise((resolve) => setTimeout(resolve, 450));
+
+  lastReport = diagnosis;
+
+  setText(el.result, diagnosis.fault);
+  setText(el.confidence, `${diagnosis.confidence}%`);
+  setText(el.aiExplain, diagnosis.explanation);
+  setText(el.steps, renderAnalysisConsole(diagnosis));
+
+  applyRecommendedInvoice(diagnosis);
 
   if (el.saveReportBtn) el.saveReportBtn.disabled = false;
-  setMessage(el.reportMessage, "Analysis complete. Ready to save.", "success");
+
+  setMessage(el.reportMessage, `Analysis complete. ${diagnosis.urgency} urgency. Ready to save.`, "success");
+  setLoading(el.runAiBtn, false);
 }
 
 async function login() {
@@ -587,6 +823,7 @@ async function save() {
     updateInvoiceUI(invoice);
 
     await saveReport({
+      sessionId: activeSessionId,
       ...lastReport,
       ...profile,
       ...invoice
@@ -595,6 +832,8 @@ async function save() {
     setMessage(el.profileMessage, "Customer and vehicle profile attached.", "success");
     setMessage(el.invoiceMessage, "Invoice attached.", "success");
     setMessage(el.reportMessage, "Saved to cloud.", "success");
+
+    activeSessionId = createSessionId();
   } catch (error) {
     const message = error.message || "Save failed.";
     if (message.includes("Customer") || message.includes("Vehicle") || message.includes("Registration")) {
@@ -609,6 +848,7 @@ async function save() {
 
 function createProfileHtml(report) {
   return `
+    <div class="report-meta"><strong>Session:</strong> ${escapeHtml(report.sessionId || "N/A")}</div>
     <div class="report-meta"><strong>Customer:</strong> ${escapeHtml(report.customerName || "N/A")}</div>
     <div class="report-meta"><strong>Phone:</strong> ${escapeHtml(report.customerPhone || "N/A")}</div>
     <div class="report-meta"><strong>Vehicle:</strong> ${escapeHtml(report.vehicleMake || "")} ${escapeHtml(report.vehicleModel || "")}</div>
@@ -649,6 +889,9 @@ function renderReports(list) {
       ${createProfileHtml(report)}
       ${createInvoiceHtml(report)}
       <div class="report-meta"><strong>Confidence:</strong> ${escapeHtml(report.confidence)}%</div>
+      <div class="report-meta"><strong>Urgency:</strong> ${escapeHtml(report.urgency || "N/A")}</div>
+      <div class="report-meta"><strong>Safe To Drive:</strong> ${escapeHtml(report.safe || "N/A")}</div>
+      <div class="report-meta"><strong>MOT Risk:</strong> ${escapeHtml(report.mot || "N/A")}</div>
       <div class="report-meta"><strong>Explanation:</strong> ${escapeHtml(report.explanation)}</div>
       <div class="report-meta"><strong>Saved:</strong> ${escapeHtml(formatDate(report.createdAt))}</div>
       <pre>${escapeHtml(report.steps)}</pre>
@@ -718,6 +961,7 @@ function renderRecentActivity(list) {
     card.className = "activity-card";
     card.innerHTML = `
       <h3>${escapeHtml(report.fault)}</h3>
+      <div class="report-meta"><strong>Session:</strong> ${escapeHtml(report.sessionId || "N/A")}</div>
       <div class="report-meta"><strong>Customer:</strong> ${escapeHtml(report.customerName || "N/A")}</div>
       <div class="report-meta"><strong>Vehicle:</strong> ${escapeHtml(report.vehicleMake || "")} ${escapeHtml(report.vehicleModel || "")}</div>
       <div class="report-meta"><strong>Registration:</strong> ${escapeHtml(report.vehicleReg || "N/A")}</div>
@@ -750,6 +994,7 @@ function applyFilters() {
 
   if (q) {
     list = list.filter((r) =>
+      (r.sessionId || "").toLowerCase().includes(q) ||
       (r.fault || "").toLowerCase().includes(q) ||
       (r.explanation || "").toLowerCase().includes(q) ||
       (r.steps || "").toLowerCase().includes(q) ||
@@ -783,14 +1028,28 @@ function applyFilters() {
 }
 
 function lookup() {
-  const codes = (el.code?.value || "").split(",").map((x) => x.trim().toUpperCase()).filter(Boolean);
+  const codes = (el.code?.value || "")
+    .split(",")
+    .map((x) => x.trim().toUpperCase())
+    .filter(Boolean);
 
   if (!codes.length) {
-    el.codeOut.textContent = "Enter a code.";
+    if (el.codeOut) el.codeOut.textContent = "Enter a code.";
     return;
   }
 
-  el.codeOut.textContent = codes.map((code) => `${code} = ${obdCodes[code] || "Unknown code"}`).join("\n");
+  if (el.codeOut) {
+    el.codeOut.textContent = codes.map((code) => {
+      const item = obdCodes[code];
+      if (!item) return `${code} = Unknown code`;
+      return `${code} = ${item.title}\nSuggested diagnostic path: ${diagnosticRules[item.diagnosticKey]?.fault || "Manual inspection required"}`;
+    }).join("\n\n");
+  }
+
+  const firstMatch = obdCodes[codes[0]];
+  if (firstMatch && el.fault) {
+    el.fault.value = firstMatch.diagnosticKey;
+  }
 }
 
 function exportPDF() {
@@ -813,6 +1072,9 @@ function exportPDF() {
       ${createProfileHtml(report)}
       ${createInvoiceHtml(report)}
       <p><strong>Confidence:</strong> ${escapeHtml(report.confidence)}%</p>
+      <p><strong>Urgency:</strong> ${escapeHtml(report.urgency || "N/A")}</p>
+      <p><strong>Safe To Drive:</strong> ${escapeHtml(report.safe || "N/A")}</p>
+      <p><strong>MOT Risk:</strong> ${escapeHtml(report.mot || "N/A")}</p>
       <p><strong>Saved:</strong> ${escapeHtml(formatDate(report.createdAt))}</p>
       <p><strong>Explanation:</strong> ${escapeHtml(report.explanation)}</p>
       <pre>${escapeHtml(report.steps)}</pre>
@@ -842,7 +1104,7 @@ function exportPDF() {
         <h1>AutoKnowledge Pro AI</h1>
         <div class="meta">Workshop Report Export</div>
         <div class="meta">Generated: ${escapeHtml(new Date().toLocaleString())}</div>
-        <div class="meta">User: ${escapeHtml(el.userStatus.textContent)}</div>
+        <div class="meta">User: ${escapeHtml(el.userStatus?.textContent || "Unknown")}</div>
         <div class="meta">Total Reports: ${allReports.length}</div>
         <div class="meta">Estimated Revenue: ${money(revenue)}</div>
       </div>
@@ -878,7 +1140,6 @@ if (el.exportPdfBtn) el.exportPdfBtn.onclick = exportPDF;
 if (el.reportSearch) el.reportSearch.oninput = applyFilters;
 if (el.reportSort) el.reportSort.onchange = applyFilters;
 if (el.paymentStatus) el.paymentStatus.onchange = calculateInvoice;
-
 if (el.checkSymptomBtn) el.checkSymptomBtn.onclick = renderSymptomResult;
 if (el.symptomSelect) el.symptomSelect.onchange = renderSymptomResult;
 if (el.warningSearch) el.warningSearch.oninput = renderWarningLights;
