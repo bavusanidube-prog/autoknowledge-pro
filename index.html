@@ -15,13 +15,13 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; }
         :root {
-            --primary: #0066CC;    /* Premium Blue 🟦 */
-            --accent-red: #E63946;  /* Premium Red 🟥 */
-            --accent-green: #2A9D8F;/* Premium Green 🟩 */
-            --accent-purple: #7B2CBF;/* Premium Purple 🟪 */
-            --success: #2e7d32;     /* Green = Good 🟢 */
-            --warning: #f57c00;      /* Yellow = Warning 🟡 */
-            --danger: #d32f2f;       /* Red = Fault 🔴 */
+            --primary: #0066CC;    /* 🟦 PREMIUM BLUE */
+            --accent-red: #E63946;  /* 🟥 PREMIUM RED */
+            --accent-green: #2A9D8F;/* 🟩 PREMIUM GREEN */
+            --accent-purple: #7B2CBF;/* 🟪 PREMIUM PURPLE */
+            --success: #2e7d32;     /* 🟢 GOOD / OK */
+            --warning: #f57c00;      /* 🟡 WARNING */
+            --danger: #d32f2f;       /* 🔴 FAULT / BAD */
             --light: #f8f9fa;
             --white: #ffffff;
             --text: #333333;
@@ -82,6 +82,12 @@
         .status-warn { color: var(--warning); font-weight: bold; }
         .status-bad { color: var(--danger); font-weight: bold; }
 
+        /* Popup / Modal */
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
+        .modal-content { background-color: white; margin: 5% auto; padding: 2rem; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 8px; position: relative; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close:hover, .close:focus { color: black; text-decoration: none; cursor: pointer; }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero h1 { font-size: 2rem; }
@@ -99,8 +105,8 @@
                     <li><a href="#help">How It Helps</a></li>
                     <li><a href="#tools">Premium Tools</a></li>
                     <li><a href="#connect">Connect To Car</a></li>
-                    <li><a href="login.html">Login</a></li>
-                    <li><a href="signup.html">Sign Up</a></li>
+                    <li><a href="#" id="loginBtn">Login</a></li>
+                    <li><a href="#" id="signupBtn">Sign Up</a></li>
                 </ul>
             </nav>
         </div>
@@ -111,9 +117,9 @@
             <h1 id="hero-heading">AI-Powered Car Diagnostics & Help</h1>
             <p>Understand what’s wrong with your car, check MOT status, get repair advice and scan directly — all in one place, built for UK drivers and mechanics.</p>
             <div class="hero-buttons" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
-                <a href="#start" class="btn btn-primary">Start Diagnostic Session</a>
-                <a href="#scan" class="btn btn-red">Run Live Scan</a>
-                <a href="#reports" class="btn btn-green">View Reports</a>
+                <button class="btn btn-primary" id="startDiagBtn">Start Diagnostic Session</button>
+                <button class="btn btn-red" id="scanBtn">Run Live Scan</button>
+                <button class="btn btn-green" id="reportsBtn">View Reports</button>
             </div>
         </section>
 
@@ -154,7 +160,7 @@
                 </div>
                 <div class="tool-card red">
                     <h3>🟥 LAUNCH X431 PRO3</h3>
-                    <p>Workshop favourite, topology view & all service functions</p>
+                    <pWorkshop favourite, topology view & all service functions</p>
                 </div>
                 <div class="tool-card green">
                     <h3>🟩 TOPDON Phoenix</h3>
@@ -181,22 +187,35 @@
         </section>
     </main>
 
-    <footer aria-label="Footer">
-        <div class="container" style="padding:2rem 0; text-align:center; color:white; background:var(--dark); border-radius:8px;">
-            <div style="display:flex; justify-content:center; gap:2rem; margin-bottom:1rem; flex-wrap:wrap;">
-                <a href="terms.html" style="color:white; text-decoration:none;">Terms of Use</a>
-                <a href="privacy.html" style="color:white; text-decoration:none;">Privacy & GDPR</a>
-                <a href="support.html" style="color:white; text-decoration:none;">Support</a>
-            </div>
-            <p>&copy; 2026 AutoKnowledge Pro. All rights reserved.</p>
+    <!-- MODALS / POPUPS -->
+    <div id="diagModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>🚗 Start New Diagnostic Session</h2>
+            <p style="margin:1rem 0;">Fill in details below or select symptoms:</p>
+            <input type="text" placeholder="Vehicle Registration / VIN" style="width:100%; padding:0.8rem; margin:0.5rem 0; border:1px solid #ddd; border-radius:4px;">
+            <input type="text" placeholder="Make & Model" style="width:100%; padding:0.8rem; margin:0.5rem 0; border:1px solid #ddd; border-radius:4px;">
+            <textarea placeholder="Symptoms / Issues / Warning Lights" style="width:100%; padding:0.8rem; margin:0.5rem 0; border:1px solid #ddd; border-radius:4px; min-height:100px;"></textarea>
+            <button class="btn btn-primary" style="margin-top:1rem;">Start Session</button>
         </div>
-    </footer>
+    </div>
 
-    <script>
-        // Simple functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('AutoKnowledge Pro loaded successfully');
-        });
-    </script>
-</body>
-</html>
+    <div id="scanModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>📡 Live Vehicle Scan</h2>
+            <p style="margin:1rem 0;">Make sure your adapter is connected and car ignition is ON.</p>
+            <p style="margin:0.5rem 0;">Status: <span id="scanStatus" class="status-warn">Ready to connect</span></p>
+            <button class="btn btn-red" style="margin-top:1rem;">Connect & Scan</button>
+        </div>
+    </div>
+
+    <div id="reportsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>📄 Saved Reports</h2>
+            <p style="margin:1rem 0;">No reports saved yet. Complete a scan to generate your first report.</p>
+        </div>
+    </div>
+
+    <div id
