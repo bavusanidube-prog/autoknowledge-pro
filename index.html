@@ -1,457 +1,864 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AutoKnowledge Pro | Professional Vehicle Diagnostics</title>
+
+<title>AutoKnowledge Pro | Motor Vehicle Expert Diagnostics</title>
+<meta name="description" content="AutoKnowledge Pro by Motor Vehicle Expert. A premium diagnostic platform for UK drivers, mechanics and workshops." />
+<meta name="robots" content="index,follow" />
+<meta name="theme-color" content="#07111f" />
 
 <style>
-:root {
-  --premium-blue: #0066CC;
-  --premium-red: #E63946;
-  --premium-green: #2A9D8F;
-  --premium-purple: #7B2CBF;
-  --status-good: #2e7d32;
-  --status-warn: #f57c00;
-  --status-fault: #d32f2f;
-  --light: #f8f9fa;
-  --white: #ffffff;
-  --dark: #212529;
-  --grey: #6c757d;
+:root{
+  --premium-blue:#0066CC;
+  --premium-red:#E63946;
+  --premium-green:#2A9D8F;
+  --premium-purple:#7B2CBF;
+  --status-good:#2e7d32;
+  --status-warn:#f57c00;
+  --status-fault:#d32f2f;
+  --light:#f8f9fa;
+  --white:#ffffff;
+  --dark:#212529;
+  --grey:#6c757d;
+
+  --bg:#07111f;
+  --bg2:#0f172a;
+  --panel:rgba(15,23,42,.78);
+  --panel-strong:rgba(2,6,23,.92);
+  --border:rgba(255,255,255,.12);
+  --text:#e5eefb;
+  --muted:#94a3b8;
+  --soft:#cbd5e1;
+  --amber:#f59e0b;
+  --amber2:#fbbf24;
+  --blue:#38bdf8;
+  --green:#22c55e;
+  --red:#ef4444;
+  --shadow:0 24px 70px rgba(0,0,0,.38);
+  --shadow-soft:0 14px 34px rgba(0,0,0,.24);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
-html {
-  scroll-behavior: smooth;
+html{
+  scroll-behavior:smooth;
+  background:var(--bg);
 }
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: var(--light);
-  color: var(--dark);
-  line-height: 1.6;
+body{
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:
+    radial-gradient(circle at top right,rgba(245,158,11,.16),transparent 30%),
+    radial-gradient(circle at left center,rgba(56,189,248,.12),transparent 28%),
+    linear-gradient(180deg,#08121f 0%,#0b1727 50%,#0d1321 100%);
+  color:var(--text);
+  min-height:100vh;
+  line-height:1.6;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
+a{
+  color:inherit;
+  text-decoration:none;
 }
 
-header {
-  background: var(--white);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+button{
+  font:inherit;
 }
 
-.navbar {
-  max-width: 1200px;
-  margin: auto;
-  padding: 18px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.bg-grid{
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at center,black,transparent 84%);
+  pointer-events:none;
+  z-index:0;
 }
 
-.logo {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--premium-blue);
+.page{
+  position:relative;
+  z-index:1;
+  width:min(1440px,100%);
+  margin:0 auto;
+  padding:24px;
 }
 
-.logo span {
-  color: var(--premium-red);
+.app-shell{
+  display:grid;
+  grid-template-columns:280px 1fr;
+  gap:22px;
+  min-height:calc(100vh - 48px);
 }
 
-.nav-links {
-  display: flex;
-  gap: 22px;
-  align-items: center;
+.sidebar{
+  position:sticky;
+  top:24px;
+  height:calc(100vh - 48px);
+  background:rgba(7,17,31,.82);
+  border:1px solid var(--border);
+  border-radius:28px;
+  padding:20px;
+  backdrop-filter:blur(18px);
+  box-shadow:var(--shadow-soft);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
 }
 
-.nav-links a {
-  font-weight: 600;
-  color: var(--dark);
+.brand{
+  display:flex;
+  gap:14px;
+  align-items:center;
+  margin-bottom:26px;
 }
 
-.nav-links a:hover {
-  color: var(--premium-blue);
+.logo-mark{
+  width:52px;
+  height:52px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--amber2),var(--amber));
+  color:#07111f;
+  font-weight:900;
+  letter-spacing:-.06em;
+  box-shadow:0 16px 34px rgba(245,158,11,.25);
 }
 
-.btn {
-  border: none;
-  padding: 13px 22px;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.3s ease;
-  font-size: 15px;
+.brand small{
+  display:block;
+  color:var(--amber2);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
 }
 
-.btn:hover {
-  transform: translateY(-2px);
-  opacity: 0.9;
+.brand strong{
+  display:block;
+  color:#fff;
+  font-size:20px;
+  letter-spacing:-.04em;
 }
 
-.btn-blue {
-  background: var(--premium-blue);
-  color: var(--white);
+.nav{
+  display:grid;
+  gap:8px;
 }
 
-.btn-red {
-  background: var(--premium-red);
-  color: var(--white);
+.nav a{
+  padding:13px 14px;
+  border-radius:16px;
+  color:var(--soft);
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border:1px solid transparent;
 }
 
-.btn-green {
-  background: var(--premium-green);
-  color: var(--white);
+.nav a:hover,
+.nav a.active{
+  background:rgba(255,255,255,.06);
+  border-color:var(--border);
+  color:#fff;
 }
 
-.btn-purple {
-  background: var(--premium-purple);
-  color: var(--white);
+.sidebar-card{
+  margin-top:24px;
+  padding:16px;
+  border-radius:20px;
+  background:
+    radial-gradient(circle at top right,rgba(245,158,11,.14),transparent 40%),
+    rgba(255,255,255,.045);
+  border:1px solid var(--border);
 }
 
-.hero {
-  background: linear-gradient(135deg, var(--premium-blue), var(--premium-purple));
-  color: var(--white);
-  padding: 90px 24px;
+.sidebar-card small{
+  color:var(--muted);
+  display:block;
+  margin-bottom:8px;
 }
 
-.hero-inner {
-  max-width: 1200px;
-  margin: auto;
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 40px;
-  align-items: center;
+.sidebar-card strong{
+  color:#fff;
+  display:block;
+  font-size:18px;
+  margin-bottom:12px;
 }
 
-.hero h1 {
-  font-size: clamp(38px, 6vw, 64px);
-  line-height: 1.05;
-  margin-bottom: 22px;
+.main{
+  display:grid;
+  gap:22px;
 }
 
-.hero p {
-  font-size: 19px;
-  max-width: 680px;
-  margin-bottom: 30px;
+.topbar{
+  background:rgba(7,17,31,.74);
+  border:1px solid var(--border);
+  border-radius:28px;
+  padding:16px 18px;
+  backdrop-filter:blur(18px);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  box-shadow:var(--shadow-soft);
 }
 
-.hero-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
+.mobile-brand{
+  display:none;
+  font-weight:900;
+  color:#fff;
 }
 
-.diagnostic-panel {
-  background: rgba(255,255,255,0.14);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 24px;
-  padding: 28px;
+.top-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
 }
 
-.status-row {
-  display: flex;
-  justify-content: space-between;
-  background: var(--white);
-  color: var(--dark);
-  padding: 14px;
-  margin-bottom: 12px;
-  border-radius: 12px;
-  font-weight: 700;
+.chip{
+  padding:10px 13px;
+  border-radius:999px;
+  background:rgba(255,255,255,.055);
+  border:1px solid var(--border);
+  color:var(--soft);
+  font-weight:800;
+  font-size:13px;
 }
 
-.good {
-  color: var(--status-good);
+.btn{
+  border:none;
+  border-radius:999px;
+  padding:13px 18px;
+  cursor:pointer;
+  font-weight:900;
+  transition:.22s ease;
 }
 
-.warn {
-  color: var(--status-warn);
+.btn:hover{
+  transform:translateY(-2px);
 }
 
-.fault {
-  color: var(--status-fault);
+.btn-primary{
+  background:linear-gradient(135deg,var(--amber2),var(--amber));
+  color:#07111f;
+  box-shadow:0 16px 34px rgba(245,158,11,.24);
 }
 
-section {
-  padding: 75px 24px;
+.btn-secondary{
+  background:rgba(255,255,255,.055);
+  color:var(--text);
+  border:1px solid var(--border);
 }
 
-.container {
-  max-width: 1200px;
-  margin: auto;
+.btn-blue{
+  background:linear-gradient(135deg,var(--premium-blue),#38bdf8);
+  color:#fff;
 }
 
-.section-title {
-  text-align: center;
-  margin-bottom: 45px;
+.btn-red{
+  background:linear-gradient(135deg,var(--premium-red),#ef4444);
+  color:#fff;
 }
 
-.section-title h2 {
-  font-size: clamp(30px, 4vw, 44px);
-  color: var(--dark);
+.btn-green{
+  background:linear-gradient(135deg,var(--premium-green),#22c55e);
+  color:#fff;
 }
 
-.section-title p {
-  color: var(--grey);
-  max-width: 700px;
-  margin: 12px auto 0;
+.btn-purple{
+  background:linear-gradient(135deg,var(--premium-purple),#a855f7);
+  color:#fff;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
+.hero{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:22px;
+  padding:34px;
+  border-radius:32px;
+  background:
+    radial-gradient(circle at top right,rgba(245,158,11,.18),transparent 34%),
+    radial-gradient(circle at bottom left,rgba(56,189,248,.13),transparent 34%),
+    linear-gradient(135deg,rgba(7,17,31,.96),rgba(15,23,42,.88));
+  border:1px solid rgba(255,255,255,.13);
+  box-shadow:var(--shadow);
 }
 
-.card {
-  background: var(--white);
-  border-radius: 18px;
-  padding: 28px;
-  box-shadow: 0 8px 26px rgba(0,0,0,0.08);
-  transition: 0.3s ease;
+.eyebrow{
+  color:var(--amber2);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:12px;
 }
 
-.card:hover {
-  transform: translateY(-6px);
+.hero h1{
+  color:#fff;
+  font-size:clamp(2.4rem,5vw,4.6rem);
+  line-height:1;
+  letter-spacing:-.07em;
+  margin-bottom:18px;
 }
 
-.card-icon {
-  width: 54px;
-  height: 54px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  color: var(--white);
-  font-size: 24px;
-  margin-bottom: 18px;
+.hero p{
+  color:var(--muted);
+  max-width:780px;
+  font-size:16px;
+  line-height:1.8;
+  margin-bottom:22px;
 }
 
-.card h3 {
-  margin-bottom: 12px;
+.hero-actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
 }
 
-.card p {
-  color: var(--grey);
+.trust-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
 }
 
-.connect {
-  background: var(--dark);
-  color: var(--white);
+.trust-row span{
+  padding:8px 11px;
+  border-radius:999px;
+  background:rgba(255,255,255,.045);
+  border:1px solid var(--border);
+  color:var(--soft);
+  font-size:13px;
+  font-weight:800;
 }
 
-.steps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+.diagnostic-visual{
+  background:rgba(2,6,23,.66);
+  border:1px solid var(--border);
+  border-radius:26px;
+  padding:20px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
 }
 
-.step {
-  background: rgba(255,255,255,0.08);
-  padding: 28px;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.15);
+.visual-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
 }
 
-.step-number {
-  background: var(--premium-green);
-  color: var(--white);
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-weight: 800;
-  margin-bottom: 16px;
+.live-dot{
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  background:var(--green);
+  box-shadow:0 0 0 7px rgba(34,197,94,.12);
+  animation:pulse 1.4s infinite ease-in-out;
 }
 
-footer {
-  background: #111;
-  color: var(--white);
-  padding: 40px 24px;
+.visual-head strong{
+  color:#fff;
 }
 
-.footer-inner {
-  max-width: 1200px;
-  margin: auto;
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
+.health-score{
+  display:grid;
+  grid-template-columns:140px 1fr;
+  gap:18px;
+  align-items:center;
+  margin-bottom:18px;
 }
 
-.footer-links {
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
+.score-ring{
+  width:140px;
+  height:140px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:
+    conic-gradient(var(--green) 0 82%,rgba(255,255,255,.08) 82% 100%);
+  position:relative;
 }
 
-.footer-links a:hover {
-  color: var(--premium-green);
+.score-ring::after{
+  content:"";
+  position:absolute;
+  inset:13px;
+  border-radius:50%;
+  background:#07111f;
+  border:1px solid var(--border);
 }
 
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 2000;
-  inset: 0;
-  background: rgba(0,0,0,0.65);
-  padding: 20px;
-  overflow-y: auto;
+.score-ring span{
+  position:relative;
+  z-index:1;
+  color:#fff;
+  font-size:34px;
+  font-weight:900;
 }
 
-.modal.active {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.score-copy h3{
+  color:#fff;
+  font-size:22px;
+  margin-bottom:8px;
 }
 
-.modal-content {
-  background: var(--white);
-  width: 100%;
-  max-width: 520px;
-  border-radius: 18px;
-  padding: 30px;
-  position: relative;
-  animation: fadeIn 0.25s ease;
+.score-copy p{
+  margin:0;
+  font-size:14px;
+  color:var(--muted);
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.status-list{
+  display:grid;
+  gap:10px;
 }
 
-.close {
-  position: absolute;
-  top: 16px;
-  right: 20px;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-  color: var(--grey);
+.status-row{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  padding:13px 14px;
+  border-radius:16px;
+  background:rgba(255,255,255,.045);
+  border:1px solid var(--border);
 }
 
-.close:hover {
-  color: var(--premium-red);
+.status-row span{
+  color:var(--soft);
+  font-weight:800;
 }
 
-.modal h2 {
-  margin-bottom: 12px;
-  color: var(--premium-blue);
+.good{color:var(--green);}
+.warn{color:var(--amber2);}
+.fault{color:var(--red);}
+
+.section{
+  background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035)),var(--panel);
+  border:1px solid var(--border);
+  border-radius:28px;
+  padding:26px;
+  box-shadow:var(--shadow-soft);
+  backdrop-filter:blur(18px);
 }
 
-.modal p {
-  color: var(--grey);
-  margin-bottom: 18px;
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:flex-start;
+  margin-bottom:20px;
 }
 
-.form-group {
-  margin-bottom: 16px;
+.section-head h2{
+  color:#fff;
+  font-size:28px;
+  letter-spacing:-.04em;
 }
 
-.form-group label {
-  display: block;
-  font-weight: 700;
-  margin-bottom: 6px;
+.section-head p{
+  color:var(--muted);
+  max-width:720px;
+  margin-top:6px;
+}
+
+.grid-4{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:16px;
+}
+
+.card{
+  padding:20px;
+  border-radius:22px;
+  background:rgba(2,6,23,.52);
+  border:1px solid var(--border);
+  transition:.22s ease;
+}
+
+.card:hover{
+  transform:translateY(-4px);
+  border-color:rgba(245,158,11,.36);
+}
+
+.icon{
+  width:48px;
+  height:48px;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  margin-bottom:16px;
+  background:rgba(255,255,255,.07);
+  border:1px solid var(--border);
+  color:var(--amber2);
+  font-weight:900;
+}
+
+.card h3{
+  color:#fff;
+  margin-bottom:8px;
+  font-size:18px;
+}
+
+.card p{
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.7;
+}
+
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:18px;
+}
+
+.live-console{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at top right,rgba(245,158,11,.14),transparent 34%),
+    radial-gradient(circle at bottom left,rgba(56,189,248,.11),transparent 34%),
+    linear-gradient(180deg,rgba(2,6,23,.92),rgba(15,23,42,.84));
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:24px;
+  padding:20px;
+}
+
+.console-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:16px;
+}
+
+.console-header strong{
+  color:#fff;
+}
+
+.scan-track{
+  height:12px;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(255,255,255,.08);
+  margin:12px 0 18px;
+}
+
+.scan-progress{
+  height:100%;
+  width:76%;
+  background:linear-gradient(90deg,var(--amber),var(--amber2));
+  border-radius:999px;
+}
+
+.feed{
+  display:grid;
+  gap:9px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:13px;
+}
+
+.feed-line{
+  color:#dbeafe;
+  padding:9px 10px;
+  border-radius:12px;
+  background:rgba(2,6,23,.58);
+  border:1px solid rgba(148,163,184,.14);
+}
+
+.feed-line span{
+  color:var(--amber2);
+}
+
+.ai-card{
+  padding:22px;
+  border-radius:24px;
+  background:rgba(2,6,23,.56);
+  border:1px solid var(--border);
+}
+
+.ai-card h3{
+  color:#fff;
+  font-size:22px;
+  margin-bottom:10px;
+}
+
+.ai-card p{
+  color:var(--muted);
+  line-height:1.7;
+  margin-bottom:16px;
+}
+
+.risk-box{
+  display:grid;
+  gap:10px;
+}
+
+.risk-box div{
+  padding:12px;
+  border-radius:15px;
+  background:rgba(255,255,255,.045);
+  border:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  color:var(--soft);
+  font-weight:800;
+}
+
+.steps{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+}
+
+.step-number{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--premium-green),var(--green));
+  color:#fff;
+  font-weight:900;
+  margin-bottom:14px;
+}
+
+.footer{
+  text-align:center;
+  color:var(--muted);
+  padding:30px;
+  border-radius:24px;
+  background:rgba(2,6,23,.72);
+  border:1px solid var(--border);
+}
+
+.footer strong{
+  display:block;
+  color:#fff;
+  margin-bottom:6px;
+}
+
+.footer-links{
+  display:flex;
+  justify-content:center;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+
+.footer-links a:hover{
+  color:var(--amber2);
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  padding:20px;
+  background:rgba(0,0,0,.72);
+  overflow-y:auto;
+}
+
+.modal.active{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.modal-content{
+  width:100%;
+  max-width:560px;
+  background:#08121f;
+  border:1px solid var(--border);
+  border-radius:26px;
+  padding:28px;
+  color:var(--text);
+  position:relative;
+  box-shadow:var(--shadow);
+  animation:fadeIn .24s ease;
+}
+
+.close{
+  position:absolute;
+  top:16px;
+  right:20px;
+  font-size:30px;
+  cursor:pointer;
+  color:var(--muted);
+}
+
+.close:hover{
+  color:var(--red);
+}
+
+.modal h2{
+  color:#fff;
+  margin-bottom:8px;
+  letter-spacing:-.04em;
+}
+
+.modal p{
+  color:var(--muted);
+  margin-bottom:18px;
+}
+
+.form-group{
+  margin-bottom:14px;
+}
+
+.form-group label{
+  display:block;
+  color:var(--soft);
+  font-weight:800;
+  margin-bottom:7px;
 }
 
 .form-group input,
 .form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 13px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  font-size: 15px;
+.form-group textarea{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid rgba(148,163,184,.22);
+  background:rgba(2,6,23,.82);
+  color:#fff;
+  outline:none;
 }
 
-.report-list,
-.scan-results {
-  background: var(--light);
-  padding: 16px;
-  border-radius: 12px;
-  margin-bottom: 16px;
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+  border-color:rgba(245,158,11,.62);
+  box-shadow:0 0 0 4px rgba(245,158,11,.13);
 }
 
-.report-item,
-.scan-item {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid #ddd;
-  padding: 10px 0;
+.scan-results,
+.report-list{
+  background:rgba(255,255,255,.045);
+  border:1px solid var(--border);
+  padding:14px;
+  border-radius:18px;
+  margin-bottom:16px;
 }
 
-.report-item:last-child,
-.scan-item:last-child {
-  border-bottom: none;
+.scan-item,
+.report-item{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:11px 0;
+  border-bottom:1px solid rgba(255,255,255,.09);
 }
 
-@media (max-width: 900px) {
-  .hero-inner,
-  .grid,
-  .steps {
-    grid-template-columns: 1fr 1fr;
+.scan-item:last-child,
+.report-item:last-child{
+  border-bottom:none;
+}
+
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 5px rgba(34,197,94,.13);}
+  50%{box-shadow:0 0 0 9px rgba(34,197,94,.05);}
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:scale(.96);}
+  to{opacity:1;transform:scale(1);}
+}
+
+@media(max-width:1100px){
+  .app-shell{
+    grid-template-columns:1fr;
   }
 
-  .hero-inner {
-    text-align: center;
+  .sidebar{
+    position:relative;
+    top:auto;
+    height:auto;
   }
 
-  .hero p {
-    margin-left: auto;
-    margin-right: auto;
+  .nav{
+    grid-template-columns:repeat(4,minmax(0,1fr));
   }
 
-  .hero-buttons {
-    justify-content: center;
+  .hero,
+  .dashboard-grid{
+    grid-template-columns:1fr;
+  }
+
+  .grid-4{
+    grid-template-columns:repeat(2,minmax(0,1fr));
   }
 }
 
-@media (max-width: 700px) {
-  .navbar {
-    flex-direction: column;
-    gap: 16px;
+@media(max-width:700px){
+  .page{
+    padding:12px;
   }
 
-  .nav-links {
-    flex-wrap: wrap;
-    justify-content: center;
+  .sidebar{
+    display:none;
   }
 
-  .hero {
-    padding: 70px 18px;
+  .mobile-brand{
+    display:block;
   }
 
-  .hero-inner,
-  .grid,
-  .steps {
-    grid-template-columns: 1fr;
+  .topbar{
+    flex-direction:column;
+    align-items:flex-start;
   }
 
-  .footer-inner {
-    flex-direction: column;
-    text-align: center;
-    align-items: center;
+  .top-actions,
+  .top-actions .btn,
+  .chip{
+    width:100%;
   }
 
-  .modal-content {
-    padding: 26px 20px;
+  .hero{
+    padding:22px;
+    border-radius:24px;
+  }
+
+  .hero h1{
+    font-size:2.25rem;
+  }
+
+  .hero-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .hero-actions .btn{
+    width:100%;
+  }
+
+  .health-score,
+  .grid-4,
+  .steps{
+    grid-template-columns:1fr;
+  }
+
+  .section{
+    padding:20px;
+    border-radius:22px;
+  }
+
+  .section-head{
+    flex-direction:column;
   }
 }
 </style>
@@ -459,155 +866,265 @@ footer {
 
 <body>
 
-<header>
-  <nav class="navbar">
-    <a href="#" class="logo">AutoKnowledge <span>Pro</span></a>
+<div class="bg-grid"></div>
 
-    <div class="nav-links">
-      <a href="#features">Features</a>
-      <a href="#tools">Tools</a>
-      <a href="#connect">Connect</a>
-      <a href="#" data-modal="loginModal">Login</a>
-      <button class="btn btn-blue" data-modal="signupModal">Sign Up</button>
-    </div>
-  </nav>
-</header>
+<div class="page">
+  <div class="app-shell">
 
-<main>
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="logo-mark">MV</div>
+          <div>
+            <small>Motor Vehicle Expert</small>
+            <strong>AutoKnowledge Pro</strong>
+          </div>
+        </div>
 
-<section class="hero">
-  <div class="hero-inner">
-    <div>
-      <h1>Professional Vehicle Diagnostics for Mechanics and Drivers</h1>
-      <p>
-        AutoKnowledge Pro helps you diagnose faults, read live vehicle data,
-        save inspection reports and understand warning lights with confidence.
-      </p>
+        <nav class="nav">
+          <a href="#" class="active">Dashboard</a>
+          <a href="#features">Diagnostics</a>
+          <a href="#live">Live Scan</a>
+          <a href="#tools">Tools</a>
+          <a href="#connect">Connect</a>
+          <a href="#" data-modal="reportsModal">Reports</a>
+          <a href="#" data-modal="loginModal">Login</a>
+          <a href="#" data-modal="signupModal">Sign Up</a>
+        </nav>
+      </div>
 
-      <div class="hero-buttons">
-        <button class="btn btn-green" data-modal="diagnosticModal">Start Diagnostic Session</button>
-        <button class="btn btn-red" data-modal="liveScanModal">Run Live Scan</button>
-        <button class="btn btn-purple" data-modal="reportsModal">View Reports</button>
+      <div class="sidebar-card">
+        <small>Current vehicle status</small>
+        <strong>82% Health Score</strong>
+        <button class="btn btn-primary" data-modal="diagnosticModal">Start Scan</button>
       </div>
-    </div>
+    </aside>
 
-    <div class="diagnostic-panel">
-      <div class="status-row">
-        <span>Engine System</span>
-        <span class="good">Good</span>
-      </div>
-      <div class="status-row">
-        <span>Brake System</span>
-        <span class="warn">Warning</span>
-      </div>
-      <div class="status-row">
-        <span>ABS Sensor</span>
-        <span class="fault">Fault</span>
-      </div>
-      <div class="status-row">
-        <span>Battery Voltage</span>
-        <span class="good">12.6V</span>
-      </div>
-    </div>
+    <main class="main">
+
+      <header class="topbar">
+        <div class="mobile-brand">AutoKnowledge Pro</div>
+
+        <div class="top-actions">
+          <span class="chip">UK Diagnostic Platform</span>
+          <span class="chip">MOT-aware guidance</span>
+          <span class="chip">Live scan ready</span>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn btn-secondary" data-modal="loginModal">Login</button>
+          <button class="btn btn-primary" data-modal="signupModal">Sign Up</button>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div>
+          <div class="eyebrow">AI-assisted vehicle diagnostics</div>
+          <h1>Premium diagnostics for UK drivers and mechanics.</h1>
+          <p>
+            AutoKnowledge Pro helps identify warning lights, symptoms, fault-code risks,
+            live vehicle data and MOT-related issues through a professional diagnostic dashboard.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn btn-primary" data-modal="diagnosticModal">Start Diagnostic Session</button>
+            <button class="btn btn-red" data-modal="liveScanModal">Run Live Scan</button>
+            <button class="btn btn-secondary" data-modal="reportsModal">View Reports</button>
+          </div>
+
+          <div class="trust-row">
+            <span>Mechanic-style guidance</span>
+            <span>Safe-to-drive advice</span>
+            <span>Warning light support</span>
+            <span>Garage report ready</span>
+          </div>
+        </div>
+
+        <div class="diagnostic-visual">
+          <div class="visual-head">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="live-dot"></span>
+              <strong>Vehicle Health Live</strong>
+            </div>
+            <span class="warn">Caution</span>
+          </div>
+
+          <div class="health-score">
+            <div class="score-ring"><span>82%</span></div>
+            <div class="score-copy">
+              <h3>BMW 320d Scan</h3>
+              <p>One active ABS fault, one maintenance warning and no critical engine fault detected.</p>
+            </div>
+          </div>
+
+          <div class="status-list">
+            <div class="status-row"><span>Engine System</span><strong class="good">Good</strong></div>
+            <div class="status-row"><span>Brake System</span><strong class="warn">Check Soon</strong></div>
+            <div class="status-row"><span>ABS Sensor</span><strong class="fault">Fault Found</strong></div>
+            <div class="status-row"><span>MOT Risk</span><strong class="warn">Medium</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Core features</div>
+            <h2>Built for real diagnostic decisions</h2>
+            <p>Designed for drivers, mobile mechanics, workshops and anyone who needs clearer vehicle fault guidance.</p>
+          </div>
+        </div>
+
+        <div class="grid-4">
+          <div class="card">
+            <div class="icon">ECU</div>
+            <h3>Fault Code Reading</h3>
+            <p>Understand fault-code meaning, possible causes and next diagnostic steps.</p>
+          </div>
+
+          <div class="card">
+            <div class="icon">!</div>
+            <h3>Warning Light Help</h3>
+            <p>Check dashboard warnings and whether the vehicle may be safe to drive.</p>
+          </div>
+
+          <div class="card">
+            <div class="icon">RPM</div>
+            <h3>Live Vehicle Data</h3>
+            <p>Review RPM, voltage, coolant temperature and system readings.</p>
+          </div>
+
+          <div class="card">
+            <div class="icon">PDF</div>
+            <h3>Saved Reports</h3>
+            <p>Create cleaner diagnostic summaries for customers or personal records.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="live" class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Live scan console</div>
+            <h2>Professional scan experience</h2>
+            <p>A more premium scan view with active modules, fault flags and AI-style mechanic reasoning.</p>
+          </div>
+          <button class="btn btn-primary" data-modal="liveScanModal">Open Live Scan</button>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="live-console">
+            <div class="console-header">
+              <strong>Scanning vehicle modules</strong>
+              <span class="chip">76% complete</span>
+            </div>
+
+            <div class="scan-track">
+              <div class="scan-progress"></div>
+            </div>
+
+            <div class="feed">
+              <div class="feed-line"><span>[OK]</span> Engine ECU communicating normally</div>
+              <div class="feed-line"><span>[WARN]</span> Brake system requires attention</div>
+              <div class="feed-line"><span>[FAULT]</span> ABS wheel speed sensor signal irregular</div>
+              <div class="feed-line"><span>[INFO]</span> Battery voltage stable at 12.6V</div>
+              <div class="feed-line"><span>[MOT]</span> ABS warning fault may affect MOT outcome</div>
+            </div>
+          </div>
+
+          <div class="ai-card">
+            <h3>AI Mechanic Summary</h3>
+            <p>
+              The scan suggests the vehicle may be driveable with caution, but the ABS fault should be checked
+              before long journeys or MOT testing.
+            </p>
+
+            <div class="risk-box">
+              <div><span>Drive status</span><strong class="warn">Caution</strong></div>
+              <div><span>Repair urgency</span><strong class="warn">Book soon</strong></div>
+              <div><span>MOT risk</span><strong class="fault">Likely issue</strong></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tools" class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Compatible tools</div>
+            <h2>Connect with everyday diagnostic equipment</h2>
+            <p>Works as a front-end concept for OBD2 scanners, garage tools and diagnostic workflows.</p>
+          </div>
+        </div>
+
+        <div class="grid-4">
+          <div class="card">
+            <h3>OBD2 Bluetooth Scanner</h3>
+            <p>Ideal for quick checks and mobile diagnostics.</p>
+          </div>
+
+          <div class="card">
+            <h3>USB Diagnostic Cable</h3>
+            <p>Reliable wired connection for workshop use.</p>
+          </div>
+
+          <div class="card">
+            <h3>Professional Scan Tool</h3>
+            <p>Suitable for garage-level inspections and fault reviews.</p>
+          </div>
+
+          <div class="card">
+            <h3>Mobile App Connection</h3>
+            <p>Designed for phone, tablet and desktop diagnostic sessions.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="connect" class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">How to connect</div>
+            <h2>Start a vehicle check in three steps</h2>
+          </div>
+        </div>
+
+        <div class="steps">
+          <div class="card">
+            <div class="step-number">1</div>
+            <h3>Plug in scanner</h3>
+            <p>Connect your OBD2 device to the vehicle diagnostic port.</p>
+          </div>
+
+          <div class="card">
+            <div class="step-number">2</div>
+            <h3>Pair device</h3>
+            <p>Connect using Bluetooth, USB or a professional diagnostic interface.</p>
+          </div>
+
+          <div class="card">
+            <div class="step-number">3</div>
+            <h3>Run scan</h3>
+            <p>Check warning lights, symptoms, live data and diagnostic reports.</p>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <strong>AutoKnowledge Pro by Motor Vehicle Expert</strong>
+        <p>&copy; 2026 AutoKnowledge Pro. All rights reserved.</p>
+
+        <div class="footer-links">
+          <a href="#features">Features</a>
+          <a href="#tools">Tools</a>
+          <a href="#connect">Connect</a>
+          <a href="#" data-modal="loginModal">Login</a>
+          <a href="#" data-modal="signupModal">Sign Up</a>
+        </div>
+      </footer>
+
+    </main>
   </div>
-</section>
-
-<section id="features">
-  <div class="container">
-    <div class="section-title">
-      <h2>Advanced Diagnostic Features</h2>
-      <p>Built for workshops, mobile mechanics, car buyers and everyday drivers.</p>
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <div class="card-icon" style="background: var(--premium-blue);">⚙</div>
-        <h3>Fault Code Reading</h3>
-        <p>Read and understand diagnostic trouble codes from key vehicle systems.</p>
-      </div>
-
-      <div class="card">
-        <div class="card-icon" style="background: var(--premium-red);">⚠</div>
-        <h3>Warning Light Help</h3>
-        <p>Identify dashboard warning lights and learn what action to take next.</p>
-      </div>
-
-      <div class="card">
-        <div class="card-icon" style="background: var(--premium-green);">📊</div>
-        <h3>Live Vehicle Data</h3>
-        <p>Monitor RPM, coolant temperature, voltage, oxygen sensors and more.</p>
-      </div>
-
-      <div class="card">
-        <div class="card-icon" style="background: var(--premium-purple);">📄</div>
-        <h3>Saved Reports</h3>
-        <p>Create professional reports for inspections, repairs and customer records.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="tools" style="background: var(--white);">
-  <div class="container">
-    <div class="section-title">
-      <h2>Compatible Tools</h2>
-      <p>Connect with common diagnostic equipment used by drivers and technicians.</p>
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <h3>OBD2 Bluetooth Scanner</h3>
-        <p>Ideal for quick mobile diagnostics and basic vehicle health checks.</p>
-      </div>
-
-      <div class="card">
-        <h3>USB Diagnostic Cable</h3>
-        <p>Reliable wired connection for workshop laptops and detailed analysis.</p>
-      </div>
-
-      <div class="card">
-        <h3>Professional Scan Tool</h3>
-        <p>Use with advanced garage-level diagnostic devices and inspection tools.</p>
-      </div>
-
-      <div class="card">
-        <h3>Mobile App Connection</h3>
-        <p>Access diagnostic sessions from phones, tablets and desktop devices.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="connect" class="connect">
-  <div class="container">
-    <div class="section-title">
-      <h2 style="color: var(--white);">How To Connect</h2>
-      <p style="color: #ddd;">Start your vehicle diagnostic session in three simple steps.</p>
-    </div>
-
-    <div class="steps">
-      <div class="step">
-        <div class="step-number">1</div>
-        <h3>Plug In Your Scanner</h3>
-        <p>Connect your OBD2 device to the vehicle diagnostic port.</p>
-      </div>
-
-      <div class="step">
-        <div class="step-number">2</div>
-        <h3>Pair Your Device</h3>
-        <p>Connect through Bluetooth, USB or your professional scan tool interface.</p>
-      </div>
-
-      <div class="step">
-        <div class="step-number">3</div>
-        <h3>Run Diagnostics</h3>
-        <p>Scan faults, check live data and save a complete vehicle report.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-</main>
+</div>
 
 <div id="diagnosticModal" class="modal">
   <div class="modal-content">
@@ -633,10 +1150,12 @@ footer {
           <option>Engine Fault Scan</option>
           <option>ABS / Brake Scan</option>
           <option>Battery and Charging Check</option>
+          <option>Warning Light Check</option>
+          <option>MOT Risk Check</option>
         </select>
       </div>
 
-      <button type="button" class="btn btn-green">Begin Session</button>
+      <button type="button" class="btn btn-primary">Begin Session</button>
     </form>
   </div>
 </div>
@@ -648,22 +1167,11 @@ footer {
     <p>View simulated live data from connected vehicle systems.</p>
 
     <div class="scan-results">
-      <div class="scan-item">
-        <span>Engine RPM</span>
-        <strong>820</strong>
-      </div>
-      <div class="scan-item">
-        <span>Coolant Temperature</span>
-        <strong class="good">89°C</strong>
-      </div>
-      <div class="scan-item">
-        <span>Battery Voltage</span>
-        <strong class="good">12.6V</strong>
-      </div>
-      <div class="scan-item">
-        <span>ABS Sensor Status</span>
-        <strong class="fault">Fault Found</strong>
-      </div>
+      <div class="scan-item"><span>Engine RPM</span><strong>820</strong></div>
+      <div class="scan-item"><span>Coolant Temperature</span><strong class="good">89°C</strong></div>
+      <div class="scan-item"><span>Battery Voltage</span><strong class="good">12.6V</strong></div>
+      <div class="scan-item"><span>ABS Sensor Status</span><strong class="fault">Fault Found</strong></div>
+      <div class="scan-item"><span>MOT Risk</span><strong class="warn">Medium</strong></div>
     </div>
 
     <button type="button" class="btn btn-red">Refresh Live Scan</button>
@@ -677,18 +1185,9 @@ footer {
     <p>Review previous diagnostic reports and inspection summaries.</p>
 
     <div class="report-list">
-      <div class="report-item">
-        <span>BMW 3 Series Scan</span>
-        <strong>View</strong>
-      </div>
-      <div class="report-item">
-        <span>Ford Fiesta Battery Check</span>
-        <strong>View</strong>
-      </div>
-      <div class="report-item">
-        <span>Audi A4 ABS Fault Report</span>
-        <strong>View</strong>
-      </div>
+      <div class="report-item"><span>BMW 3 Series ABS Report</span><strong>View</strong></div>
+      <div class="report-item"><span>Ford Fiesta Battery Check</span><strong>View</strong></div>
+      <div class="report-item"><span>Audi A4 Engine Scan</span><strong>View</strong></div>
     </div>
 
     <button type="button" class="btn btn-purple">Download Reports</button>
@@ -754,20 +1253,6 @@ footer {
   </div>
 </div>
 
-<footer>
-  <div class="footer-inner">
-    <p>&copy; 2026 AutoKnowledge Pro. All rights reserved.</p>
-
-    <div class="footer-links">
-      <a href="#features">Features</a>
-      <a href="#tools">Tools</a>
-      <a href="#connect">Connect</a>
-      <a href="#" data-modal="loginModal">Login</a>
-      <a href="#" data-modal="signupModal">Sign Up</a>
-    </div>
-  </div>
-</footer>
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const modalButtons = document.querySelectorAll("[data-modal]");
@@ -777,18 +1262,25 @@ document.addEventListener("DOMContentLoaded", function () {
   modalButtons.forEach(function (button) {
     button.addEventListener("click", function (event) {
       event.preventDefault();
+
       const modalId = button.getAttribute("data-modal");
       const modal = document.getElementById(modalId);
 
       if (modal) {
         modal.classList.add("active");
+        document.body.style.overflow = "hidden";
       }
     });
   });
 
   closeButtons.forEach(function (button) {
     button.addEventListener("click", function () {
-      button.closest(".modal").classList.remove("active");
+      const modal = button.closest(".modal");
+
+      if (modal) {
+        modal.classList.remove("active");
+        document.body.style.overflow = "";
+      }
     });
   });
 
@@ -796,6 +1288,7 @@ document.addEventListener("DOMContentLoaded", function () {
     modal.addEventListener("click", function (event) {
       if (event.target === modal) {
         modal.classList.remove("active");
+        document.body.style.overflow = "";
       }
     });
   });
@@ -805,6 +1298,8 @@ document.addEventListener("DOMContentLoaded", function () {
       modals.forEach(function (modal) {
         modal.classList.remove("active");
       });
+
+      document.body.style.overflow = "";
     }
   });
 });
