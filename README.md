@@ -1,6 +1,10 @@
-# AutoKnowledge Pro AI
+# AutoKnowledge Pro
 
-Premium workshop management and vehicle diagnostics web application built for modern garages.
+A professional UK vehicle diagnostic assistant that helps motorists understand common car faults, dashboard warning lights and clutch-related symptoms using structured diagnostic pathways.
+
+The application is designed to educate users, guide logical fault finding and direct them to detailed Motor Vehicle Expert guides. It does **not** replace a physical inspection or professional diagnosis.
+
+---
 
 ## Live Demo
 
@@ -8,62 +12,145 @@ https://bavusanidube-prog.github.io/autoknowledge-pro/
 
 ---
 
-## Screenshots
+## What AutoKnowledge Pro Does
 
-### Dashboard
+AutoKnowledge Pro provides a guided diagnostic experience rather than a generic chatbot.
 
-![Dashboard](images/imagesdashboard.png.png)
+Current production features include:
 
-### Invoice Builder
+* Interactive symptom checker
+* Clutch symptom checker
+* Dashboard warning-light checker
+* Engine and acceleration guidance
+* Battery and starting guidance
+* Cooling-system guidance
+* Brake-system guidance
+* MOT awareness
+* Safe driving recommendations
+* Links to in-depth Motor Vehicle Expert guides
 
-![Invoice](images/imagesinvoice.png.png)
-
-### Reports System
-
-![Reports](images/imagesreports.png.png)
-
----
-
-## Features
-
-- Secure Firebase Authentication
-- Customer & Vehicle Profile Intake
-- AI Diagnostic Engine
-- OBD Fault Code Lookup
-- Smart Invoice Builder
-- Revenue Dashboard
-- Workshop Reports History
-- PDF Export
-- Responsive Premium UI
-- GitHub Pages Deployment
+The application follows real diagnostic logic instead of guessing or assigning arbitrary confidence scores.
 
 ---
 
-## Tech Stack
+## Current Diagnostic Categories
 
-- HTML5
-- CSS3
-- JavaScript (Vanilla)
-- Firebase Authentication
-- Cloud Firestore
-- GitHub Pages
+### Clutch & Transmission
+
+* Clutch slipping symptoms
+* Clutch burning smell
+* High clutch bite point
+* Clutch pedal stuck down
+* Clutch pedal goes to the floor
+* Clutch makes noise when pressed
+* Clutch slip in high gears
+* Clutch slip after replacement
+
+### Dashboard Warning Lights
+
+* Oil pressure
+* Engine management
+* Battery / charging
+* Brake warning
+* ABS
+* Airbag
+* Coolant temperature
+* DPF
+* Tyre pressure
+* Traction control
+
+### Vehicle Systems
+
+* Engine and acceleration
+* Battery and starting
+* Cooling system
+* Brakes
 
 ---
 
-## Business Use Case
+## Built Using
 
-Designed as a lightweight SaaS platform for independent garages and workshop owners who need:
+* HTML5
+* CSS3
+* Vanilla JavaScript
+* GitHub Pages
 
-- customer management
-- diagnostics workflow
-- invoicing
-- reporting
-- operational analytics
+No frameworks are required.
 
 ---
 
-## How to Run Locally
+## Design Principles
+
+The project is built around several core principles:
+
+* UK-focused diagnostic guidance
+* Mechanic-style logical fault finding
+* Safety-first recommendations
+* Honest limitations
+* No fake AI confidence percentages
+* No invented fault-code interpretation
+* No unnecessary complexity
+* Fast loading
+* Mobile-first responsive interface
+
+---
+
+## Relationship with Motor Vehicle Expert
+
+AutoKnowledge Pro is the interactive companion application for:
+
+https://motorvehicleexpert.co.uk/
+
+Every diagnostic pathway is designed to direct users to detailed educational guides on the Motor Vehicle Expert website where appropriate.
+
+---
+
+## Local Development
+
+Clone the repository:
 
 ```bash
 git clone https://github.com/bavusanidube-prog/autoknowledge-pro.git
+```
+
+Move into the project:
+
+```bash
 cd autoknowledge-pro
+```
+
+Open `index.html` in your browser or run a local web server.
+
+No installation process is required.
+
+---
+
+## Roadmap
+
+Planned future improvements include:
+
+* Expanded symptom database
+* Additional drivetrain diagnostic routes
+* Steering and suspension pathways
+* Electrical-system diagnostics
+* Guided pre-purchase vehicle inspections
+* Smarter decision trees
+* Improved mobile experience
+
+---
+
+## Author
+
+**Bavusani Dube**
+
+Motor Vehicle Expert
+
+https://motorvehicleexpert.co.uk/
+
+---
+
+## Licence
+
+This project is provided for educational purposes.
+
+Diagnostic guidance should always be supported by appropriate testing and professional inspection where required.
