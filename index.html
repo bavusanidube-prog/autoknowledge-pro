@@ -1,1309 +1,4075 @@
 <!DOCTYPE html>
 <html lang="en-GB">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>AutoKnowledge Pro | Motor Vehicle Expert Diagnostics</title>
-<meta name="description" content="AutoKnowledge Pro by Motor Vehicle Expert. A premium diagnostic platform for UK drivers, mechanics and workshops." />
-<meta name="robots" content="index,follow" />
-<meta name="theme-color" content="#07111f" />
-
-<style>
-:root{
-  --premium-blue:#0066CC;
-  --premium-red:#E63946;
-  --premium-green:#2A9D8F;
-  --premium-purple:#7B2CBF;
-  --status-good:#2e7d32;
-  --status-warn:#f57c00;
-  --status-fault:#d32f2f;
-  --light:#f8f9fa;
-  --white:#ffffff;
-  --dark:#212529;
-  --grey:#6c757d;
-
-  --bg:#07111f;
-  --bg2:#0f172a;
-  --panel:rgba(15,23,42,.78);
-  --panel-strong:rgba(2,6,23,.92);
-  --border:rgba(255,255,255,.12);
-  --text:#e5eefb;
-  --muted:#94a3b8;
-  --soft:#cbd5e1;
-  --amber:#f59e0b;
-  --amber2:#fbbf24;
-  --blue:#38bdf8;
-  --green:#22c55e;
-  --red:#ef4444;
-  --shadow:0 24px 70px rgba(0,0,0,.38);
-  --shadow-soft:0 14px 34px rgba(0,0,0,.24);
-}
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-html{
-  scroll-behavior:smooth;
-  background:var(--bg);
-}
-
-body{
-  font-family:Inter,Segoe UI,Arial,sans-serif;
-  background:
-    radial-gradient(circle at top right,rgba(245,158,11,.16),transparent 30%),
-    radial-gradient(circle at left center,rgba(56,189,248,.12),transparent 28%),
-    linear-gradient(180deg,#08121f 0%,#0b1727 50%,#0d1321 100%);
-  color:var(--text);
-  min-height:100vh;
-  line-height:1.6;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-}
-
-a{
-  color:inherit;
-  text-decoration:none;
-}
-
-button{
-  font:inherit;
-}
-
-.bg-grid{
-  position:fixed;
-  inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
-  background-size:42px 42px;
-  mask-image:radial-gradient(circle at center,black,transparent 84%);
-  pointer-events:none;
-  z-index:0;
-}
-
-.page{
-  position:relative;
-  z-index:1;
-  width:min(1440px,100%);
-  margin:0 auto;
-  padding:24px;
-}
-
-.app-shell{
-  display:grid;
-  grid-template-columns:280px 1fr;
-  gap:22px;
-  min-height:calc(100vh - 48px);
-}
-
-.sidebar{
-  position:sticky;
-  top:24px;
-  height:calc(100vh - 48px);
-  background:rgba(7,17,31,.82);
-  border:1px solid var(--border);
-  border-radius:28px;
-  padding:20px;
-  backdrop-filter:blur(18px);
-  box-shadow:var(--shadow-soft);
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-}
-
-.brand{
-  display:flex;
-  gap:14px;
-  align-items:center;
-  margin-bottom:26px;
-}
-
-.logo-mark{
-  width:52px;
-  height:52px;
-  border-radius:16px;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(135deg,var(--amber2),var(--amber));
-  color:#07111f;
-  font-weight:900;
-  letter-spacing:-.06em;
-  box-shadow:0 16px 34px rgba(245,158,11,.25);
-}
-
-.brand small{
-  display:block;
-  color:var(--amber2);
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-
-.brand strong{
-  display:block;
-  color:#fff;
-  font-size:20px;
-  letter-spacing:-.04em;
-}
-
-.nav{
-  display:grid;
-  gap:8px;
-}
-
-.nav a{
-  padding:13px 14px;
-  border-radius:16px;
-  color:var(--soft);
-  font-weight:800;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  border:1px solid transparent;
-}
-
-.nav a:hover,
-.nav a.active{
-  background:rgba(255,255,255,.06);
-  border-color:var(--border);
-  color:#fff;
-}
-
-.sidebar-card{
-  margin-top:24px;
-  padding:16px;
-  border-radius:20px;
-  background:
-    radial-gradient(circle at top right,rgba(245,158,11,.14),transparent 40%),
-    rgba(255,255,255,.045);
-  border:1px solid var(--border);
-}
-
-.sidebar-card small{
-  color:var(--muted);
-  display:block;
-  margin-bottom:8px;
-}
-
-.sidebar-card strong{
-  color:#fff;
-  display:block;
-  font-size:18px;
-  margin-bottom:12px;
-}
-
-.main{
-  display:grid;
-  gap:22px;
-}
-
-.topbar{
-  background:rgba(7,17,31,.74);
-  border:1px solid var(--border);
-  border-radius:28px;
-  padding:16px 18px;
-  backdrop-filter:blur(18px);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  box-shadow:var(--shadow-soft);
-}
-
-.mobile-brand{
-  display:none;
-  font-weight:900;
-  color:#fff;
-}
-
-.top-actions{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.chip{
-  padding:10px 13px;
-  border-radius:999px;
-  background:rgba(255,255,255,.055);
-  border:1px solid var(--border);
-  color:var(--soft);
-  font-weight:800;
-  font-size:13px;
-}
-
-.btn{
-  border:none;
-  border-radius:999px;
-  padding:13px 18px;
-  cursor:pointer;
-  font-weight:900;
-  transition:.22s ease;
-}
-
-.btn:hover{
-  transform:translateY(-2px);
-}
-
-.btn-primary{
-  background:linear-gradient(135deg,var(--amber2),var(--amber));
-  color:#07111f;
-  box-shadow:0 16px 34px rgba(245,158,11,.24);
-}
-
-.btn-secondary{
-  background:rgba(255,255,255,.055);
-  color:var(--text);
-  border:1px solid var(--border);
-}
-
-.btn-blue{
-  background:linear-gradient(135deg,var(--premium-blue),#38bdf8);
-  color:#fff;
-}
-
-.btn-red{
-  background:linear-gradient(135deg,var(--premium-red),#ef4444);
-  color:#fff;
-}
-
-.btn-green{
-  background:linear-gradient(135deg,var(--premium-green),#22c55e);
-  color:#fff;
-}
-
-.btn-purple{
-  background:linear-gradient(135deg,var(--premium-purple),#a855f7);
-  color:#fff;
-}
-
-.hero{
-  display:grid;
-  grid-template-columns:1.15fr .85fr;
-  gap:22px;
-  padding:34px;
-  border-radius:32px;
-  background:
-    radial-gradient(circle at top right,rgba(245,158,11,.18),transparent 34%),
-    radial-gradient(circle at bottom left,rgba(56,189,248,.13),transparent 34%),
-    linear-gradient(135deg,rgba(7,17,31,.96),rgba(15,23,42,.88));
-  border:1px solid rgba(255,255,255,.13);
-  box-shadow:var(--shadow);
-}
-
-.eyebrow{
-  color:var(--amber2);
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  margin-bottom:12px;
-}
-
-.hero h1{
-  color:#fff;
-  font-size:clamp(2.4rem,5vw,4.6rem);
-  line-height:1;
-  letter-spacing:-.07em;
-  margin-bottom:18px;
-}
-
-.hero p{
-  color:var(--muted);
-  max-width:780px;
-  font-size:16px;
-  line-height:1.8;
-  margin-bottom:22px;
-}
-
-.hero-actions{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-bottom:20px;
-}
-
-.trust-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.trust-row span{
-  padding:8px 11px;
-  border-radius:999px;
-  background:rgba(255,255,255,.045);
-  border:1px solid var(--border);
-  color:var(--soft);
-  font-size:13px;
-  font-weight:800;
-}
-
-.diagnostic-visual{
-  background:rgba(2,6,23,.66);
-  border:1px solid var(--border);
-  border-radius:26px;
-  padding:20px;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
-}
-
-.visual-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:18px;
-}
-
-.live-dot{
-  width:10px;
-  height:10px;
-  border-radius:999px;
-  background:var(--green);
-  box-shadow:0 0 0 7px rgba(34,197,94,.12);
-  animation:pulse 1.4s infinite ease-in-out;
-}
-
-.visual-head strong{
-  color:#fff;
-}
-
-.health-score{
-  display:grid;
-  grid-template-columns:140px 1fr;
-  gap:18px;
-  align-items:center;
-  margin-bottom:18px;
-}
-
-.score-ring{
-  width:140px;
-  height:140px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:
-    conic-gradient(var(--green) 0 82%,rgba(255,255,255,.08) 82% 100%);
-  position:relative;
-}
-
-.score-ring::after{
-  content:"";
-  position:absolute;
-  inset:13px;
-  border-radius:50%;
-  background:#07111f;
-  border:1px solid var(--border);
-}
-
-.score-ring span{
-  position:relative;
-  z-index:1;
-  color:#fff;
-  font-size:34px;
-  font-weight:900;
-}
-
-.score-copy h3{
-  color:#fff;
-  font-size:22px;
-  margin-bottom:8px;
-}
-
-.score-copy p{
-  margin:0;
-  font-size:14px;
-  color:var(--muted);
-}
-
-.status-list{
-  display:grid;
-  gap:10px;
-}
-
-.status-row{
-  display:flex;
-  justify-content:space-between;
-  gap:14px;
-  padding:13px 14px;
-  border-radius:16px;
-  background:rgba(255,255,255,.045);
-  border:1px solid var(--border);
-}
-
-.status-row span{
-  color:var(--soft);
-  font-weight:800;
-}
-
-.good{color:var(--green);}
-.warn{color:var(--amber2);}
-.fault{color:var(--red);}
-
-.section{
-  background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035)),var(--panel);
-  border:1px solid var(--border);
-  border-radius:28px;
-  padding:26px;
-  box-shadow:var(--shadow-soft);
-  backdrop-filter:blur(18px);
-}
-
-.section-head{
-  display:flex;
-  justify-content:space-between;
-  gap:20px;
-  align-items:flex-start;
-  margin-bottom:20px;
-}
-
-.section-head h2{
-  color:#fff;
-  font-size:28px;
-  letter-spacing:-.04em;
-}
-
-.section-head p{
-  color:var(--muted);
-  max-width:720px;
-  margin-top:6px;
-}
-
-.grid-4{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:16px;
-}
-
-.card{
-  padding:20px;
-  border-radius:22px;
-  background:rgba(2,6,23,.52);
-  border:1px solid var(--border);
-  transition:.22s ease;
-}
-
-.card:hover{
-  transform:translateY(-4px);
-  border-color:rgba(245,158,11,.36);
-}
-
-.icon{
-  width:48px;
-  height:48px;
-  border-radius:15px;
-  display:grid;
-  place-items:center;
-  margin-bottom:16px;
-  background:rgba(255,255,255,.07);
-  border:1px solid var(--border);
-  color:var(--amber2);
-  font-weight:900;
-}
-
-.card h3{
-  color:#fff;
-  margin-bottom:8px;
-  font-size:18px;
-}
-
-.card p{
-  color:var(--muted);
-  font-size:14px;
-  line-height:1.7;
-}
-
-.dashboard-grid{
-  display:grid;
-  grid-template-columns:1.2fr .8fr;
-  gap:18px;
-}
-
-.live-console{
-  position:relative;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at top right,rgba(245,158,11,.14),transparent 34%),
-    radial-gradient(circle at bottom left,rgba(56,189,248,.11),transparent 34%),
-    linear-gradient(180deg,rgba(2,6,23,.92),rgba(15,23,42,.84));
-  border:1px solid rgba(255,255,255,.13);
-  border-radius:24px;
-  padding:20px;
-}
-
-.console-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  margin-bottom:16px;
-}
-
-.console-header strong{
-  color:#fff;
-}
-
-.scan-track{
-  height:12px;
-  border-radius:999px;
-  overflow:hidden;
-  background:rgba(255,255,255,.08);
-  margin:12px 0 18px;
-}
-
-.scan-progress{
-  height:100%;
-  width:76%;
-  background:linear-gradient(90deg,var(--amber),var(--amber2));
-  border-radius:999px;
-}
-
-.feed{
-  display:grid;
-  gap:9px;
-  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-  font-size:13px;
-}
-
-.feed-line{
-  color:#dbeafe;
-  padding:9px 10px;
-  border-radius:12px;
-  background:rgba(2,6,23,.58);
-  border:1px solid rgba(148,163,184,.14);
-}
-
-.feed-line span{
-  color:var(--amber2);
-}
-
-.ai-card{
-  padding:22px;
-  border-radius:24px;
-  background:rgba(2,6,23,.56);
-  border:1px solid var(--border);
-}
-
-.ai-card h3{
-  color:#fff;
-  font-size:22px;
-  margin-bottom:10px;
-}
-
-.ai-card p{
-  color:var(--muted);
-  line-height:1.7;
-  margin-bottom:16px;
-}
-
-.risk-box{
-  display:grid;
-  gap:10px;
-}
-
-.risk-box div{
-  padding:12px;
-  border-radius:15px;
-  background:rgba(255,255,255,.045);
-  border:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  color:var(--soft);
-  font-weight:800;
-}
-
-.steps{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:16px;
-}
-
-.step-number{
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(135deg,var(--premium-green),var(--green));
-  color:#fff;
-  font-weight:900;
-  margin-bottom:14px;
-}
-
-.footer{
-  text-align:center;
-  color:var(--muted);
-  padding:30px;
-  border-radius:24px;
-  background:rgba(2,6,23,.72);
-  border:1px solid var(--border);
-}
-
-.footer strong{
-  display:block;
-  color:#fff;
-  margin-bottom:6px;
-}
-
-.footer-links{
-  display:flex;
-  justify-content:center;
-  gap:16px;
-  flex-wrap:wrap;
-  margin-top:12px;
-}
-
-.footer-links a:hover{
-  color:var(--amber2);
-}
-
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:9999;
-  padding:20px;
-  background:rgba(0,0,0,.72);
-  overflow-y:auto;
-}
-
-.modal.active{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.modal-content{
-  width:100%;
-  max-width:560px;
-  background:#08121f;
-  border:1px solid var(--border);
-  border-radius:26px;
-  padding:28px;
-  color:var(--text);
-  position:relative;
-  box-shadow:var(--shadow);
-  animation:fadeIn .24s ease;
-}
-
-.close{
-  position:absolute;
-  top:16px;
-  right:20px;
-  font-size:30px;
-  cursor:pointer;
-  color:var(--muted);
-}
-
-.close:hover{
-  color:var(--red);
-}
-
-.modal h2{
-  color:#fff;
-  margin-bottom:8px;
-  letter-spacing:-.04em;
-}
-
-.modal p{
-  color:var(--muted);
-  margin-bottom:18px;
-}
-
-.form-group{
-  margin-bottom:14px;
-}
-
-.form-group label{
-  display:block;
-  color:var(--soft);
-  font-weight:800;
-  margin-bottom:7px;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea{
-  width:100%;
-  padding:14px;
-  border-radius:14px;
-  border:1px solid rgba(148,163,184,.22);
-  background:rgba(2,6,23,.82);
-  color:#fff;
-  outline:none;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus{
-  border-color:rgba(245,158,11,.62);
-  box-shadow:0 0 0 4px rgba(245,158,11,.13);
-}
-
-.scan-results,
-.report-list{
-  background:rgba(255,255,255,.045);
-  border:1px solid var(--border);
-  padding:14px;
-  border-radius:18px;
-  margin-bottom:16px;
-}
-
-.scan-item,
-.report-item{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  padding:11px 0;
-  border-bottom:1px solid rgba(255,255,255,.09);
-}
-
-.scan-item:last-child,
-.report-item:last-child{
-  border-bottom:none;
-}
-
-@keyframes pulse{
-  0%,100%{box-shadow:0 0 0 5px rgba(34,197,94,.13);}
-  50%{box-shadow:0 0 0 9px rgba(34,197,94,.05);}
-}
-
-@keyframes fadeIn{
-  from{opacity:0;transform:scale(.96);}
-  to{opacity:1;transform:scale(1);}
-}
-
-@media(max-width:1100px){
-  .app-shell{
-    grid-template-columns:1fr;
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>AutoKnowledge Pro | Free UK Car Problem Checker</title>
+
+  <meta
+    name="description"
+    content="Check a car symptom, dashboard warning light or OBD fault code with AutoKnowledge Pro. Get plain-English safety, MOT and diagnostic guidance for UK drivers."
+  />
+
+  <meta
+    name="robots"
+    content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+  />
+
+  <meta
+    name="author"
+    content="Motor Vehicle Expert"
+  />
+
+  <meta
+    name="theme-color"
+    content="#0f2744"
+  />
+
+  <link
+    rel="canonical"
+    href="https://bavusanidube-prog.github.io/autoknowledge-pro/"
+  />
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="favicon.png"
+  />
+
+  <link
+    rel="stylesheet"
+    href="styles.css"
+  />
+
+  <!-- ======================================================
+       OPEN GRAPH
+  ======================================================= -->
+
+  <meta
+    property="og:type"
+    content="website"
+  />
+
+  <meta
+    property="og:site_name"
+    content="AutoKnowledge Pro"
+  />
+
+  <meta
+    property="og:locale"
+    content="en_GB"
+  />
+
+  <meta
+    property="og:title"
+    content="AutoKnowledge Pro | Free UK Car Problem Checker"
+  />
+
+  <meta
+    property="og:description"
+    content="Choose a vehicle symptom or warning light and get clear diagnostic direction, safety guidance, MOT relevance and sensible next checks."
+  />
+
+  <meta
+    property="og:url"
+    content="https://bavusanidube-prog.github.io/autoknowledge-pro/"
+  />
+
+  <meta
+    property="og:image"
+    content="https://bavusanidube-prog.github.io/autoknowledge-pro/logo.png"
+  />
+
+  <meta
+    property="og:image:alt"
+    content="AutoKnowledge Pro by Motor Vehicle Expert"
+  />
+
+  <!-- ======================================================
+       TWITTER
+  ======================================================= -->
+
+  <meta
+    name="twitter:card"
+    content="summary"
+  />
+
+  <meta
+    name="twitter:title"
+    content="AutoKnowledge Pro | Free UK Car Problem Checker"
+  />
+
+  <meta
+    name="twitter:description"
+    content="Check vehicle symptoms, warning lights and fault-code guidance in plain English."
+  />
+
+  <meta
+    name="twitter:image"
+    content="https://bavusanidube-prog.github.io/autoknowledge-pro/logo.png"
+  />
+
+  <!-- ======================================================
+       WEB APPLICATION SCHEMA
+  ======================================================= -->
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "@id": "https://bavusanidube-prog.github.io/autoknowledge-pro/#application",
+    "name": "AutoKnowledge Pro",
+    "alternateName": "Motor Vehicle Expert Car Problem Checker",
+    "url": "https://bavusanidube-prog.github.io/autoknowledge-pro/",
+    "applicationCategory": "AutomotiveApplication",
+    "applicationSubCategory": "Vehicle symptom and warning light checker",
+    "operatingSystem": "Web browser",
+    "browserRequirements": "Requires JavaScript and a modern web browser",
+    "isAccessibleForFree": true,
+    "description": "A free UK-focused vehicle problem checker that helps users understand symptoms, dashboard warning lights, driving urgency, MOT relevance and sensible diagnostic next steps.",
+    "creator": {
+      "@type": "Person",
+      "name": "Bavusani Otis Dube"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Motor Vehicle Expert",
+      "url": "https://motorvehicleexpert.co.uk/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://motorvehicleexpert.co.uk/logo.png"
+      }
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "GBP"
+    }
   }
+  </script>
 
-  .sidebar{
-    position:relative;
-    top:auto;
-    height:auto;
-  }
-
-  .nav{
-    grid-template-columns:repeat(4,minmax(0,1fr));
-  }
-
-  .hero,
-  .dashboard-grid{
-    grid-template-columns:1fr;
-  }
-
-  .grid-4{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-  }
-}
-
-@media(max-width:700px){
-  .page{
-    padding:12px;
-  }
-
-  .sidebar{
-    display:none;
-  }
-
-  .mobile-brand{
-    display:block;
-  }
-
-  .topbar{
-    flex-direction:column;
-    align-items:flex-start;
-  }
-
-  .top-actions,
-  .top-actions .btn,
-  .chip{
-    width:100%;
-  }
-
-  .hero{
-    padding:22px;
-    border-radius:24px;
-  }
-
-  .hero h1{
-    font-size:2.25rem;
-  }
-
-  .hero-actions{
-    display:grid;
-    grid-template-columns:1fr;
-  }
-
-  .hero-actions .btn{
-    width:100%;
-  }
-
-  .health-score,
-  .grid-4,
-  .steps{
-    grid-template-columns:1fr;
-  }
-
-  .section{
-    padding:20px;
-    border-radius:22px;
-  }
-
-  .section-head{
-    flex-direction:column;
-  }
-}
-</style>
 </head>
 
 <body>
 
-<div class="bg-grid"></div>
+  <a
+    class="skip-link"
+    href="#main-content"
+  >
+    Skip to diagnostic checker
+  </a>
 
-<div class="page">
-  <div class="app-shell">
+  <!-- ======================================================
+       SITE HEADER
+  ======================================================= -->
 
-    <aside class="sidebar">
-      <div>
-        <div class="brand">
-          <div class="logo-mark">MV</div>
-          <div>
-            <small>Motor Vehicle Expert</small>
-            <strong>AutoKnowledge Pro</strong>
-          </div>
-        </div>
+  <header class="site-header">
 
-        <nav class="nav">
-          <a href="#" class="active">Dashboard</a>
-          <a href="#features">Diagnostics</a>
-          <a href="#live">Live Scan</a>
-          <a href="#tools">Tools</a>
-          <a href="#connect">Connect</a>
-          <a href="#" data-modal="reportsModal">Reports</a>
-          <a href="#" data-modal="loginModal">Login</a>
-          <a href="#" data-modal="signupModal">Sign Up</a>
-        </nav>
-      </div>
+    <div class="app-container header-inner">
 
-      <div class="sidebar-card">
-        <small>Current vehicle status</small>
-        <strong>82% Health Score</strong>
-        <button class="btn btn-primary" data-modal="diagnosticModal">Start Scan</button>
-      </div>
-    </aside>
+      <a
+        class="app-brand"
+        href="./"
+        aria-label="AutoKnowledge Pro home"
+      >
 
-    <main class="main">
+        <img
+          src="logo.png"
+          alt="AutoKnowledge Pro logo"
+          class="app-logo"
+          width="64"
+          height="64"
+        />
 
-      <header class="topbar">
-        <div class="mobile-brand">AutoKnowledge Pro</div>
+        <span class="brand-copy">
 
-        <div class="top-actions">
-          <span class="chip">UK Diagnostic Platform</span>
-          <span class="chip">MOT-aware guidance</span>
-          <span class="chip">Live scan ready</span>
-        </div>
+          <small>
+            Motor Vehicle Expert
+          </small>
 
-        <div class="top-actions">
-          <button class="btn btn-secondary" data-modal="loginModal">Login</button>
-          <button class="btn btn-primary" data-modal="signupModal">Sign Up</button>
-        </div>
-      </header>
+          <strong>
+            AutoKnowledge Pro
+          </strong>
 
-      <section class="hero">
-        <div>
-          <div class="eyebrow">AI-assisted vehicle diagnostics</div>
-          <h1>Premium diagnostics for UK drivers and mechanics.</h1>
-          <p>
-            AutoKnowledge Pro helps identify warning lights, symptoms, fault-code risks,
-            live vehicle data and MOT-related issues through a professional diagnostic dashboard.
+        </span>
+
+      </a>
+
+      <nav
+        class="header-nav"
+        aria-label="Primary navigation"
+      >
+
+        <a href="#start-check">
+          Start Check
+        </a>
+
+        <a href="#how-it-works">
+          How It Works
+        </a>
+
+        <a
+          href="https://motorvehicleexpert.co.uk/fault-codes.html"
+          target="_blank"
+          rel="noopener"
+        >
+          Fault Codes
+        </a>
+
+        <a
+          href="https://motorvehicleexpert.co.uk/diagnostics.html"
+          target="_blank"
+          rel="noopener"
+        >
+          Diagnostic Guides
+        </a>
+
+      </nav>
+
+    </div>
+
+  </header>
+
+  <main id="main-content">
+
+    <!-- ====================================================
+         HONEST PRODUCT HERO
+    ===================================================== -->
+
+    <section class="app-hero">
+
+      <div class="app-container hero-grid">
+
+        <div class="hero-copy">
+
+          <span class="eyebrow">
+            Free UK vehicle problem checker
+          </span>
+
+          <h1>
+            Understand your car problem before replacing parts
+          </h1>
+
+          <p class="hero-lead">
+            Choose a vehicle symptom or dashboard warning light and receive
+            plain-English diagnostic direction, driving urgency, MOT relevance
+            and sensible checks to discuss with a mechanic.
           </p>
 
           <div class="hero-actions">
-            <button class="btn btn-primary" data-modal="diagnosticModal">Start Diagnostic Session</button>
-            <button class="btn btn-red" data-modal="liveScanModal">Run Live Scan</button>
-            <button class="btn btn-secondary" data-modal="reportsModal">View Reports</button>
+
+            <a
+              class="button button-primary"
+              href="#start-check"
+            >
+              Start Vehicle Check
+            </a>
+
+            <a
+              class="button button-secondary"
+              href="https://motorvehicleexpert.co.uk/fault-codes.html"
+              target="_blank"
+              rel="noopener"
+            >
+              Look Up a Fault Code
+            </a>
+
           </div>
 
-          <div class="trust-row">
-            <span>Mechanic-style guidance</span>
-            <span>Safe-to-drive advice</span>
-            <span>Warning light support</span>
-            <span>Garage report ready</span>
-          </div>
+          <ul
+            class="hero-benefits"
+            aria-label="App benefits"
+          >
+
+            <li>
+              No account required
+            </li>
+
+            <li>
+              No pretend vehicle scan
+            </li>
+
+            <li>
+              UK and MOT-aware guidance
+            </li>
+
+            <li>
+              Free to use
+            </li>
+
+          </ul>
+
         </div>
 
-        <div class="diagnostic-visual">
-          <div class="visual-head">
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span class="live-dot"></span>
-              <strong>Vehicle Health Live</strong>
-            </div>
-            <span class="warn">Caution</span>
-          </div>
+        <aside
+          class="hero-diagnostic-card"
+          aria-label="How AutoKnowledge Pro helps"
+        >
 
-          <div class="health-score">
-            <div class="score-ring"><span>82%</span></div>
-            <div class="score-copy">
-              <h3>BMW 320d Scan</h3>
-              <p>One active ABS fault, one maintenance warning and no critical engine fault detected.</p>
-            </div>
-          </div>
+          <div class="diagnostic-card-heading">
 
-          <div class="status-list">
-            <div class="status-row"><span>Engine System</span><strong class="good">Good</strong></div>
-            <div class="status-row"><span>Brake System</span><strong class="warn">Check Soon</strong></div>
-            <div class="status-row"><span>ABS Sensor</span><strong class="fault">Fault Found</strong></div>
-            <div class="status-row"><span>MOT Risk</span><strong class="warn">Medium</strong></div>
-          </div>
-        </div>
-      </section>
+            <span class="status-indicator"></span>
 
-      <section id="features" class="section">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">Core features</div>
-            <h2>Built for real diagnostic decisions</h2>
-            <p>Designed for drivers, mobile mechanics, workshops and anyone who needs clearer vehicle fault guidance.</p>
-          </div>
-        </div>
+            <div>
 
-        <div class="grid-4">
-          <div class="card">
-            <div class="icon">ECU</div>
-            <h3>Fault Code Reading</h3>
-            <p>Understand fault-code meaning, possible causes and next diagnostic steps.</p>
-          </div>
+              <small>
+                Diagnostic guidance
+              </small>
 
-          <div class="card">
-            <div class="icon">!</div>
-            <h3>Warning Light Help</h3>
-            <p>Check dashboard warnings and whether the vehicle may be safe to drive.</p>
-          </div>
+              <strong>
+                Start with what you noticed
+              </strong>
 
-          <div class="card">
-            <div class="icon">RPM</div>
-            <h3>Live Vehicle Data</h3>
-            <p>Review RPM, voltage, coolant temperature and system readings.</p>
-          </div>
-
-          <div class="card">
-            <div class="icon">PDF</div>
-            <h3>Saved Reports</h3>
-            <p>Create cleaner diagnostic summaries for customers or personal records.</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="live" class="section">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">Live scan console</div>
-            <h2>Professional scan experience</h2>
-            <p>A more premium scan view with active modules, fault flags and AI-style mechanic reasoning.</p>
-          </div>
-          <button class="btn btn-primary" data-modal="liveScanModal">Open Live Scan</button>
-        </div>
-
-        <div class="dashboard-grid">
-          <div class="live-console">
-            <div class="console-header">
-              <strong>Scanning vehicle modules</strong>
-              <span class="chip">76% complete</span>
             </div>
 
-            <div class="scan-track">
-              <div class="scan-progress"></div>
-            </div>
-
-            <div class="feed">
-              <div class="feed-line"><span>[OK]</span> Engine ECU communicating normally</div>
-              <div class="feed-line"><span>[WARN]</span> Brake system requires attention</div>
-              <div class="feed-line"><span>[FAULT]</span> ABS wheel speed sensor signal irregular</div>
-              <div class="feed-line"><span>[INFO]</span> Battery voltage stable at 12.6V</div>
-              <div class="feed-line"><span>[MOT]</span> ABS warning fault may affect MOT outcome</div>
-            </div>
           </div>
 
-          <div class="ai-card">
-            <h3>AI Mechanic Summary</h3>
+          <div class="diagnostic-preview-list">
+
+            <article class="diagnostic-preview-item">
+
+              <span class="preview-icon">
+                01
+              </span>
+
+              <div>
+
+                <strong>
+                  Choose the symptom
+                </strong>
+
+                <p>
+                  Tell us whether the vehicle will not start, lacks power,
+                  overheats, smells, shakes or shows another problem.
+                </p>
+
+              </div>
+
+            </article>
+
+            <article class="diagnostic-preview-item">
+
+              <span class="preview-icon">
+                02
+              </span>
+
+              <div>
+
+                <strong>
+                  Add the conditions
+                </strong>
+
+                <p>
+                  Record when it happens, which warning lights appear and
+                  whether the vehicle still drives normally.
+                </p>
+
+              </div>
+
+            </article>
+
+            <article class="diagnostic-preview-item">
+
+              <span class="preview-icon">
+                03
+              </span>
+
+              <div>
+
+                <strong>
+                  Review the next steps
+                </strong>
+
+                <p>
+                  See likely fault areas, urgency, MOT relevance and the checks
+                  that should happen before parts are replaced.
+                </p>
+
+              </div>
+
+            </article>
+
+          </div>
+
+          <div class="honesty-notice">
+
+            <strong>
+              What this app does not do
+            </strong>
+
             <p>
-              The scan suggests the vehicle may be driveable with caution, but the ABS fault should be checked
-              before long journeys or MOT testing.
+              AutoKnowledge Pro does not connect to your vehicle, read an ECU or
+              replace a professional inspection. It provides structured
+              diagnostic guidance from the information you select.
             </p>
 
-            <div class="risk-box">
-              <div><span>Drive status</span><strong class="warn">Caution</strong></div>
-              <div><span>Repair urgency</span><strong class="warn">Book soon</strong></div>
-              <div><span>MOT risk</span><strong class="fault">Likely issue</strong></div>
+          </div>
+
+        </aside>
+
+      </div>
+
+    </section>
+
+    <!-- ====================================================
+         START YOUR VEHICLE CHECK
+    ===================================================== -->
+
+    <section
+      class="checker-section"
+      id="start-check"
+      aria-labelledby="start-check-title"
+    >
+
+      <div class="app-container">
+
+        <div class="section-heading">
+
+          <span class="eyebrow">
+            Start your check
+          </span>
+
+          <h2 id="start-check-title">
+            What would you like help with?
+          </h2>
+
+          <p>
+            Choose the route that best matches the information you already
+            have. AutoKnowledge Pro will guide you without pretending to scan or
+            communicate with the vehicle.
+          </p>
+
+        </div>
+
+        <div
+          class="checker-route-grid"
+          role="list"
+        >
+
+          <!-- ==============================================
+               SYMPTOM CHECKER ROUTE
+          =============================================== -->
+
+          <article
+            class="checker-route-card checker-route-primary"
+            role="listitem"
+          >
+
+            <span
+              class="route-number"
+              aria-hidden="true"
+            >
+              01
+            </span>
+
+            <div class="route-icon" aria-hidden="true">
+              ?
             </div>
-          </div>
-        </div>
-      </section>
 
-      <section id="tools" class="section">
-        <div class="section-head">
+            <h3>
+              Check a Vehicle Symptom
+            </h3>
+
+            <p>
+              Start with what the vehicle is doing, such as losing power,
+              overheating, failing to start, smelling unusual, shaking or
+              developing a clutch problem.
+            </p>
+
+            <ul class="route-feature-list">
+
+              <li>
+                Guided follow-up questions
+              </li>
+
+              <li>
+                Likely fault areas
+              </li>
+
+              <li>
+                Safe-to-drive guidance
+              </li>
+
+              <li>
+                MOT relevance
+              </li>
+
+            </ul>
+
+            <button
+              class="button button-primary route-button"
+              type="button"
+              data-checker-route="symptom"
+              aria-controls="symptom-checker"
+              aria-expanded="false"
+            >
+              Check a Symptom
+            </button>
+
+          </article>
+
+          <!-- ==============================================
+               WARNING-LIGHT ROUTE
+          =============================================== -->
+
+          <article
+            class="checker-route-card"
+            role="listitem"
+          >
+
+            <span
+              class="route-number"
+              aria-hidden="true"
+            >
+              02
+            </span>
+
+            <div class="route-icon route-icon-warning" aria-hidden="true">
+              !
+            </div>
+
+            <h3>
+              Check a Warning Light
+            </h3>
+
+            <p>
+              Select the dashboard light you have seen and review its urgency,
+              likely causes, driving advice and possible MOT implications.
+            </p>
+
+            <ul class="route-feature-list">
+
+              <li>
+                Red, amber and green urgency
+              </li>
+
+              <li>
+                Stop-or-continue guidance
+              </li>
+
+              <li>
+                Common causes
+              </li>
+
+              <li>
+                Relevant warning-light guide
+              </li>
+
+            </ul>
+
+            <button
+              class="button button-secondary route-button"
+              type="button"
+              data-checker-route="warning-light"
+              aria-controls="warning-light-checker"
+              aria-expanded="false"
+            >
+              Check a Warning Light
+            </button>
+
+          </article>
+
+          <!-- ==============================================
+               EXISTING FAULT-CODE ROUTE
+          =============================================== -->
+
+          <article
+            class="checker-route-card"
+            role="listitem"
+          >
+
+            <span
+              class="route-number"
+              aria-hidden="true"
+            >
+              03
+            </span>
+
+            <div class="route-icon route-icon-code" aria-hidden="true">
+              P
+            </div>
+
+            <h3>
+              Look Up a Fault Code
+            </h3>
+
+            <p>
+              Already have an OBD code such as P0299 or P0420? Use the existing
+              Motor Vehicle Expert fault-code checker and published diagnostic
+              guides.
+            </p>
+
+            <ul class="route-feature-list">
+
+              <li>
+                Code meaning
+              </li>
+
+              <li>
+                Common causes
+              </li>
+
+              <li>
+                Diagnostic direction
+              </li>
+
+              <li>
+                Published code guides
+              </li>
+
+            </ul>
+
+            <a
+              class="button button-secondary route-button"
+              href="https://motorvehicleexpert.co.uk/fault-codes.html"
+              target="_blank"
+              rel="noopener"
+            >
+              Open Fault-Code Checker
+            </a>
+
+          </article>
+
+        </div>
+
+        <div class="checker-trust-note">
+
+          <strong>
+            Not sure which route to choose?
+          </strong>
+
+          <p>
+            Start with the symptom checker when you do not have a fault code.
+            Choose the warning-light checker when a dashboard symbol is the main
+            concern. Use the fault-code page only when a scanner has already
+            provided a code.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ====================================================
+         DIAGNOSTIC CHECKER WORKSPACE
+    ===================================================== -->
+
+    <section
+      class="checker-workspace"
+      aria-label="Vehicle diagnostic checker"
+    >
+
+      <div class="app-container">
+
+        <!-- ==================================================
+             CHECKER PROGRESS
+        =================================================== -->
+
+        <div
+          class="checker-progress"
+          id="checker-progress"
+          hidden
+          aria-label="Diagnostic progress"
+        >
+
+          <div class="progress-heading">
+
+            <strong id="progress-title">
+              Vehicle symptom check
+            </strong>
+
+            <span id="progress-status">
+              Step 1 of 4
+            </span>
+
+          </div>
+
+          <div
+            class="progress-track"
+            role="progressbar"
+            aria-valuemin="1"
+            aria-valuemax="4"
+            aria-valuenow="1"
+            aria-labelledby="progress-title"
+          >
+
+            <span
+              class="progress-fill"
+              id="progress-fill"
+            ></span>
+
+          </div>
+
+        </div>
+
+        <!-- ==================================================
+             SYMPTOM CHECKER
+        =================================================== -->
+
+        <section
+          class="diagnostic-checker"
+          id="symptom-checker"
+          aria-labelledby="symptom-checker-title"
+          hidden
+        >
+
+          <div class="checker-panel-heading">
+
+            <div>
+
+              <span class="eyebrow">
+                Guided symptom checker
+              </span>
+
+              <h2 id="symptom-checker-title">
+                What part of the vehicle is causing concern?
+              </h2>
+
+              <p>
+                Select the system that best matches the main symptom. You can
+                return and choose another category at any time.
+              </p>
+
+            </div>
+
+            <button
+              class="text-button"
+              type="button"
+              data-checker-close
+            >
+              Close checker
+            </button>
+
+          </div>
+
+          <!-- ================================================
+               STEP 1: VEHICLE SYSTEM
+          ================================================= -->
+
+          <div
+            class="checker-step"
+            id="symptom-step-system"
+            data-checker-step="1"
+          >
+
+            <fieldset class="checker-fieldset">
+
+              <legend>
+                Choose the main vehicle system
+              </legend>
+
+              <div class="choice-card-grid choice-card-grid-large">
+
+                <!-- CLUTCH -->
+
+                <label class="choice-card choice-card-featured">
+
+                  <input
+                    type="radio"
+                    name="vehicle-system"
+                    value="clutch"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    C
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      Clutch and Manual Gearbox
+                    </strong>
+
+                    <small>
+                      Slip, burning smell, high bite point, pedal faults, noise
+                      or pull-away judder.
+                    </small>
+
+                    <span class="choice-badge">
+                      Full checker available
+                    </span>
+
+                  </span>
+
+                </label>
+
+                <!-- ENGINE -->
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="vehicle-system"
+                    value="engine"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    E
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      Engine and Acceleration
+                    </strong>
+
+                    <small>
+                      Loss of power, hesitation, stuttering, smoke, rough running
+                      or poor acceleration.
+                    </small>
+
+                    <span class="choice-badge choice-badge-secondary">
+                      Guided route
+                    </span>
+
+                  </span>
+
+                </label>
+
+                <!-- STARTING -->
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="vehicle-system"
+                    value="starting"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    B
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      Battery and Starting
+                    </strong>
+
+                    <small>
+                      No crank, slow crank, clicking, flat battery or charging
+                      concerns.
+                    </small>
+
+                    <span class="choice-badge choice-badge-secondary">
+                      Guided route
+                    </span>
+
+                  </span>
+
+                </label>
+
+                <!-- COOLING -->
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="vehicle-system"
+                    value="cooling"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    T
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      Cooling and Overheating
+                    </strong>
+
+                    <small>
+                      High temperature, coolant loss, overheating, heater faults
+                      or cooling-fan concerns.
+                    </small>
+
+                    <span class="choice-badge choice-badge-secondary">
+                      Guided route
+                    </span>
+
+                  </span>
+
+                </label>
+
+                <!-- BRAKES -->
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="vehicle-system"
+                    value="brakes"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    B
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      Brakes
+                    </strong>
+
+                    <small>
+                      Poor braking, noise, vibration, pulling, overheating or
+                      warning lights.
+                    </small>
+
+                    <span class="choice-badge choice-badge-secondary">
+                      Safety-first route
+                    </span>
+
+                  </span>
+
+                </label>
+
+                <!-- STEERING -->
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="vehicle-system"
+                    value="steering"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    S
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      Steering and Suspension
+                    </strong>
+
+                    <small>
+                      Pulling, knocking, vibration, uneven tyre wear or unstable
+                      handling.
+                    </small>
+
+                    <span class="choice-badge choice-badge-muted">
+                      Guide links initially
+                    </span>
+
+                  </span>
+
+                </label>
+
+                <!-- EXHAUST -->
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="vehicle-system"
+                    value="exhaust"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    X
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      Exhaust and Emissions
+                    </strong>
+
+                    <small>
+                      Smoke, exhaust leaks, emissions warnings, DPF faults or
+                      unusual smells.
+                    </small>
+
+                    <span class="choice-badge choice-badge-muted">
+                      Guide links initially
+                    </span>
+
+                  </span>
+
+                </label>
+
+                <!-- MOT -->
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="vehicle-system"
+                    value="mot"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    M
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      MOT Concern
+                    </strong>
+
+                    <small>
+                      Check whether a known warning light, symptom or visible
+                      defect may affect an MOT.
+                    </small>
+
+                    <span class="choice-badge choice-badge-muted">
+                      MOT guide route
+                    </span>
+
+                  </span>
+
+                </label>
+
+              </div>
+
+            </fieldset>
+
+            <div class="checker-actions">
+
+              <button
+                class="button button-primary"
+                id="system-continue"
+                type="button"
+                disabled
+              >
+                Continue
+              </button>
+
+            </div>
+
+          </div>
+
+          <!-- ================================================
+               STEP 2: CLUTCH MAIN SYMPTOM
+          ================================================= -->
+
+          <div
+            class="checker-step"
+            id="clutch-step-symptom"
+            data-checker-step="2"
+            hidden
+          >
+
+            <div class="step-heading">
+
+              <span class="step-label">
+                Clutch symptom checker
+              </span>
+
+              <h3>
+                What is the main clutch problem?
+              </h3>
+
+              <p>
+                Choose the symptom that best matches what the driver notices
+                first.
+              </p>
+
+            </div>
+
+            <fieldset class="checker-fieldset">
+
+              <legend class="visually-hidden">
+                Choose the main clutch symptom
+              </legend>
+
+              <div class="choice-card-grid">
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="clutch-symptom"
+                    value="slipping"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    RPM
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      Clutch Slips or Revs Flare
+                    </strong>
+
+                    <small>
+                      Engine RPM rises without matching road-speed increase.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="clutch-symptom"
+                    value="burning-smell"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    H
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      Burning Clutch Smell
+                    </strong>
+
+                    <small>
+                      A sharp hot friction smell appears after manoeuvring,
+                      traffic, hills or acceleration.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="clutch-symptom"
+                    value="high-bite-point"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    ↑
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      High Clutch Bite Point
+                    </strong>
+
+                    <small>
+                      The clutch engages close to the top of the pedal travel.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="clutch-symptom"
+                    value="pedal-stuck-down"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    ↓
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      Clutch Pedal Stays Down
+                    </strong>
+
+                    <small>
+                      The pedal remains near the floor or returns slowly.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="clutch-symptom"
+                    value="pedal-floor"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    0
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      Pedal Goes to the Floor
+                    </strong>
+
+                    <small>
+                      The pedal suddenly loses resistance or pressure.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="clutch-symptom"
+                    value="noise-pressed"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    N
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      Noise When Pressing the Clutch
+                    </strong>
+
+                    <small>
+                      Squealing, grinding, rumbling or clicking changes with
+                      pedal position.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="clutch-symptom"
+                    value="pull-away-judder"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    J
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      Judder When Pulling Away
+                    </strong>
+
+                    <small>
+                      The vehicle shakes or grips unevenly as the clutch engages.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="choice-card">
+
+                  <input
+                    type="radio"
+                    name="clutch-symptom"
+                    value="after-replacement"
+                  />
+
+                  <span class="choice-card-icon" aria-hidden="true">
+                    R
+                  </span>
+
+                  <span class="choice-card-copy">
+
+                    <strong>
+                      Problem After Clutch Replacement
+                    </strong>
+
+                    <small>
+                      Slip, smell, noise or pedal problems began after recent
+                      clutch work.
+                    </small>
+
+                  </span>
+
+                </label>
+
+              </div>
+
+            </fieldset>
+
+            <div class="checker-actions checker-actions-split">
+
+              <button
+                class="button button-secondary"
+                type="button"
+                data-checker-back="system"
+              >
+                Back
+              </button>
+
+              <button
+                class="button button-primary"
+                id="clutch-symptom-continue"
+                type="button"
+                disabled
+              >
+                Continue
+              </button>
+
+            </div>
+
+          </div>
+
+          <!-- ================================================
+               STEP 3: CLUTCH CONDITIONS
+          ================================================= -->
+
+          <div
+            class="checker-step"
+            id="clutch-step-conditions"
+            data-checker-step="3"
+            hidden
+          >
+
+            <div class="step-heading">
+
+              <span class="step-label">
+                Symptom conditions
+              </span>
+
+              <h3>
+                Which additional signs are present?
+              </h3>
+
+              <p>
+                Select every statement that applies. These answers help separate
+                friction wear from hydraulic, cable, release-bearing, flywheel
+                and engine-performance faults.
+              </p>
+
+            </div>
+
+            <fieldset class="checker-fieldset">
+
+              <legend class="visually-hidden">
+                Select additional clutch symptoms
+              </legend>
+
+              <div class="check-option-grid">
+
+                <label class="check-option">
+
+                  <input
+                    type="checkbox"
+                    name="clutch-condition"
+                    value="rpm-flare"
+                  />
+
+                  <span>
+
+                    <strong>
+                      RPM rises without matching acceleration
+                    </strong>
+
+                    <small>
+                      Strong evidence of genuine clutch torque-transfer loss.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="check-option">
+
+                  <input
+                    type="checkbox"
+                    name="clutch-condition"
+                    value="high-gears"
+                  />
+
+                  <span>
+
+                    <strong>
+                      Worse in fourth, fifth or sixth gear
+                    </strong>
+
+                    <small>
+                      Higher gears commonly expose early clutch slip.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="check-option">
+
+                  <input
+                    type="checkbox"
+                    name="clutch-condition"
+                    value="uphill"
+                  />
+
+                  <span>
+
+                    <strong>
+                      Worse uphill or under heavy load
+                    </strong>
+
+                    <small>
+                      Increased torque demand may expose reduced clutch grip.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="check-option">
+
+                  <input
+                    type="checkbox"
+                    name="clutch-condition"
+                    value="burning-smell"
+                  />
+
+                  <span>
+
+                    <strong>
+                      Strong burning friction smell
+                    </strong>
+
+                    <small>
+                      Repeated smell supports clutch overheating or excessive
+                      slipping.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="check-option">
+
+                  <input
+                    type="checkbox"
+                    name="clutch-condition"
+                    value="pedal-slow"
+                  />
+
+                  <span>
+
+                    <strong>
+                      Pedal returns slowly or incompletely
+                    </strong>
+
+                    <small>
+                      Hydraulic, cable, spring or release-mechanism binding may
+                      be present.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="check-option">
+
+                  <input
+                    type="checkbox"
+                    name="clutch-condition"
+                    value="fluid-loss"
+                  />
+
+                  <span>
+
+                    <strong>
+                      Clutch or brake-fluid level is falling
+                    </strong>
+
+                    <small>
+                      Indicates a hydraulic leak requiring urgent inspection.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="check-option">
+
+                  <input
+                    type="checkbox"
+                    name="clutch-condition"
+                    value="gear-selection"
+                  />
+
+                  <span>
+
+                    <strong>
+                      First or reverse gear is difficult to select
+                    </strong>
+
+                    <small>
+                      The clutch may not be disengaging fully.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="check-option">
+
+                  <input
+                    type="checkbox"
+                    name="clutch-condition"
+                    value="noise-pressed"
+                  />
+
+                  <span>
+
+                    <strong>
+                      Noise changes when the pedal is pressed
+                    </strong>
+
+                    <small>
+                      Release bearing, fork, pivot or pressure-plate contact may
+                      be involved.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="check-option">
+
+                  <input
+                    type="checkbox"
+                    name="clutch-condition"
+                    value="judder"
+                  />
+
+                  <span>
+
+                    <strong>
+                      Vehicle judders during pull-away
+                    </strong>
+
+                    <small>
+                      Contamination, flywheel condition, engine mounts or uneven
+                      clutch contact may be involved.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="check-option">
+
+                  <input
+                    type="checkbox"
+                    name="clutch-condition"
+                    value="worse-hot"
+                  />
+
+                  <span>
+
+                    <strong>
+                      The problem becomes worse when hot
+                    </strong>
+
+                    <small>
+                      Heat may expose friction, clamping or hydraulic-return
+                      problems.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="check-option">
+
+                  <input
+                    type="checkbox"
+                    name="clutch-condition"
+                    value="recent-repair"
+                  />
+
+                  <span>
+
+                    <strong>
+                      Clutch or hydraulic work was recently completed
+                    </strong>
+
+                    <small>
+                      Installation, part compatibility or post-repair hydraulic
+                      issues require investigation.
+                    </small>
+
+                  </span>
+
+                </label>
+
+                <label class="check-option check-option-danger">
+
+                  <input
+                    type="checkbox"
+                    name="clutch-condition"
+                    value="smoke-loss-drive"
+                  />
+
+                  <span>
+
+                    <strong>
+                      Smoke, severe slip or loss of drive
+                    </strong>
+
+                    <small>
+                      This is a breakdown-level warning that may require vehicle
+                      recovery.
+                    </small>
+
+                  </span>
+
+                </label>
+
+              </div>
+
+            </fieldset>
+
+            <div class="checker-note">
+
+              <strong>
+                Only select signs you have genuinely observed
+              </strong>
+
+              <p>
+                More selections do not produce a better diagnosis. The result is
+                most useful when it reflects the vehicle accurately.
+              </p>
+
+            </div>
+
+            <div class="checker-actions checker-actions-split">
+
+              <button
+                class="button button-secondary"
+                type="button"
+                data-checker-back="clutch-symptom"
+              >
+                Back
+              </button>
+
+              <button
+                class="button button-primary"
+                id="clutch-conditions-continue"
+                type="button"
+              >
+                Review Safety Questions
+              </button>
+
+            </div>
+
+          </div>
+
+          <!-- ================================================
+               STEP 4: SAFETY QUESTIONS
+          ================================================= -->
+
+          <div
+            class="checker-step"
+            id="clutch-step-safety"
+            data-checker-step="4"
+            hidden
+          >
+
+            <div class="step-heading">
+
+              <span class="step-label">
+                Safety and urgency
+              </span>
+
+              <h3>
+                How is the vehicle behaving now?
+              </h3>
+
+              <p>
+                These final questions determine whether cautious driving may be
+                reasonable or whether the vehicle should be stopped and
+                recovered.
+              </p>
+
+            </div>
+
+            <div class="safety-question-list">
+
+              <fieldset class="inline-question">
+
+                <legend>
+                  Can the vehicle pull away and accelerate predictably?
+                </legend>
+
+                <div class="segmented-options">
+
+                  <label>
+
+                    <input
+                      type="radio"
+                      name="drive-predictable"
+                      value="yes"
+                    />
+
+                    <span>
+                      Yes
+                    </span>
+
+                  </label>
+
+                  <label>
+
+                    <input
+                      type="radio"
+                      name="drive-predictable"
+                      value="sometimes"
+                    />
+
+                    <span>
+                      Sometimes
+                    </span>
+
+                  </label>
+
+                  <label>
+
+                    <input
+                      type="radio"
+                      name="drive-predictable"
+                      value="no"
+                    />
+
+                    <span>
+                      No
+                    </span>
+
+                  </label>
+
+                </div>
+
+              </fieldset>
+
+              <fieldset class="inline-question">
+
+                <legend>
+                  Is there smoke or a strong smell that remains after stopping?
+                </legend>
+
+                <div class="segmented-options">
+
+                  <label>
+
+                    <input
+                      type="radio"
+                      name="persistent-heat"
+                      value="no"
+                    />
+
+                    <span>
+                      No
+                    </span>
+
+                  </label>
+
+                  <label>
+
+                    <input
+                      type="radio"
+                      name="persistent-heat"
+                      value="mild"
+                    />
+
+                    <span>
+                      Mild smell
+                    </span>
+
+                  </label>
+
+                  <label>
+
+                    <input
+                      type="radio"
+                      name="persistent-heat"
+                      value="severe"
+                    />
+
+                    <span>
+                      Smoke or strong smell
+                    </span>
+
+                  </label>
+
+                </div>
+
+              </fieldset>
+
+              <fieldset class="inline-question">
+
+                <legend>
+                  Has the hydraulic-fluid level dropped?
+                </legend>
+
+                <div class="segmented-options">
+
+                  <label>
+
+                    <input
+                      type="radio"
+                      name="hydraulic-loss"
+                      value="no"
+                    />
+
+                    <span>
+                      No
+                    </span>
+
+                  </label>
+
+                  <label>
+
+                    <input
+                      type="radio"
+                      name="hydraulic-loss"
+                      value="unsure"
+                    />
+
+                    <span>
+                      Unsure
+                    </span>
+
+                  </label>
+
+                  <label>
+
+                    <input
+                      type="radio"
+                      name="hydraulic-loss"
+                      value="yes"
+                    />
+
+                    <span>
+                      Yes
+                    </span>
+
+                  </label>
+
+                </div>
+
+              </fieldset>
+
+              <fieldset class="inline-question">
+
+                <legend>
+                  When did the problem begin?
+                </legend>
+
+                <div class="segmented-options segmented-options-wide">
+
+                  <label>
+
+                    <input
+                      type="radio"
+                      name="fault-timing"
+                      value="sudden"
+                    />
+
+                    <span>
+                      Suddenly
+                    </span>
+
+                  </label>
+
+                  <label>
+
+                    <input
+                      type="radio"
+                      name="fault-timing"
+                      value="gradual"
+                    />
+
+                    <span>
+                      Gradually
+                    </span>
+
+                  </label>
+
+                  <label>
+
+                    <input
+                      type="radio"
+                      name="fault-timing"
+                      value="after-repair"
+                    />
+
+                    <span>
+                      After recent repair
+                    </span>
+
+                  </label>
+
+                  <label>
+
+                    <input
+                      type="radio"
+                      name="fault-timing"
+                      value="unsure"
+                    />
+
+                    <span>
+                      Not sure
+                    </span>
+
+                  </label>
+
+                </div>
+
+              </fieldset>
+
+            </div>
+
+            <div
+              class="form-message"
+              id="clutch-safety-message"
+              role="alert"
+              hidden
+            ></div>
+
+            <div class="checker-actions checker-actions-split">
+
+              <button
+                class="button button-secondary"
+                type="button"
+                data-checker-back="clutch-conditions"
+              >
+                Back
+              </button>
+
+              <button
+                class="button button-primary"
+                id="generate-clutch-result"
+                type="button"
+              >
+                Show Diagnostic Guidance
+              </button>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ==================================================
+             WARNING-LIGHT CHECKER
+        =================================================== -->
+
+        <section
+          class="diagnostic-checker"
+          id="warning-light-checker"
+          aria-labelledby="warning-light-checker-title"
+          hidden
+        >
+
+          <div class="checker-panel-heading">
+
+            <div>
+
+              <span class="eyebrow">
+                Dashboard warning-light checker
+              </span>
+
+              <h2 id="warning-light-checker-title">
+                Which warning light is showing?
+              </h2>
+
+              <p>
+                Select the main illuminated warning light. The next version of
+                the app logic will provide urgency, common causes, MOT relevance
+                and a matching Motor Vehicle Expert guide.
+              </p>
+
+            </div>
+
+            <button
+              class="text-button"
+              type="button"
+              data-checker-close
+            >
+              Close checker
+            </button>
+
+          </div>
+
+          <fieldset class="checker-fieldset">
+
+            <legend class="visually-hidden">
+              Choose a dashboard warning light
+            </legend>
+
+            <div class="warning-light-grid">
+
+              <label class="warning-light-option warning-light-red">
+
+                <input
+                  type="radio"
+                  name="warning-light"
+                  value="oil-pressure"
+                />
+
+                <span class="warning-symbol" aria-hidden="true">
+                  OIL
+                </span>
+
+                <span>
+
+                  <strong>
+                    Oil Pressure
+                  </strong>
+
+                  <small>
+                    Stop-engine warning
+                  </small>
+
+                </span>
+
+              </label>
+
+              <label class="warning-light-option warning-light-red">
+
+                <input
+                  type="radio"
+                  name="warning-light"
+                  value="coolant-temperature"
+                />
+
+                <span class="warning-symbol" aria-hidden="true">
+                  TEMP
+                </span>
+
+                <span>
+
+                  <strong>
+                    Coolant Temperature
+                  </strong>
+
+                  <small>
+                    Overheating warning
+                  </small>
+
+                </span>
+
+              </label>
+
+              <label class="warning-light-option warning-light-red">
+
+                <input
+                  type="radio"
+                  name="warning-light"
+                  value="brake"
+                />
+
+                <span class="warning-symbol" aria-hidden="true">
+                  BRAKE
+                </span>
+
+                <span>
+
+                  <strong>
+                    Brake Warning
+                  </strong>
+
+                  <small>
+                    Brake-system concern
+                  </small>
+
+                </span>
+
+              </label>
+
+              <label class="warning-light-option warning-light-amber">
+
+                <input
+                  type="radio"
+                  name="warning-light"
+                  value="engine-management"
+                />
+
+                <span class="warning-symbol" aria-hidden="true">
+                  EML
+                </span>
+
+                <span>
+
+                  <strong>
+                    Engine Management
+                  </strong>
+
+                  <small>
+                    Engine or emissions fault
+                  </small>
+
+                </span>
+
+              </label>
+
+              <label class="warning-light-option warning-light-amber">
+
+                <input
+                  type="radio"
+                  name="warning-light"
+                  value="abs"
+                />
+
+                <span class="warning-symbol" aria-hidden="true">
+                  ABS
+                </span>
+
+                <span>
+
+                  <strong>
+                    ABS
+                  </strong>
+
+                  <small>
+                    Anti-lock braking fault
+                  </small>
+
+                </span>
+
+              </label>
+
+              <label class="warning-light-option warning-light-amber">
+
+                <input
+                  type="radio"
+                  name="warning-light"
+                  value="airbag"
+                />
+
+                <span class="warning-symbol" aria-hidden="true">
+                  SRS
+                </span>
+
+                <span>
+
+                  <strong>
+                    Airbag
+                  </strong>
+
+                  <small>
+                    Restraint-system fault
+                  </small>
+
+                </span>
+
+              </label>
+
+              <label class="warning-light-option warning-light-amber">
+
+                <input
+                  type="radio"
+                  name="warning-light"
+                  value="battery"
+                />
+
+                <span class="warning-symbol" aria-hidden="true">
+                  BAT
+                </span>
+
+                <span>
+
+                  <strong>
+                    Battery or Charging
+                  </strong>
+
+                  <small>
+                    Alternator-system concern
+                  </small>
+
+                </span>
+
+              </label>
+
+              <label class="warning-light-option warning-light-amber">
+
+                <input
+                  type="radio"
+                  name="warning-light"
+                  value="dpf"
+                />
+
+                <span class="warning-symbol" aria-hidden="true">
+                  DPF
+                </span>
+
+                <span>
+
+                  <strong>
+                    Diesel Particulate Filter
+                  </strong>
+
+                  <small>
+                    Exhaust-filter concern
+                  </small>
+
+                </span>
+
+              </label>
+
+              <label class="warning-light-option warning-light-amber">
+
+                <input
+                  type="radio"
+                  name="warning-light"
+                  value="tyre-pressure"
+                />
+
+                <span class="warning-symbol" aria-hidden="true">
+                  TPMS
+                </span>
+
+                <span>
+
+                  <strong>
+                    Tyre Pressure
+                  </strong>
+
+                  <small>
+                    Pressure or sensor warning
+                  </small>
+
+                </span>
+
+              </label>
+
+              <label class="warning-light-option warning-light-amber">
+
+                <input
+                  type="radio"
+                  name="warning-light"
+                  value="traction-control"
+                />
+
+                <span class="warning-symbol" aria-hidden="true">
+                  TC
+                </span>
+
+                <span>
+
+                  <strong>
+                    Traction Control
+                  </strong>
+
+                  <small>
+                    Stability-system concern
+                  </small>
+
+                </span>
+
+              </label>
+
+            </div>
+
+          </fieldset>
+
+          <div class="checker-actions checker-actions-split">
+
+            <button
+              class="button button-secondary"
+              type="button"
+              data-checker-close
+            >
+              Cancel
+            </button>
+
+            <button
+              class="button button-primary"
+              id="generate-warning-result"
+              type="button"
+              disabled
+            >
+              Check Warning Light
+            </button>
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </section>
+
+    <!-- ====================================================
+         DIAGNOSTIC RESULT
+    ===================================================== -->
+
+    <section
+      class="result-section"
+      id="diagnostic-result"
+      aria-labelledby="result-title"
+      aria-live="polite"
+      hidden
+    >
+
+      <div class="app-container">
+
+        <div class="result-shell">
+
+          <header class="result-header">
+
+            <div>
+
+              <span
+                class="result-eyebrow"
+                id="result-eyebrow"
+              >
+                Diagnostic guidance
+              </span>
+
+              <h2 id="result-title">
+                Your vehicle-check result
+              </h2>
+
+              <p id="result-summary">
+                Your selected information will be summarised here.
+              </p>
+
+            </div>
+
+            <div
+              class="result-urgency"
+              id="result-urgency"
+            >
+
+              <small>
+                Urgency
+              </small>
+
+              <strong id="result-urgency-label">
+                Review required
+              </strong>
+
+            </div>
+
+          </header>
+
+          <div class="result-grid">
+
+            <article class="result-card">
+
+              <span class="result-card-label">
+                Strongest fault direction
+              </span>
+
+              <h3 id="result-direction">
+                Diagnostic direction
+              </h3>
+
+              <p id="result-direction-copy">
+                The strongest likely fault direction will appear here.
+              </p>
+
+            </article>
+
+            <article class="result-card">
+
+              <span class="result-card-label">
+                Driving guidance
+              </span>
+
+              <h3 id="result-driving-title">
+                Assess before driving
+              </h3>
+
+              <p id="result-driving-copy">
+                Safety and driving advice will appear here.
+              </p>
+
+            </article>
+
+            <article class="result-card">
+
+              <span class="result-card-label">
+                MOT relevance
+              </span>
+
+              <h3 id="result-mot-title">
+                Separate MOT assessment
+              </h3>
+
+              <p id="result-mot-copy">
+                Relevant MOT guidance will appear here.
+              </p>
+
+            </article>
+
+          </div>
+
+          <div class="result-detail-grid">
+
+            <article class="result-detail-card">
+
+              <h3>
+                Possible fault areas
+              </h3>
+
+              <ul
+                class="result-list"
+                id="result-causes"
+              ></ul>
+
+            </article>
+
+            <article class="result-detail-card">
+
+              <h3>
+                Recommended next checks
+              </h3>
+
+              <ul
+                class="result-list"
+                id="result-checks"
+              ></ul>
+
+            </article>
+
+          </div>
+
+          <article class="result-guides-card">
+
+            <div>
+
+              <span class="result-card-label">
+                Continue the diagnosis
+              </span>
+
+              <h3>
+                Relevant Motor Vehicle Expert guides
+              </h3>
+
+              <p>
+                Use the full guides for detailed symptoms, causes, diagnostic
+                processes, repair costs and used-car checks.
+              </p>
+
+            </div>
+
+            <div
+              class="result-guide-links"
+              id="result-guide-links"
+            ></div>
+
+          </article>
+
+          <div class="result-disclaimer">
+
+            <strong>
+              Diagnostic guidance, not a confirmed repair
+            </strong>
+
+            <p>
+              This result is based only on the information selected. A physical
+              inspection, measurements and suitable diagnostic equipment may be
+              required before parts are replaced.
+            </p>
+
+          </div>
+
+          <div class="result-actions">
+
+            <button
+              class="button button-primary"
+              id="print-result"
+              type="button"
+            >
+              Print Guidance
+            </button>
+
+            <button
+              class="button button-secondary"
+              id="start-new-check"
+              type="button"
+            >
+              Start a New Check
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ====================================================
+         HOW THE CHECKER WORKS
+    ===================================================== -->
+
+    <section
+      class="information-section"
+      id="how-it-works"
+      aria-labelledby="how-it-works-title"
+    >
+
+      <div class="app-container">
+
+        <div class="section-heading">
+
+          <span class="eyebrow">
+            Simple diagnostic workflow
+          </span>
+
+          <h2 id="how-it-works-title">
+            How AutoKnowledge Pro Works
+          </h2>
+
+          <p>
+            The checker uses the symptoms and conditions you select to organise
+            possible fault areas, safety urgency and sensible next steps. It
+            does not claim to identify a failed component without physical
+            testing.
+          </p>
+
+        </div>
+
+        <div class="process-grid">
+
+          <article class="process-card">
+
+            <span
+              class="process-number"
+              aria-hidden="true"
+            >
+              01
+            </span>
+
+            <h3>
+              Choose the Main Problem
+            </h3>
+
+            <p>
+              Start with the symptom, warning light or fault code that appeared
+              first rather than selecting a part you already suspect.
+            </p>
+
+          </article>
+
+          <article class="process-card">
+
+            <span
+              class="process-number"
+              aria-hidden="true"
+            >
+              02
+            </span>
+
+            <h3>
+              Add the Conditions
+            </h3>
+
+            <p>
+              Tell the checker when the fault happens, whether it changes with
+              heat or load and which additional signs are present.
+            </p>
+
+          </article>
+
+          <article class="process-card">
+
+            <span
+              class="process-number"
+              aria-hidden="true"
+            >
+              03
+            </span>
+
+            <h3>
+              Review Diagnostic Direction
+            </h3>
+
+            <p>
+              Receive possible fault areas and a logical testing order rather
+              than an unsupported instruction to replace one component.
+            </p>
+
+          </article>
+
+          <article class="process-card">
+
+            <span
+              class="process-number"
+              aria-hidden="true"
+            >
+              04
+            </span>
+
+            <h3>
+              Decide the Safe Next Step
+            </h3>
+
+            <p>
+              Use the urgency, driving and MOT information to decide whether to
+              monitor, arrange diagnosis or stop and recover the vehicle.
+            </p>
+
+          </article>
+
+        </div>
+
+        <div class="mechanic-principle">
+
+          <span
+            class="principle-icon"
+            aria-hidden="true"
+          >
+            ✓
+          </span>
+
           <div>
-            <div class="eyebrow">Compatible tools</div>
-            <h2>Connect with everyday diagnostic equipment</h2>
-            <p>Works as a front-end concept for OBD2 scanners, garage tools and diagnostic workflows.</p>
+
+            <strong>
+              The symptom begins the diagnosis—it does not finish it
+            </strong>
+
+            <p>
+              A useful diagnosis compares vehicle behaviour, warning lights,
+              operating conditions, fluid levels, sounds, smells and test
+              results before parts are authorised.
+            </p>
+
           </div>
+
         </div>
 
-        <div class="grid-4">
-          <div class="card">
-            <h3>OBD2 Bluetooth Scanner</h3>
-            <p>Ideal for quick checks and mobile diagnostics.</p>
+      </div>
+
+    </section>
+
+    <!-- ====================================================
+         CLUTCH CHECKER EXPLANATION
+    ===================================================== -->
+
+    <section
+      class="feature-section feature-section-clutch"
+      id="clutch-checker-information"
+      aria-labelledby="clutch-checker-information-title"
+    >
+
+      <div class="app-container feature-split">
+
+        <div class="feature-copy">
+
+          <span class="eyebrow">
+            Detailed launch pathway
+          </span>
+
+          <h2 id="clutch-checker-information-title">
+            A Complete Clutch Symptom Checker
+          </h2>
+
+          <p>
+            The clutch pathway is the most detailed part of the first
+            AutoKnowledge Pro release because it is supported by the complete
+            Motor Vehicle Expert clutch diagnostic cluster.
+          </p>
+
+          <p>
+            It compares clutch slip, burning smells, bite-point position, pedal
+            pressure, pedal return, release-system noise, pull-away judder and
+            faults that begin after clutch replacement.
+          </p>
+
+          <div class="feature-actions">
+
+            <button
+              class="button button-primary"
+              type="button"
+              data-open-clutch-checker
+            >
+              Start Clutch Check
+            </button>
+
+            <a
+              class="button button-secondary"
+              href="https://motorvehicleexpert.co.uk/clutch-slipping-symptoms.html"
+              target="_blank"
+              rel="noopener"
+            >
+              Read Clutch-Slip Hub
+            </a>
+
           </div>
 
-          <div class="card">
-            <h3>USB Diagnostic Cable</h3>
-            <p>Reliable wired connection for workshop use.</p>
-          </div>
-
-          <div class="card">
-            <h3>Professional Scan Tool</h3>
-            <p>Suitable for garage-level inspections and fault reviews.</p>
-          </div>
-
-          <div class="card">
-            <h3>Mobile App Connection</h3>
-            <p>Designed for phone, tablet and desktop diagnostic sessions.</p>
-          </div>
         </div>
-      </section>
 
-      <section id="connect" class="section">
-        <div class="section-head">
+        <div class="feature-points">
+
+          <article class="feature-point">
+
+            <span aria-hidden="true">
+              RPM
+            </span>
+
+            <div>
+
+              <h3>
+                Torque-Transfer Symptoms
+              </h3>
+
+              <p>
+                Checks whether engine RPM rises without the expected increase in
+                road speed and whether the symptom appears under load.
+              </p>
+
+            </div>
+
+          </article>
+
+          <article class="feature-point">
+
+            <span aria-hidden="true">
+              PED
+            </span>
+
+            <div>
+
+              <h3>
+                Pedal and Hydraulic Behaviour
+              </h3>
+
+              <p>
+                Compares pressure loss, slow return, changing bite point and
+                hydraulic-fluid loss.
+              </p>
+
+            </div>
+
+          </article>
+
+          <article class="feature-point">
+
+            <span aria-hidden="true">
+              HOT
+            </span>
+
+            <div>
+
+              <h3>
+                Heat, Smell and Load
+              </h3>
+
+              <p>
+                Records burning smells, hot-operation changes, uphill load and
+                higher-gear clutch slip.
+              </p>
+
+            </div>
+
+          </article>
+
+          <article class="feature-point">
+
+            <span aria-hidden="true">
+              FIX
+            </span>
+
+            <div>
+
+              <h3>
+                Repair-Aware Guidance
+              </h3>
+
+              <p>
+                Identifies when recent clutch work makes installation,
+                contamination, flywheel or release-system checks important.
+              </p>
+
+            </div>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ====================================================
+         SUPPORTED CHECKER ROUTES
+    ===================================================== -->
+
+    <section
+      class="information-section"
+      id="supported-checks"
+      aria-labelledby="supported-checks-title"
+    >
+
+      <div class="app-container">
+
+        <div class="section-heading">
+
+          <span class="eyebrow">
+            First production release
+          </span>
+
+          <h2 id="supported-checks-title">
+            Vehicle Problems Covered at Launch
+          </h2>
+
+          <p>
+            The first release prioritises common problems that can be supported
+            with clear safety rules and established Motor Vehicle Expert
+            diagnostic content.
+          </p>
+
+        </div>
+
+        <div class="support-grid">
+
+          <article class="support-card support-card-featured">
+
+            <span class="support-status support-status-complete">
+              Complete pathway
+            </span>
+
+            <h3>
+              Clutch and Manual Gearbox
+            </h3>
+
+            <p>
+              Detailed symptom, condition, urgency and guide-linking logic for
+              the full clutch cluster.
+            </p>
+
+            <ul>
+
+              <li>
+                Clutch slip and rev flare
+              </li>
+
+              <li>
+                Burning clutch smell
+              </li>
+
+              <li>
+                High bite point
+              </li>
+
+              <li>
+                Pedal pressure and return faults
+              </li>
+
+              <li>
+                Noise and pull-away judder
+              </li>
+
+              <li>
+                Faults after replacement
+              </li>
+
+            </ul>
+
+          </article>
+
+          <article class="support-card">
+
+            <span class="support-status">
+              Guided pathway
+            </span>
+
+            <h3>
+              Engine and Acceleration
+            </h3>
+
+            <p>
+              Helps separate engine power loss, hesitation, misfire and
+              drivetrain torque-transfer problems.
+            </p>
+
+            <ul>
+
+              <li>
+                Slow acceleration
+              </li>
+
+              <li>
+                Hesitation and stuttering
+              </li>
+
+              <li>
+                Uphill power loss
+              </li>
+
+              <li>
+                Smoke and rough running
+              </li>
+
+            </ul>
+
+          </article>
+
+          <article class="support-card">
+
+            <span class="support-status">
+              Guided pathway
+            </span>
+
+            <h3>
+              Battery and Starting
+            </h3>
+
+            <p>
+              Organises no-start and charging symptoms before batteries,
+              alternators or starter motors are replaced.
+            </p>
+
+            <ul>
+
+              <li>
+                No crank
+              </li>
+
+              <li>
+                Slow cranking
+              </li>
+
+              <li>
+                Clicking without starting
+              </li>
+
+              <li>
+                Charging warning
+              </li>
+
+            </ul>
+
+          </article>
+
+          <article class="support-card">
+
+            <span class="support-status">
+              Safety pathway
+            </span>
+
+            <h3>
+              Cooling and Overheating
+            </h3>
+
+            <p>
+              Provides stop-driving guidance for overheating, coolant loss and
+              high-temperature warnings.
+            </p>
+
+            <ul>
+
+              <li>
+                Temperature warning
+              </li>
+
+              <li>
+                Coolant loss
+              </li>
+
+              <li>
+                Cooling-fan concern
+              </li>
+
+              <li>
+                Heater and circulation faults
+              </li>
+
+            </ul>
+
+          </article>
+
+          <article class="support-card">
+
+            <span class="support-status">
+              Safety pathway
+            </span>
+
+            <h3>
+              Brakes
+            </h3>
+
+            <p>
+              Prioritises safety where braking effort, pedal feel, noise,
+              overheating or vehicle stability has changed.
+            </p>
+
+            <ul>
+
+              <li>
+                Poor braking
+              </li>
+
+              <li>
+                Soft or sinking pedal
+              </li>
+
+              <li>
+                Brake noise and vibration
+              </li>
+
+              <li>
+                Pulling and overheating
+              </li>
+
+            </ul>
+
+          </article>
+
+          <article class="support-card">
+
+            <span class="support-status support-status-link">
+              Live specialist page
+            </span>
+
+            <h3>
+              OBD Fault Codes
+            </h3>
+
+            <p>
+              Existing fault-code lookup remains on Motor Vehicle Expert so
+              published code guides are not unnecessarily duplicated.
+            </p>
+
+            <a
+              class="inline-link"
+              href="https://motorvehicleexpert.co.uk/fault-codes.html"
+              target="_blank"
+              rel="noopener"
+            >
+              Open the fault-code checker
+            </a>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ====================================================
+         SAFETY FIRST
+    ===================================================== -->
+
+    <section
+      class="safety-section"
+      id="safety"
+      aria-labelledby="safety-title"
+    >
+
+      <div class="app-container">
+
+        <div class="safety-header">
+
           <div>
-            <div class="eyebrow">How to connect</div>
-            <h2>Start a vehicle check in three steps</h2>
+
+            <span class="eyebrow eyebrow-light">
+              Safety first
+            </span>
+
+            <h2 id="safety-title">
+              Some Symptoms Should Stop the Check
+            </h2>
+
+            <p>
+              An online checker should never delay urgent action. Stop safely
+              and arrange professional help when the vehicle shows an immediate
+              safety or major-damage warning.
+            </p>
+
           </div>
+
+          <span
+            class="safety-header-icon"
+            aria-hidden="true"
+          >
+            !
+          </span>
+
         </div>
 
-        <div class="steps">
-          <div class="card">
-            <div class="step-number">1</div>
-            <h3>Plug in scanner</h3>
-            <p>Connect your OBD2 device to the vehicle diagnostic port.</p>
-          </div>
+        <div class="safety-grid">
 
-          <div class="card">
-            <div class="step-number">2</div>
-            <h3>Pair device</h3>
-            <p>Connect using Bluetooth, USB or a professional diagnostic interface.</p>
-          </div>
+          <article class="safety-card safety-card-stop">
 
-          <div class="card">
-            <div class="step-number">3</div>
-            <h3>Run scan</h3>
-            <p>Check warning lights, symptoms, live data and diagnostic reports.</p>
-          </div>
+            <span class="safety-level">
+              Stop and recover
+            </span>
+
+            <h3>
+              Do Not Continue Driving If...
+            </h3>
+
+            <ul>
+
+              <li>
+                Braking effort is seriously reduced.
+              </li>
+
+              <li>
+                The brake pedal sinks or feels unsafe.
+              </li>
+
+              <li>
+                The red oil-pressure warning remains illuminated.
+              </li>
+
+              <li>
+                The engine is overheating or producing steam.
+              </li>
+
+              <li>
+                Smoke, fuel smell or an electrical-burning smell appears.
+              </li>
+
+              <li>
+                Steering control or vehicle stability is seriously affected.
+              </li>
+
+              <li>
+                The clutch cannot transfer drive predictably.
+              </li>
+
+              <li>
+                Fluid is leaking rapidly.
+              </li>
+
+            </ul>
+
+          </article>
+
+          <article class="safety-card safety-card-caution">
+
+            <span class="safety-level">
+              Arrange diagnosis promptly
+            </span>
+
+            <h3>
+              Limit Driving If...
+            </h3>
+
+            <ul>
+
+              <li>
+                A fault becomes worse under load.
+              </li>
+
+              <li>
+                A warning light remains illuminated.
+              </li>
+
+              <li>
+                A burning smell returns repeatedly.
+              </li>
+
+              <li>
+                Acceleration or gear selection is unreliable.
+              </li>
+
+              <li>
+                Coolant, oil, brake fluid or clutch fluid is reducing.
+              </li>
+
+              <li>
+                The fault started immediately after repair work.
+              </li>
+
+              <li>
+                The vehicle may not be safe for fast roads or overtaking.
+              </li>
+
+            </ul>
+
+          </article>
+
+          <article class="safety-card safety-card-monitor">
+
+            <span class="safety-level">
+              Monitor and investigate
+            </span>
+
+            <h3>
+              Careful Monitoring May Be Reasonable If...
+            </h3>
+
+            <ul>
+
+              <li>
+                The symptom is mild and not becoming worse.
+              </li>
+
+              <li>
+                Vehicle control remains normal.
+              </li>
+
+              <li>
+                No red warning light is present.
+              </li>
+
+              <li>
+                No fluid loss, smoke or strong smell is present.
+              </li>
+
+              <li>
+                Acceleration and braking remain predictable.
+              </li>
+
+              <li>
+                A professional check is already arranged.
+              </li>
+
+            </ul>
+
+          </article>
+
         </div>
-      </section>
 
-      <footer class="footer">
-        <strong>AutoKnowledge Pro by Motor Vehicle Expert</strong>
-        <p>&copy; 2026 AutoKnowledge Pro. All rights reserved.</p>
+        <div class="emergency-note">
 
-        <div class="footer-links">
-          <a href="#features">Features</a>
-          <a href="#tools">Tools</a>
-          <a href="#connect">Connect</a>
-          <a href="#" data-modal="loginModal">Login</a>
-          <a href="#" data-modal="signupModal">Sign Up</a>
+          <strong>
+            Call the emergency services when there is immediate danger
+          </strong>
+
+          <p>
+            Move away from live traffic where it is safe to do so. Do not remain
+            beside a dangerous carriageway or attempt repairs in an unsafe
+            position.
+          </p>
+
         </div>
-      </footer>
 
-    </main>
-  </div>
-</div>
-
-<div id="diagnosticModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2>Start Diagnostic Session</h2>
-    <p>Enter vehicle details to begin a professional diagnostic check.</p>
-
-    <form>
-      <div class="form-group">
-        <label for="vehicleReg">Vehicle Registration</label>
-        <input type="text" id="vehicleReg" placeholder="Example: AB12 CDE" />
       </div>
 
-      <div class="form-group">
-        <label for="vehicleMake">Vehicle Make</label>
-        <input type="text" id="vehicleMake" placeholder="Example: Ford, BMW, Toyota" />
+    </section>
+
+    <!-- ====================================================
+         MOT GUIDANCE
+    ===================================================== -->
+
+    <section
+      class="information-section"
+      id="mot-guidance"
+      aria-labelledby="mot-guidance-title"
+    >
+
+      <div class="app-container">
+
+        <div class="section-heading">
+
+          <span class="eyebrow">
+            UK MOT guidance
+          </span>
+
+          <h2 id="mot-guidance-title">
+            How the Checker Handles MOT Relevance
+          </h2>
+
+          <p>
+            The app separates mechanical urgency from MOT relevance. A fault can
+            require repair even when it is not assessed as a standalone MOT
+            item.
+          </p>
+
+        </div>
+
+        <div class="mot-grid">
+
+          <article class="mot-card">
+
+            <span class="mot-card-icon" aria-hidden="true">
+              1
+            </span>
+
+            <h3>
+              Directly Relevant
+            </h3>
+
+            <p>
+              Warning lights, brakes, tyres, steering, suspension, visibility,
+              emissions and structural defects may fall within MOT inspection
+              categories.
+            </p>
+
+          </article>
+
+          <article class="mot-card">
+
+            <span class="mot-card-icon" aria-hidden="true">
+              2
+            </span>
+
+            <h3>
+              Indirectly Relevant
+            </h3>
+
+            <p>
+              A fault may prevent the vehicle being operated safely during the
+              test even when the failed component is not checked independently.
+            </p>
+
+          </article>
+
+          <article class="mot-card">
+
+            <span class="mot-card-icon" aria-hidden="true">
+              3
+            </span>
+
+            <h3>
+              Not an MOT Guarantee
+            </h3>
+
+            <p>
+              An MOT pass confirms the test result at that time. It does not
+              prove the vehicle has no mechanical fault or that a repair was
+              completed correctly.
+            </p>
+
+          </article>
+
+        </div>
+
+        <div class="information-actions">
+
+          <a
+            class="button button-secondary"
+            href="https://motorvehicleexpert.co.uk/does-mot-check.html"
+            target="_blank"
+            rel="noopener"
+          >
+            What Does the MOT Check?
+          </a>
+
+          <a
+            class="button button-secondary"
+            href="https://motorvehicleexpert.co.uk/common-mot-failure-reasons-uk.html"
+            target="_blank"
+            rel="noopener"
+          >
+            Common MOT Failures
+          </a>
+
+        </div>
+
       </div>
 
-      <div class="form-group">
-        <label for="diagnosticType">Diagnostic Type</label>
-        <select id="diagnosticType">
-          <option>Full Vehicle Scan</option>
-          <option>Engine Fault Scan</option>
-          <option>ABS / Brake Scan</option>
-          <option>Battery and Charging Check</option>
-          <option>Warning Light Check</option>
-          <option>MOT Risk Check</option>
-        </select>
+    </section>
+
+    <!-- ====================================================
+         LIMITATIONS
+    ===================================================== -->
+
+    <section
+      class="limitations-section"
+      id="limitations"
+      aria-labelledby="limitations-title"
+    >
+
+      <div class="app-container limitations-grid">
+
+        <div class="limitations-copy">
+
+          <span class="eyebrow">
+            Clear boundaries
+          </span>
+
+          <h2 id="limitations-title">
+            What AutoKnowledge Pro Cannot Do
+          </h2>
+
+          <p>
+            Trust depends on being clear about the difference between diagnostic
+            guidance and confirmed vehicle testing.
+          </p>
+
+          <ul class="limitations-list">
+
+            <li>
+              It cannot communicate with the vehicle or read its ECU.
+            </li>
+
+            <li>
+              It cannot connect to a Bluetooth, USB or professional scan tool.
+            </li>
+
+            <li>
+              It cannot inspect components, fluids or wiring through a screen.
+            </li>
+
+            <li>
+              It cannot confirm one failed part from one symptom.
+            </li>
+
+            <li>
+              It cannot replace an MOT test, workshop inspection or road test.
+            </li>
+
+            <li>
+              It cannot guarantee that a vehicle is safe to drive.
+            </li>
+
+          </ul>
+
+        </div>
+
+        <aside class="limitations-panel">
+
+          <span
+            class="limitations-panel-icon"
+            aria-hidden="true"
+          >
+            MVE
+          </span>
+
+          <h3>
+            What It Is Designed to Do
+          </h3>
+
+          <p>
+            AutoKnowledge Pro helps users describe a fault more accurately,
+            understand possible systems involved and prepare for the correct
+            diagnostic checks.
+          </p>
+
+          <div class="limitations-benefits">
+
+            <span>
+              Understand urgency
+            </span>
+
+            <span>
+              Avoid random parts replacement
+            </span>
+
+            <span>
+              Prepare useful garage information
+            </span>
+
+            <span>
+              Find detailed diagnostic guides
+            </span>
+
+          </div>
+
+        </aside>
+
       </div>
 
-      <button type="button" class="btn btn-primary">Begin Session</button>
-    </form>
-  </div>
-</div>
+    </section>
 
-<div id="liveScanModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2>Run Live Scan</h2>
-    <p>View simulated live data from connected vehicle systems.</p>
+    <!-- ====================================================
+         WHY TRUST THE GUIDANCE
+    ===================================================== -->
 
-    <div class="scan-results">
-      <div class="scan-item"><span>Engine RPM</span><strong>820</strong></div>
-      <div class="scan-item"><span>Coolant Temperature</span><strong class="good">89°C</strong></div>
-      <div class="scan-item"><span>Battery Voltage</span><strong class="good">12.6V</strong></div>
-      <div class="scan-item"><span>ABS Sensor Status</span><strong class="fault">Fault Found</strong></div>
-      <div class="scan-item"><span>MOT Risk</span><strong class="warn">Medium</strong></div>
+    <section
+      class="information-section"
+      id="trust"
+      aria-labelledby="trust-title"
+    >
+
+      <div class="app-container">
+
+        <div class="section-heading">
+
+          <span class="eyebrow">
+            Motor Vehicle Expert
+          </span>
+
+          <h2 id="trust-title">
+            Built Around Practical Automotive Diagnosis
+          </h2>
+
+          <p>
+            AutoKnowledge Pro follows the same approach as Motor Vehicle Expert:
+            start with the driver’s symptom, prioritise safety, use evidence and
+            avoid replacing parts before the fault has been tested.
+          </p>
+
+        </div>
+
+        <div class="trust-grid">
+
+          <article class="trust-card">
+
+            <span
+              class="trust-card-icon"
+              aria-hidden="true"
+            >
+              UK
+            </span>
+
+            <h3>
+              UK-Focused Guidance
+            </h3>
+
+            <p>
+              Driving advice, MOT relevance and repair terminology are written
+              for UK motorists.
+            </p>
+
+          </article>
+
+          <article class="trust-card">
+
+            <span
+              class="trust-card-icon"
+              aria-hidden="true"
+            >
+              D
+            </span>
+
+            <h3>
+              Diagnostic Order
+            </h3>
+
+            <p>
+              The checker organises possible causes and next checks instead of
+              presenting one unverified component as the answer.
+            </p>
+
+          </article>
+
+          <article class="trust-card">
+
+            <span
+              class="trust-card-icon"
+              aria-hidden="true"
+            >
+              S
+            </span>
+
+            <h3>
+              Safety Before Convenience
+            </h3>
+
+            <p>
+              Serious warning signs override the normal checker journey and
+              direct the user towards stopping or recovery.
+            </p>
+
+          </article>
+
+          <article class="trust-card">
+
+            <span
+              class="trust-card-icon"
+              aria-hidden="true"
+            >
+              G
+            </span>
+
+            <h3>
+              Detailed Supporting Guides
+            </h3>
+
+            <p>
+              Results connect users with full Motor Vehicle Expert diagnostic,
+              MOT and repair-cost pages.
+            </p>
+
+          </article>
+
+        </div>
+
+        <div class="creator-note">
+
+          <img
+            src="logo.png"
+            alt=""
+            width="72"
+            height="72"
+            loading="lazy"
+            decoding="async"
+          />
+
+          <div>
+
+            <strong>
+              Created by Bavusani Otis Dube
+            </strong>
+
+            <p>
+              Motor Vehicle Expert is built around automotive maintenance,
+              repair and MOT-testing knowledge, with practical explanations for
+              drivers who want to understand faults before authorising repairs.
+            </p>
+
+            <a
+              class="inline-link"
+              href="https://motorvehicleexpert.co.uk/about.html"
+              target="_blank"
+              rel="noopener"
+            >
+              About Motor Vehicle Expert
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ====================================================
+         MOTOR VEHICLE EXPERT RESOURCES
+    ===================================================== -->
+
+    <section
+      class="resources-section"
+      id="resources"
+      aria-labelledby="resources-title"
+    >
+
+      <div class="app-container">
+
+        <div class="section-heading">
+
+          <span class="eyebrow">
+            Continue your diagnosis
+          </span>
+
+          <h2 id="resources-title">
+            Live Motor Vehicle Expert Resources
+          </h2>
+
+          <p>
+            Use the specialist hubs and guides for full diagnostic processes,
+            repair-cost information, MOT advice and used-car checks.
+          </p>
+
+        </div>
+
+        <div class="resource-grid">
+
+          <a
+            class="resource-card resource-card-primary"
+            href="https://motorvehicleexpert.co.uk/diagnostics.html"
+            target="_blank"
+            rel="noopener"
+          >
+
+            <span class="resource-card-label">
+              Diagnostic hub
+            </span>
+
+            <strong>
+              Vehicle Diagnostics
+            </strong>
+
+            <p>
+              Browse symptom-led engine, drivetrain, starting, cooling and
+              vehicle-system guides.
+            </p>
+
+            <span class="resource-card-link">
+              Browse diagnostics →
+            </span>
+
+          </a>
+
+          <a
+            class="resource-card"
+            href="https://motorvehicleexpert.co.uk/warning-lights.html"
+            target="_blank"
+            rel="noopener"
+          >
+
+            <span class="resource-card-label">
+              Dashboard guidance
+            </span>
+
+            <strong>
+              Warning Lights
+            </strong>
+
+            <p>
+              Understand warning colours, urgency, common causes and MOT
+              implications.
+            </p>
+
+            <span class="resource-card-link">
+              Check warning lights →
+            </span>
+
+          </a>
+
+          <a
+            class="resource-card"
+            href="https://motorvehicleexpert.co.uk/fault-codes.html"
+            target="_blank"
+            rel="noopener"
+          >
+
+            <span class="resource-card-label">
+              OBD information
+            </span>
+
+            <strong>
+              Fault-Code Checker
+            </strong>
+
+            <p>
+              Search an existing OBD code and open the relevant published code
+              guide.
+            </p>
+
+            <span class="resource-card-link">
+              Look up a code →
+            </span>
+
+          </a>
+
+          <a
+            class="resource-card"
+            href="https://motorvehicleexpert.co.uk/clutch-slipping-symptoms.html"
+            target="_blank"
+            rel="noopener"
+          >
+
+            <span class="resource-card-label">
+              Complete cluster
+            </span>
+
+            <strong>
+              Clutch Diagnostics
+            </strong>
+
+            <p>
+              Compare clutch slip, pedal faults, burning smells, noise, bite
+              points and replacement problems.
+            </p>
+
+            <span class="resource-card-link">
+              Open clutch hub →
+            </span>
+
+          </a>
+
+          <a
+            class="resource-card"
+            href="https://motorvehicleexpert.co.uk/common-mot-failure-reasons-uk.html"
+            target="_blank"
+            rel="noopener"
+          >
+
+            <span class="resource-card-label">
+              UK test guidance
+            </span>
+
+            <strong>
+              Common MOT Failures
+            </strong>
+
+            <p>
+              Review the major lighting, braking, tyre, suspension, emissions
+              and visibility failure areas.
+            </p>
+
+            <span class="resource-card-link">
+              Review MOT failures →
+            </span>
+
+          </a>
+
+          <a
+            class="resource-card"
+            href="https://motorvehicleexpert.co.uk/used-car-buying-guides.html"
+            target="_blank"
+            rel="noopener"
+          >
+
+            <span class="resource-card-label">
+              Buying protection
+            </span>
+
+            <strong>
+              Used-Car Buying Guides
+            </strong>
+
+            <p>
+              Check vehicle condition, service history, MOT records and repair
+              risk before buying.
+            </p>
+
+            <span class="resource-card-link">
+              Browse buying guides →
+            </span>
+
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ======================================================
+       APP FOOTER
+  ======================================================= -->
+
+  <footer class="app-footer">
+
+    <div class="app-container footer-grid">
+
+      <div class="footer-brand">
+
+        <a
+          class="app-brand"
+          href="./"
+          aria-label="AutoKnowledge Pro home"
+        >
+
+          <img
+            src="logo.png"
+            alt="AutoKnowledge Pro logo"
+            class="app-logo"
+            width="58"
+            height="58"
+            loading="lazy"
+            decoding="async"
+          />
+
+          <span class="brand-copy">
+
+            <small>
+              Motor Vehicle Expert
+            </small>
+
+            <strong>
+              AutoKnowledge Pro
+            </strong>
+
+          </span>
+
+        </a>
+
+        <p>
+          Free symptom-led vehicle diagnostic guidance for UK drivers.
+        </p>
+
+      </div>
+
+      <div class="footer-column">
+
+        <strong>
+          App
+        </strong>
+
+        <a href="#start-check">
+          Start Vehicle Check
+        </a>
+
+        <a href="#how-it-works">
+          How It Works
+        </a>
+
+        <a href="#safety">
+          Safety Guidance
+        </a>
+
+        <a href="#limitations">
+          App Limitations
+        </a>
+
+      </div>
+
+      <div class="footer-column">
+
+        <strong>
+          Motor Vehicle Expert
+        </strong>
+
+        <a
+          href="https://motorvehicleexpert.co.uk/diagnostics.html"
+          target="_blank"
+          rel="noopener"
+        >
+          Diagnostics
+        </a>
+
+        <a
+          href="https://motorvehicleexpert.co.uk/warning-lights.html"
+          target="_blank"
+          rel="noopener"
+        >
+          Warning Lights
+        </a>
+
+        <a
+          href="https://motorvehicleexpert.co.uk/fault-codes.html"
+          target="_blank"
+          rel="noopener"
+        >
+          Fault Codes
+        </a>
+
+        <a
+          href="https://motorvehicleexpert.co.uk/guides.html"
+          target="_blank"
+          rel="noopener"
+        >
+          Vehicle Guides
+        </a>
+
+      </div>
+
+      <div class="footer-column">
+
+        <strong>
+          Information
+        </strong>
+
+        <a
+          href="https://motorvehicleexpert.co.uk/about.html"
+          target="_blank"
+          rel="noopener"
+        >
+          About
+        </a>
+
+        <a
+          href="https://motorvehicleexpert.co.uk/privacy-policy.html"
+          target="_blank"
+          rel="noopener"
+        >
+          Privacy Policy
+        </a>
+
+        <a
+          href="https://motorvehicleexpert.co.uk/disclaimer.html"
+          target="_blank"
+          rel="noopener"
+        >
+          Disclaimer
+        </a>
+
+        <a
+          href="https://motorvehicleexpert.co.uk/contact.html"
+          target="_blank"
+          rel="noopener"
+        >
+          Contact
+        </a>
+
+      </div>
+
     </div>
 
-    <button type="button" class="btn btn-red">Refresh Live Scan</button>
-  </div>
-</div>
+    <div class="app-container footer-bottom">
 
-<div id="reportsModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2>Saved Reports</h2>
-    <p>Review previous diagnostic reports and inspection summaries.</p>
+      <p>
+        © 2026 AutoKnowledge Pro and Motor Vehicle Expert. All rights reserved.
+      </p>
 
-    <div class="report-list">
-      <div class="report-item"><span>BMW 3 Series ABS Report</span><strong>View</strong></div>
-      <div class="report-item"><span>Ford Fiesta Battery Check</span><strong>View</strong></div>
-      <div class="report-item"><span>Audi A4 Engine Scan</span><strong>View</strong></div>
+      <p>
+        Diagnostic guidance only. Always obtain a physical inspection where
+        safety or repair certainty matters.
+      </p>
+
     </div>
 
-    <button type="button" class="btn btn-purple">Download Reports</button>
-  </div>
-</div>
+  </footer>
 
-<div id="loginModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2>Login</h2>
-    <p>Access your AutoKnowledge Pro dashboard.</p>
+  <!-- ======================================================
+       NOSCRIPT MESSAGE
+  ======================================================= -->
 
-    <form>
-      <div class="form-group">
-        <label for="loginEmail">Email Address</label>
-        <input type="email" id="loginEmail" placeholder="you@example.com" />
-      </div>
+  <noscript>
 
-      <div class="form-group">
-        <label for="loginPassword">Password</label>
-        <input type="password" id="loginPassword" placeholder="Enter your password" />
-      </div>
+    <div class="noscript-message">
 
-      <button type="button" class="btn btn-blue">Login</button>
-    </form>
-  </div>
-</div>
+      <strong>
+        JavaScript is required for the interactive checker
+      </strong>
 
-<div id="signupModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2>Create Your Account</h2>
-    <p>Sign up to save diagnostic sessions, reports and vehicle history.</p>
+      <p>
+        You can still use the diagnostic resources at
+        <a href="https://motorvehicleexpert.co.uk/diagnostics.html">
+          Motor Vehicle Expert
+        </a>.
+      </p>
 
-    <form>
-      <div class="form-group">
-        <label for="signupName">Full Name</label>
-        <input type="text" id="signupName" placeholder="Your full name" />
-      </div>
+    </div>
 
-      <div class="form-group">
-        <label for="signupEmail">Email Address</label>
-        <input type="email" id="signupEmail" placeholder="you@example.com" />
-      </div>
+  </noscript>
 
-      <div class="form-group">
-        <label for="accountType">Account Type</label>
-        <select id="accountType">
-          <option>Driver</option>
-          <option>Mechanic</option>
-          <option>Garage / Workshop</option>
-          <option>Fleet Manager</option>
-        </select>
-      </div>
+  <!-- ======================================================
+       RESULT ITEM TEMPLATES
+       USED BY APP.JS
+  ======================================================= -->
 
-      <div class="form-group">
-        <label for="signupPassword">Password</label>
-        <input type="password" id="signupPassword" placeholder="Create a password" />
-      </div>
+  <template id="result-list-item-template">
 
-      <button type="button" class="btn btn-green">Sign Up</button>
-    </form>
-  </div>
-</div>
+    <li class="generated-result-item">
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const modalButtons = document.querySelectorAll("[data-modal]");
-  const modals = document.querySelectorAll(".modal");
-  const closeButtons = document.querySelectorAll(".close");
+      <span
+        class="generated-result-marker"
+        aria-hidden="true"
+      >
+        ✓
+      </span>
 
-  modalButtons.forEach(function (button) {
-    button.addEventListener("click", function (event) {
-      event.preventDefault();
+      <span data-result-item-text></span>
 
-      const modalId = button.getAttribute("data-modal");
-      const modal = document.getElementById(modalId);
+    </li>
 
-      if (modal) {
-        modal.classList.add("active");
-        document.body.style.overflow = "hidden";
-      }
-    });
-  });
+  </template>
 
-  closeButtons.forEach(function (button) {
-    button.addEventListener("click", function () {
-      const modal = button.closest(".modal");
+  <template id="result-guide-link-template">
 
-      if (modal) {
-        modal.classList.remove("active");
-        document.body.style.overflow = "";
-      }
-    });
-  });
+    <a
+      class="result-guide-link"
+      target="_blank"
+      rel="noopener"
+    >
 
-  modals.forEach(function (modal) {
-    modal.addEventListener("click", function (event) {
-      if (event.target === modal) {
-        modal.classList.remove("active");
-        document.body.style.overflow = "";
-      }
-    });
-  });
+      <span data-guide-title></span>
 
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-      modals.forEach(function (modal) {
-        modal.classList.remove("active");
-      });
+      <span aria-hidden="true">
+        →
+      </span>
 
-      document.body.style.overflow = "";
-    }
-  });
-});
-</script>
+    </a>
+
+  </template>
+
+  <template id="result-warning-template">
+
+    <div class="generated-warning">
+
+      <strong data-warning-title></strong>
+
+      <p data-warning-copy></p>
+
+    </div>
+
+  </template>
+
+  <!-- ======================================================
+       APPLICATION SCRIPT
+  ======================================================= -->
+
+  <script
+    src="app.js"
+    defer
+  ></script>
 
 </body>
+
 </html>
+
+   
