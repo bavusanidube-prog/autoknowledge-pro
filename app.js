@@ -2603,7 +2603,7 @@ const WARNING_LIGHT_PROFILES = Object.freeze({
     guides: [
       {
         title: "DPF Warning Light Guide",
-        url: "dpf-warning-light.html"
+        url: "dpf-warning-light-explained.html"
       },
       {
         title: "Car Fails MOT on Emissions",
