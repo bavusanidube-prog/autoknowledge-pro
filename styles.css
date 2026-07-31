@@ -3577,3 +3577,804 @@ section {
    END OF AUTOKNOWLEDGE PRO PRODUCTION STYLESHEET
 ========================================================== */
 
+/* ==========================================================
+   AUTOKNOWLEDGE PRO
+   FULL-SITE READABILITY OVERRIDE
+
+   Purpose:
+   - Larger text across the complete application
+   - Darker paragraph and label colours
+   - Stronger headings
+   - Larger buttons and form controls
+   - Better readability on desktop and mobile
+========================================================== */
+
+/* ==========================================================
+   GLOBAL TYPOGRAPHY
+========================================================== */
+
+html {
+  font-size: 18px;
+}
+
+body {
+  color: #24394d;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+p,
+li,
+small,
+span,
+label,
+button,
+a {
+  text-rendering: optimizeLegibility;
+}
+
+p {
+  color: #344b61;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: #0d2239;
+}
+
+.section-heading {
+  width: min(100%, 860px);
+}
+
+.section-heading h2 {
+  margin-bottom: 16px;
+  font-size: clamp(2.15rem, 4.4vw, 3.25rem);
+  line-height: 1.12;
+}
+
+.section-heading p {
+  color: #344b61;
+  font-size: 1.08rem;
+  line-height: 1.75;
+}
+
+.eyebrow {
+  margin-bottom: 16px;
+  font-size: 0.82rem;
+  letter-spacing: 0.09em;
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.brand-copy small {
+  font-size: 0.74rem;
+}
+
+.brand-copy strong {
+  font-size: 1.2rem;
+}
+
+.header-nav a {
+  padding: 11px 15px;
+  color: #30485f;
+  font-size: 0.98rem;
+}
+
+/* ==========================================================
+   BUTTONS
+========================================================== */
+
+.button {
+  min-height: 56px;
+  padding: 14px 23px;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.text-button {
+  color: #3b5167;
+  font-size: 0.98rem;
+}
+
+/* ==========================================================
+   HERO
+========================================================== */
+
+.hero-copy h1 {
+  font-size: clamp(3rem, 6.6vw, 5.4rem);
+  line-height: 1;
+}
+
+.hero-lead {
+  max-width: 760px;
+  color: #d8e2eb;
+  font-size: 1.16rem;
+  line-height: 1.78;
+}
+
+.hero-benefits li {
+  padding: 10px 13px;
+  color: #edf3f8;
+  font-size: 0.9rem;
+}
+
+.diagnostic-card-heading small {
+  color: #c4d0dc;
+  font-size: 0.78rem;
+}
+
+.diagnostic-card-heading strong {
+  font-size: 1.18rem;
+}
+
+.diagnostic-preview-item strong {
+  font-size: 1.02rem;
+}
+
+.diagnostic-preview-item p {
+  color: #d0dbe5;
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.honesty-notice strong {
+  font-size: 0.98rem;
+}
+
+.honesty-notice p {
+  color: #d4dee7;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+/* ==========================================================
+   STARTING ROUTE CARDS
+========================================================== */
+
+.checker-route-card {
+  padding: 30px;
+}
+
+.route-number {
+  font-size: 0.88rem;
+}
+
+.checker-route-card h3 {
+  font-size: 1.55rem;
+  line-height: 1.25;
+}
+
+.checker-route-card > p {
+  color: #344b61;
+  font-size: 1.02rem;
+  line-height: 1.72;
+}
+
+.route-feature-list li {
+  color: #2f485f;
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.checker-trust-note strong {
+  font-size: 1rem;
+}
+
+.checker-trust-note p {
+  color: #2f5375;
+  font-size: 0.96rem;
+  line-height: 1.65;
+}
+
+/* ==========================================================
+   CHECKER WORKSPACE
+========================================================== */
+
+.checker-panel-heading h2 {
+  font-size: clamp(1.95rem, 3.4vw, 2.7rem);
+}
+
+.checker-panel-heading p {
+  color: #344b61;
+  font-size: 1.03rem;
+  line-height: 1.72;
+}
+
+.step-label {
+  font-size: 0.82rem;
+}
+
+.step-heading h3 {
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+}
+
+.step-heading p {
+  color: #344b61;
+  font-size: 1.02rem;
+  line-height: 1.72;
+}
+
+.checker-fieldset > legend:not(.visually-hidden) {
+  font-size: 1.2rem;
+}
+
+/* ==========================================================
+   PROGRESS BAR
+========================================================== */
+
+.progress-heading strong {
+  font-size: 1rem;
+}
+
+.progress-heading span {
+  color: #475d72;
+  font-size: 0.94rem;
+}
+
+/* ==========================================================
+   VEHICLE SYSTEM AND CLUTCH CARDS
+========================================================== */
+
+.choice-card {
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 15px;
+  padding: 20px;
+}
+
+.choice-card-icon {
+  width: 54px;
+  height: 54px;
+  font-size: 0.88rem;
+}
+
+.choice-card-copy {
+  gap: 8px;
+}
+
+.choice-card-copy strong {
+  color: #10243b;
+  font-size: 1.12rem;
+  line-height: 1.4;
+}
+
+.choice-card-copy small {
+  color: #344b61;
+  font-size: 0.96rem;
+  line-height: 1.65;
+}
+
+.choice-badge {
+  padding: 6px 10px;
+  font-size: 0.76rem;
+}
+
+/* ==========================================================
+   CHECKBOX CONDITION CARDS
+========================================================== */
+
+.check-option {
+  grid-template-columns: 25px minmax(0, 1fr);
+  gap: 13px;
+  padding: 19px;
+}
+
+.check-option input {
+  width: 22px;
+  height: 22px;
+}
+
+.check-option strong {
+  color: #10243b;
+  font-size: 1.06rem;
+  line-height: 1.45;
+}
+
+.check-option small {
+  color: #344b61;
+  font-size: 0.95rem;
+  line-height: 1.62;
+}
+
+.checker-note strong {
+  font-size: 1rem;
+}
+
+.checker-note p {
+  color: #2d5378;
+  font-size: 0.94rem;
+  line-height: 1.62;
+}
+
+/* ==========================================================
+   SAFETY QUESTIONS
+========================================================== */
+
+.inline-question {
+  padding: 22px;
+}
+
+.inline-question legend {
+  color: #10243b;
+  font-size: 1.08rem;
+  line-height: 1.5;
+}
+
+.segmented-options span {
+  min-height: 50px;
+  padding: 11px 14px;
+  color: #263f57;
+  font-size: 0.98rem;
+}
+
+.form-message {
+  font-size: 0.96rem;
+  line-height: 1.6;
+}
+
+/* ==========================================================
+   WARNING-LIGHT CARDS
+========================================================== */
+
+.warning-light-option {
+  min-height: 185px;
+  padding: 19px;
+}
+
+.warning-symbol {
+  min-width: 64px;
+  height: 64px;
+  font-size: 0.82rem;
+}
+
+.warning-light-option strong {
+  color: #10243b;
+  font-size: 1.08rem;
+  line-height: 1.35;
+}
+
+.warning-light-option small {
+  color: #344b61;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+/* ==========================================================
+   RESULTS
+========================================================== */
+
+.result-eyebrow {
+  font-size: 0.8rem;
+}
+
+.result-header h2 {
+  font-size: clamp(2.1rem, 4.6vw, 3.15rem);
+}
+
+.result-header p {
+  color: #e0e8ef;
+  font-size: 1.08rem;
+  line-height: 1.72;
+}
+
+.result-urgency small {
+  color: #d0dae4;
+  font-size: 0.76rem;
+}
+
+.result-urgency strong {
+  font-size: 1.08rem;
+}
+
+.result-card-label {
+  font-size: 0.8rem;
+}
+
+.result-card h3 {
+  color: #10243b;
+  font-size: 1.35rem;
+  line-height: 1.35;
+}
+
+.result-card p {
+  color: #2f465c;
+  font-size: 1.02rem;
+  line-height: 1.7;
+}
+
+.result-detail-card h3 {
+  color: #10243b;
+  font-size: 1.32rem;
+}
+
+.generated-result-item {
+  color: #263e55;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.generated-result-marker {
+  width: 20px;
+  height: 20px;
+  font-size: 0.7rem;
+}
+
+.result-guides-card h3 {
+  font-size: 1.34rem;
+}
+
+.result-guides-card p {
+  color: #2e5276;
+  font-size: 1rem;
+  line-height: 1.68;
+}
+
+.result-guide-link {
+  min-height: 58px;
+  padding: 15px 17px;
+  color: #123d73;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.result-disclaimer strong {
+  font-size: 1.04rem;
+}
+
+.result-disclaimer p {
+  color: #624217;
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+/* ==========================================================
+   INFORMATION AND WORKFLOW CARDS
+========================================================== */
+
+.process-card h3 {
+  font-size: 1.25rem;
+}
+
+.process-card p {
+  color: #344b61;
+  font-size: 0.98rem;
+  line-height: 1.68;
+}
+
+.mechanic-principle strong {
+  font-size: 1.08rem;
+}
+
+.mechanic-principle p {
+  color: #285f48;
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+/* ==========================================================
+   CLUTCH FEATURE
+========================================================== */
+
+.feature-copy p {
+  color: #d3dde6;
+  font-size: 1.04rem;
+  line-height: 1.75;
+}
+
+.feature-point h3 {
+  font-size: 1.12rem;
+}
+
+.feature-point p {
+  color: #d0dae4;
+  font-size: 0.94rem;
+  line-height: 1.65;
+}
+
+/* ==========================================================
+   SUPPORTED CHECKS
+========================================================== */
+
+.support-status {
+  font-size: 0.74rem;
+}
+
+.support-card h3 {
+  font-size: 1.34rem;
+}
+
+.support-card > p {
+  color: #344b61;
+  font-size: 0.98rem;
+  line-height: 1.68;
+}
+
+.support-card li {
+  color: #30495f;
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.inline-link {
+  font-size: 0.96rem;
+}
+
+/* ==========================================================
+   SAFETY SECTION
+========================================================== */
+
+.safety-header p {
+  color: #f6dfdc;
+  font-size: 1.08rem;
+  line-height: 1.7;
+}
+
+.safety-level {
+  font-size: 0.75rem;
+}
+
+.safety-card h3 {
+  font-size: 1.3rem;
+}
+
+.safety-card li {
+  color: #f5e1df;
+  font-size: 0.96rem;
+  line-height: 1.62;
+}
+
+.emergency-note strong {
+  font-size: 1rem;
+}
+
+.emergency-note p {
+  color: #f5dfdc;
+  font-size: 0.95rem;
+  line-height: 1.62;
+}
+
+/* ==========================================================
+   MOT SECTION
+========================================================== */
+
+.mot-card h3 {
+  font-size: 1.28rem;
+}
+
+.mot-card p {
+  color: #344b61;
+  font-size: 0.98rem;
+  line-height: 1.68;
+}
+
+/* ==========================================================
+   LIMITATIONS
+========================================================== */
+
+.limitations-copy > p {
+  color: #344b61;
+  font-size: 1.04rem;
+  line-height: 1.7;
+}
+
+.limitations-list li {
+  color: #2e475d;
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.limitations-panel h3 {
+  font-size: 1.5rem;
+}
+
+.limitations-panel > p {
+  color: #d0dbe5;
+  font-size: 1rem;
+  line-height: 1.68;
+}
+
+.limitations-benefits span {
+  color: #edf3f8;
+  font-size: 0.94rem;
+}
+
+/* ==========================================================
+   TRUST
+========================================================== */
+
+.trust-card h3 {
+  font-size: 1.2rem;
+}
+
+.trust-card p {
+  color: #344b61;
+  font-size: 0.96rem;
+  line-height: 1.65;
+}
+
+.creator-note strong {
+  font-size: 1.08rem;
+}
+
+.creator-note p {
+  color: #344b61;
+  font-size: 0.96rem;
+  line-height: 1.65;
+}
+
+/* ==========================================================
+   RESOURCE CARDS
+========================================================== */
+
+.resource-card-label {
+  font-size: 0.74rem;
+}
+
+.resource-card strong {
+  font-size: 1.32rem;
+}
+
+.resource-card p {
+  color: #344b61;
+  font-size: 0.98rem;
+  line-height: 1.68;
+}
+
+.resource-card-link {
+  font-size: 0.96rem;
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.footer-brand p {
+  color: #c2cfda;
+  font-size: 0.96rem;
+  line-height: 1.65;
+}
+
+.footer-column > strong {
+  font-size: 1rem;
+}
+
+.footer-column a {
+  color: #c6d2dc;
+  font-size: 0.94rem;
+}
+
+.footer-bottom p {
+  color: #aebdca;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+/* ==========================================================
+   MOBILE READABILITY
+========================================================== */
+
+@media (max-width: 760px) {
+  html {
+    font-size: 17px;
+  }
+
+  body {
+    font-size: 1rem;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.55rem, 13vw, 3.8rem);
+  }
+
+  .hero-lead {
+    font-size: 1.08rem;
+  }
+
+  .section-heading h2 {
+    font-size: 2.15rem;
+  }
+
+  .section-heading p,
+  .checker-panel-heading p,
+  .step-heading p {
+    font-size: 1rem;
+  }
+
+  .checker-route-card {
+    padding: 24px;
+  }
+
+  .checker-route-card h3 {
+    font-size: 1.42rem;
+  }
+
+  .checker-route-card > p {
+    font-size: 1rem;
+  }
+
+  .choice-card {
+    grid-template-columns: 48px minmax(0, 1fr);
+    padding: 18px;
+  }
+
+  .choice-card-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .choice-card-copy strong {
+    font-size: 1.08rem;
+  }
+
+  .choice-card-copy small {
+    font-size: 0.96rem;
+  }
+
+  .check-option strong {
+    font-size: 1.02rem;
+  }
+
+  .check-option small {
+    font-size: 0.94rem;
+  }
+
+  .warning-light-option {
+    min-height: 165px;
+  }
+
+  .result-header h2 {
+    font-size: 2.1rem;
+  }
+
+  .result-card h3,
+  .result-detail-card h3,
+  .result-guides-card h3 {
+    font-size: 1.25rem;
+  }
+
+  .result-card p,
+  .generated-result-item,
+  .result-guide-link,
+  .result-disclaimer p {
+    font-size: 0.98rem;
+  }
+
+  .result-guide-link {
+    min-height: 60px;
+  }
+}
+
+/* ==========================================================
+   VERY SMALL SCREENS
+========================================================== */
+
+@media (max-width: 420px) {
+  html {
+    font-size: 16.5px;
+  }
+
+  .hero-copy h1 {
+    font-size: 2.4rem;
+  }
+
+  .section-heading h2 {
+    font-size: 1.95rem;
+  }
+
+  .choice-card {
+    grid-template-columns: 1fr;
+  }
+
+  .choice-card-icon {
+    margin-bottom: 2px;
+  }
+
+  .result-guide-link {
+    padding: 15px;
+  }
+}
+
+
