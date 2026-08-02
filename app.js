@@ -105,6 +105,10 @@ const dom = {
     '.progress-track[role="progressbar"]'
   ),
 
+  progressSteps: Array.from(
+    document.querySelectorAll(".progress-step")
+  ),
+
   symptomChecker: document.getElementById("symptom-checker"),
   warningChecker: document.getElementById("warning-light-checker"),
 
@@ -310,14 +314,25 @@ function normaliseGuideUrl(path) {
    5. CHECKER VISIBILITY
 ========================================================== */
 
+function setRouteExpandedState(activeRoute = null) {
+  dom.routeButtons.forEach((button) => {
+    const isActive =
+      activeRoute !== null &&
+      button.dataset.checkerRoute === activeRoute;
+
+    button.setAttribute(
+      "aria-expanded",
+      String(isActive)
+    );
+  });
+}
+
 function hideAllCheckers() {
   setHidden(dom.symptomChecker, true);
   setHidden(dom.warningChecker, true);
   setHidden(dom.checkerProgress, true);
 
-  dom.routeButtons.forEach((button) => {
-    button.setAttribute("aria-expanded", "false");
-  });
+  setRouteExpandedState();
 }
 
 function hideAllSymptomSteps() {
@@ -391,6 +406,22 @@ function updateProgress(step) {
       String(safeStep)
     );
   }
+
+  dom.progressSteps.forEach((progressStep, index) => {
+    const stepNumber = index + 1;
+    const isCurrent = stepNumber === safeStep;
+    const isComplete = stepNumber < safeStep;
+
+    progressStep.classList.toggle(
+      "progress-step-active",
+      isCurrent
+    );
+
+    progressStep.classList.toggle(
+      "progress-step-complete",
+      isComplete
+    );
+  });
 }
 
 /* ==========================================================
@@ -407,16 +438,12 @@ function openRoute(routeName) {
     setHidden(dom.symptomChecker, false);
     showSymptomStep(CHECKER_STEPS.SYSTEM);
 
-    const routeButton = dom.routeButtons.find(
-      (button) =>
-        button.dataset.checkerRoute === "symptom"
+    setRouteExpandedState("symptom");
+
+    scrollToElement(
+      dom.checkerProgress || dom.symptomChecker
     );
 
-    if (routeButton) {
-      routeButton.setAttribute("aria-expanded", "true");
-    }
-
-    scrollToElement(dom.checkerProgress || dom.symptomChecker);
     return;
   }
 
@@ -424,18 +451,16 @@ function openRoute(routeName) {
     setHidden(dom.warningChecker, false);
     setHidden(dom.checkerProgress, true);
 
-    const routeButton = dom.routeButtons.find(
-      (button) =>
-        button.dataset.checkerRoute === "warning-light"
-    );
-
-    if (routeButton) {
-      routeButton.setAttribute("aria-expanded", "true");
-    }
+    setRouteExpandedState("warning-light");
 
     scrollToElement(dom.warningChecker);
     focusFirstInput(dom.warningChecker);
+
+    return;
   }
+
+  state.activeRoute = null;
+  setRouteExpandedState();
 }
 
 function openClutchChecker() {
@@ -456,9 +481,13 @@ function openClutchChecker() {
   hideResult();
 
   setHidden(dom.symptomChecker, false);
+  setRouteExpandedState("symptom");
+
   showSymptomStep(CHECKER_STEPS.SYMPTOM);
 
-  scrollToElement(dom.checkerProgress || dom.symptomChecker);
+  scrollToElement(
+    dom.checkerProgress || dom.symptomChecker
+  );
 }
 
 function closeChecker() {
@@ -3814,7 +3843,7 @@ function updateDocumentTitleForResult(result) {
 
 function restoreDefaultDocumentTitle() {
   document.title =
-    "AutoKnowledge Pro | Free UK Car Problem Checker";
+    "AutoKnowledge Pro | Free UK Vehicle Diagnostic Assistant";
 }
 
 /* ==========================================================
@@ -4310,5 +4339,3 @@ window.AutoKnowledgePro = Object.freeze({
 /* ==========================================================
    END OF AUTOKNOWLEDGE PRO PRODUCTION APPLICATION
 ========================================================== */
-
-
