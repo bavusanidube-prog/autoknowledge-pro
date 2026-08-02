@@ -9775,3 +9775,15 @@ button[aria-busy="true"]::after,
     content: none !important;
   }
 }
+/* ==========================================================
+   COMPLETED CHECKER PROGRESS STEPS
+========================================================== */
+
+.progress-step-complete {
+  color: var(--status-green);
+}
+
+.progress-step-complete::before {
+  color: var(--status-green);
+  content: "✓ ";
+}
