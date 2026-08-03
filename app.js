@@ -1,5 +1,10 @@
 Library
 /
+AutoKnowledge-Pro-app-BUTTONS-FIXED.txt
+
+
+Library
+/
 AutoKnowledge-Pro-app-LOCKED.txt
 
 
@@ -6414,3 +6419,39 @@ window.AutoKnowledgePro = Object.freeze({
 /* ==========================================================
    END OF AUTOKNOWLEDGE PRO PRODUCTION APPLICATION
 ========================================================== */
+
+/* ==========================================================
+   78. GLOBAL START-BUTTON SAFETY BINDING
+========================================================== */
+
+function bindGlobalStartControls() {
+  document.addEventListener("click", (event) => {
+    const startControl =
+      event.target.closest("[data-start-symptom-checker]");
+
+    if (startControl) {
+      event.preventDefault();
+      openRoute("symptom");
+      return;
+    }
+
+    const clutchControl =
+      event.target.closest("[data-open-clutch-checker]");
+
+    if (clutchControl) {
+      event.preventDefault();
+      openClutchChecker();
+      return;
+    }
+
+    const routeControl =
+      event.target.closest("[data-checker-route]");
+
+    if (routeControl) {
+      event.preventDefault();
+      openRoute(routeControl.dataset.checkerRoute);
+    }
+  });
+}
+
+bindGlobalStartControls();
