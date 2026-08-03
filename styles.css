@@ -10504,3 +10504,178 @@ input[type="checkbox"] {
   .confidence-meter { width:100%; }
 }
 
+
+
+/* ==========================================================
+   69. FINAL RELEASE COVERAGE CONTROLS
+========================================================== */
+
+.support-grid {
+  align-items: stretch;
+}
+
+.support-card button.inline-link {
+  width: fit-content;
+  margin-top: auto;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  background: transparent;
+  color: var(--mve-orange-700);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 850;
+  text-align: left;
+}
+
+.support-card button.inline-link:hover {
+  color: var(--mve-navy-900);
+}
+
+@media (min-width: 1180px) {
+  .support-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ==========================================================
+   70. VERSION 1.0.0 FINAL QA REFINEMENT
+========================================================== */
+
+:where(
+  .choice-card-copy,
+  .check-option-copy,
+  .result-card,
+  .support-card,
+  .repair-intelligence,
+  .report-card
+) {
+  min-width: 0;
+}
+
+:where(
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  li,
+  strong,
+  small,
+  .choice-card-detail,
+  .result-direction-copy
+) {
+  overflow-wrap: anywhere;
+}
+
+.text-button,
+.inline-link,
+.support-card button.inline-link {
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.choice-card,
+.check-option,
+.warning-light-option,
+.segmented-options label,
+.button {
+  touch-action: manipulation;
+}
+
+.choice-card input,
+.check-option input,
+.warning-light-option input,
+.segmented-options input {
+  cursor: pointer;
+}
+
+.diagnostic-checker,
+.result-shell,
+.vehicle-profile-card {
+  contain: layout paint;
+}
+
+.generated-result-list li,
+.result-list li {
+  break-inside: avoid;
+}
+
+@media (max-width: 760px) {
+  .site-header {
+    position: sticky;
+    top: 0;
+  }
+
+  .header-inner {
+    min-height: 72px;
+  }
+
+  .header-cta {
+    white-space: nowrap;
+  }
+
+  .checker-panel-heading {
+    align-items: stretch;
+  }
+
+  .checker-panel-heading .text-button {
+    align-self: flex-start;
+  }
+
+  .repair-intelligence,
+  .result-card,
+  .support-card,
+  .vehicle-profile-card {
+    border-radius: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-brand-copy strong {
+    max-width: 128px;
+  }
+
+  .header-cta span:first-child {
+    font-size: 0.78rem;
+  }
+
+  .choice-card-grid,
+  .check-option-grid,
+  .warning-light-grid,
+  .result-card-grid,
+  .support-grid {
+    gap: 12px;
+  }
+
+  .checker-step,
+  .checker-panel-heading,
+  .repair-intelligence {
+    padding-inline: 15px;
+  }
+
+  .button {
+    min-height: 48px;
+  }
+}
+
+@supports (padding: max(0px)) {
+  .mobile-bottom-nav {
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+}
+
+@media print {
+  .result-card,
+  .repair-intelligence,
+  .report-section,
+  .report-qr-section,
+  .mechanic-notes {
+    break-inside: avoid;
+  }
+
+  a {
+    text-decoration: none;
+  }
+}
