@@ -1,6 +1,6 @@
 Library
 /
-autoknowledge-pro-app-clean.txt
+AutoKnowledge-Pro-Full-app-TXT.txt
 
 
 /* ==========================================================
@@ -473,6 +473,7 @@ function hideAllCheckers() {
   setHidden(dom.symptomChecker, true);
   setHidden(dom.engineChecker, true);
   setHidden(dom.warningChecker, true);
+  hideExtendedCheckers();
   setHidden(dom.checkerProgress, true);
 
   setRouteExpandedState();
@@ -790,6 +791,12 @@ function continueFromSystem() {
     return;
   }
 
+  if (["starting", "cooling", "brakes"].includes(selectedSystem)) {
+    showExtendedSystemStep(selectedSystem, CHECKER_STEPS.SYMPTOM);
+    scrollToElement(dom.checkerProgress);
+    return;
+  }
+
   if (GUIDE_ONLY_SYSTEMS[selectedSystem]) {
     renderGuideOnlyResult(
       GUIDE_ONLY_SYSTEMS[selectedSystem]
@@ -1051,6 +1058,18 @@ function handleBackNavigation(target) {
 
       break;
 
+    case "starting-symptom":
+    case "cooling-symptom":
+    case "brakes-symptom":
+      showExtendedSystemStep(target.split("-")[0], CHECKER_STEPS.SYMPTOM);
+      break;
+
+    case "starting-conditions":
+    case "cooling-conditions":
+    case "brakes-conditions":
+      showExtendedSystemStep(target.split("-")[0], CHECKER_STEPS.CONDITIONS);
+      break;
+
     default:
 
       showSystemStep();
@@ -1120,6 +1139,7 @@ function resetSymptomState() {
   setButtonDisabled(dom.engineSymptomContinue, true);
 
   resetValidationMessages();
+  resetExtendedSystems();
 }
 
 function resetWarningState() {
@@ -1584,6 +1604,8 @@ function bindEvents() {
     "click",
     resetApplication
   );
+
+  bindExtendedSystemEvents();
 }
 
 /* ==========================================================
@@ -3873,6 +3895,259 @@ function bindEngineEvents() {
 
 // bindEngineEvents(); bound during final application initialisation.
 
+
+/* ==========================================================
+   EXTENDED DIAGNOSTIC SYSTEMS
+   Starting, Cooling and Brakes
+========================================================== */
+
+const EXTENDED_SYSTEM_CONFIG = Object.freeze({
+  starting: {
+    eyebrow: "Battery and starting diagnostic guidance",
+    baseTitle: "Starting and Charging Fault",
+    symptoms: {
+      "no-crank": ["No-Crank Starting Fault", "The starter circuit is not rotating the engine.", ["Discharged or failed battery", "Loose or corroded battery connections", "Starter relay, solenoid or motor fault", "Ignition-switch or start-authorisation fault", "Engine or accessory mechanically locked"], ["Measure battery voltage and voltage drop during a start request.", "Check battery terminals, earth straps and starter connections.", "Confirm whether the starter relay and solenoid receive a command.", "Check immobiliser or start-authorisation messages.", "Do not replace the starter before proving power and earth integrity."]],
+      "slow-crank": ["Slow-Crank Starting Fault", "The starter is rotating the engine below normal speed.", ["Low battery state of charge", "Aged battery with poor cold-cranking capacity", "High resistance in positive or earth cables", "Starter motor drawing excessive current", "Engine oil viscosity or mechanical drag"], ["Test battery state of charge and cold-cranking performance.", "Measure cranking voltage and cable voltage drop.", "Check starter current draw.", "Inspect engine and chassis earth connections.", "Compare cold and warm cranking speed."]],
+      "rapid-clicking": ["Rapid Starter Clicking", "The starter solenoid is repeatedly engaging and releasing.", ["Battery voltage collapsing under load", "Loose or corroded battery terminal", "Poor engine earth", "Weak battery despite normal resting voltage", "Starter-solenoid supply fault"], ["Load-test the battery.", "Clean and tighten battery connections.", "Measure voltage drop on both battery cables.", "Check charging performance after the engine starts.", "Avoid repeated clicking attempts that heat cables and terminals."]],
+      "single-click": ["Single Click With No Crank", "The start command reaches part of the circuit but the starter does not rotate normally.", ["Starter solenoid or motor fault", "Poor high-current cable connection", "Engine or starter mechanically jammed", "Starter relay contact fault", "Battery unable to supply current"], ["Confirm battery condition first.", "Check voltage at the starter main terminal and solenoid command terminal.", "Measure positive and earth voltage drop.", "Check whether the engine can be rotated safely by the correct procedure.", "Inspect relay and starter connections."]],
+      "cranks-no-start": ["Cranks but Will Not Start", "The engine rotates but combustion does not begin.", ["Fuel-delivery or fuel-pressure fault", "Ignition or injector-control fault", "Crankshaft/camshaft position signal loss", "Immobiliser or start-authorisation fault", "Low compression or mechanical timing fault"], ["Read fault codes and live engine-speed data while cranking.", "Confirm fuel pressure and injector command.", "Check ignition output on petrol engines.", "Review immobiliser status.", "Check compression and mechanical timing where electronic inputs are present."]],
+      "jump-start-then-flat": ["Starts With a Jump but Fails Again", "Assisted voltage allows starting, but the underlying battery or charging problem remains.", ["Battery unable to retain charge", "Alternator not restoring battery charge", "Parasitic electrical drain", "Poor battery connection", "Incorrect battery specification or registration"], ["Fully charge and test the battery.", "Measure charging voltage and current under load.", "Perform a parasitic-drain test after modules sleep.", "Inspect terminals and earths.", "Check battery coding/registration where required."]],
+      "battery-keeps-going-flat": ["Battery Repeatedly Goes Flat", "Stored electrical energy is being lost or not restored correctly.", ["Aged or internally faulty battery", "Parasitic drain", "Charging-system underperformance", "Frequent short journeys", "Module, light or accessory remaining active"], ["Charge and test the battery before drain testing.", "Measure closed-circuit current after sleep time.", "Check alternator output and ripple.", "Inspect boot, glovebox and interior lights.", "Review journey pattern and battery specification."]],
+      "battery-light-driving": ["Battery Warning While Driving", "The charging system may not be maintaining vehicle voltage.", ["Alternator or regulator fault", "Auxiliary belt failure or slip", "Charging cable or fuse-link fault", "Battery connection fault", "Crankshaft pulley or tensioner failure"], ["Reduce electrical load and stop safely if steering, cooling or lighting becomes affected.", "Inspect the auxiliary belt without approaching moving parts.", "Measure charging voltage and current.", "Check alternator cable, fuse links and earths.", "Do not continue until the belt-drive and overheating risk are understood."]]
+    },
+    safetyNames: ["starting-drive-safe","starting-battery-warning","starting-burning-smell","starting-fault-timing"],
+    guides: [{title:"Battery vs Alternator Diagnosis",url:"battery-vs-alternator-diagnosis.html"},{title:"Vehicle Diagnostics Hub",url:"diagnostics.html"},{title:"Warning Lights Guide",url:"warning-lights.html"}]
+  },
+  cooling: {
+    eyebrow: "Cooling and overheating diagnostic guidance",
+    baseTitle: "Cooling-System Fault",
+    symptoms: {
+      "overheats-traffic": ["Overheating in Traffic", "The cooling system struggles when natural airflow is low.", ["Cooling fan not operating", "Fan control, relay, fuse or wiring fault", "Restricted radiator airflow", "Low coolant or trapped air", "Water-pump circulation problem"], ["Confirm fan operation at the correct temperature.", "Check fan power, earth and control command.", "Inspect radiator and condenser airflow.", "Check coolant level only when cold.", "Pressure-test and bleed the system correctly."]],
+      "overheats-speed": ["Overheating at Speed", "Temperature rises under sustained load despite strong road airflow.", ["Low coolant or internal leakage", "Restricted radiator or coolant passage", "Water-pump impeller or drive fault", "Thermostat not opening fully", "Combustion gas entering the cooling system"], ["Stop if temperature continues rising.", "Pressure-test the system.", "Check radiator temperature distribution.", "Verify thermostat and pump circulation.", "Test for combustion gases where pressure rises rapidly."]],
+      "coolant-dropping": ["Repeated Coolant Loss", "Coolant is leaving the system externally or internally.", ["Hose, radiator or expansion-tank leak", "Water-pump or thermostat-housing leak", "Heater-matrix leak", "Cylinder-head-gasket or internal engine leak", "Pressure-cap fault"], ["Pressure-test the cold system.", "Inspect dried coolant staining.", "Check carpets and heater housing.", "Monitor exhaust and oil condition.", "Do not repeatedly top up without locating the loss."]],
+      "heater-cold": ["Heater Blows Cold", "Heater circulation or coolant level may be inadequate.", ["Low coolant level", "Air trapped in the system", "Thermostat fault", "Blocked heater matrix", "Water-pump circulation fault"], ["Check coolant level when cold.", "Compare heater hose temperatures.", "Bleed the system using the correct procedure.", "Check thermostat behaviour.", "Investigate circulation before replacing the heater matrix."]],
+      "fan-not-running": ["Cooling Fan Does Not Run", "The electric fan is not operating when cooling demand requires it.", ["Blown fuse or failed relay", "Fan motor fault", "Wiring or earth fault", "Temperature-sensor or control fault", "Air-conditioning pressure/control issue"], ["Confirm actual coolant temperature.", "Command the fan with suitable diagnostic equipment.", "Check fuse, relay, power and earth.", "Test fan current draw.", "Inspect sensor data and control logic."]],
+      "temperature-fluctuates": ["Fluctuating Engine Temperature", "Temperature changes unexpectedly rather than remaining controlled.", ["Air trapped in coolant", "Low coolant level", "Thermostat sticking", "Intermittent fan or sensor fault", "Combustion pressure entering coolant"], ["Check coolant level and bleeding.", "Compare scan-data temperature with gauge behaviour.", "Observe thermostat opening.", "Check for rapid hose pressurisation.", "Inspect fan cycling and sensor connections."]],
+      "steam-engine-bay": ["Steam From the Engine Bay", "Coolant is boiling or escaping onto hot components.", ["Burst hose or failed connection", "Radiator or expansion-tank failure", "Severe overheating", "Pressure-cap fault", "Water-pump or housing leak"], ["Stop immediately and switch off safely.", "Do not open the pressure cap while hot.", "Arrange recovery.", "Inspect only after full cooling.", "Pressure-test before refilling and driving."]],
+      "coolant-warning": ["Coolant Warning Light", "The system has detected low coolant or excessive temperature.", ["Low coolant level", "Level-sensor fault", "Active coolant leak", "Overheating", "Wiring or control fault"], ["Identify whether the warning is level or temperature related.", "Stop for a red temperature warning.", "Check coolant only when safe and cold.", "Inspect for leakage.", "Read relevant fault codes and sensor data."]]
+    },
+    safetyNames: ["cooling-temperature","cooling-loss","cooling-drive-safe","cooling-fault-timing"],
+    guides: [{title:"Cooling System Guides",url:"diagnostics.html"},{title:"Thermostat Replacement Cost UK",url:"thermostat-replacement-cost-uk.html"},{title:"Water Pump Replacement Cost UK",url:"water-pump-replacement-cost-uk.html"}]
+  },
+  brakes: {
+    eyebrow: "Braking-system diagnostic guidance",
+    baseTitle: "Brake-System Fault",
+    symptoms: {
+      "soft-spongy": ["Soft or Spongy Brake Pedal", "Hydraulic pressure is not building with the expected firmness.", ["Air in the hydraulic system", "Brake-fluid leak", "Flexible hose expansion", "Incorrect bleeding or recent repair issue", "Master-cylinder fault"], ["Do not drive if braking is reduced.", "Check fluid level and visible leaks.", "Inspect hoses and pipes.", "Bleed only after leakage is ruled out.", "Test master-cylinder pressure retention."]],
+      "pedal-sinks": ["Brake Pedal Sinks", "Hydraulic pressure may be bypassing or escaping.", ["Master-cylinder internal bypass", "External fluid leak", "ABS hydraulic-unit fault", "Air in the system", "Rear brake adjustment issue on applicable designs"], ["Stop driving if the pedal approaches the floor.", "Check for fluid leakage.", "Hold controlled pressure and observe pedal movement.", "Inspect master cylinder and ABS hydraulic unit.", "Arrange recovery where braking is unreliable."]],
+      "pulls-braking": ["Vehicle Pulls While Braking", "Braking force may be unequal across the axle.", ["Sticking caliper or slider", "Contaminated friction material", "Collapsed flexible hose", "Tyre or suspension difference", "Unequal disc or pad condition"], ["Compare wheel temperatures.", "Inspect caliper movement and hose condition.", "Check tyres and pressures.", "Inspect pads and discs on both sides.", "Test on safe equipment rather than repeated road braking."]],
+      "grinding": ["Grinding Brake Noise", "Friction material may be worn through or a component may be contacting metal.", ["Brake pads worn to backing plates", "Damaged disc", "Foreign material", "Loose or failed brake hardware", "Wheel-bearing or shield contact"], ["Avoid further driving.", "Inspect pad thickness and disc condition.", "Check caliper and hardware security.", "Inspect shields and bearings.", "Replace damaged parts only after the cause is confirmed."]],
+      "squealing": ["Squealing Brakes", "High-frequency vibration is occurring during brake application.", ["Pad material or glazing", "Missing or damaged anti-noise hardware", "Disc surface condition", "Dust or contamination", "Wear indicator contact"], ["Check pad thickness first.", "Inspect disc and pad surfaces.", "Verify hardware and lubrication points.", "Check for contamination.", "Do not assume noise alone means braking is unsafe."]],
+      "vibration": ["Brake Vibration", "Rotational variation or looseness is being felt during braking.", ["Disc thickness variation or run-out", "Hub contamination or run-out", "Tyre/wheel issue", "Suspension or steering wear", "ABS activation on poor surfaces"], ["Identify whether vibration is in pedal, steering or body.", "Measure disc run-out and thickness.", "Check hub face and wheel torque.", "Inspect suspension and tyres.", "Confirm whether ABS operation is normal."]],
+      "binding-hot": ["Binding or Overheating Brake", "A brake may not be releasing fully.", ["Seized caliper piston or sliders", "Collapsed flexible hose", "Parking-brake cable or mechanism", "Incorrectly fitted pads", "Hydraulic pressure not releasing"], ["Stop if smoke or severe heat is present.", "Do not touch hot components.", "Compare wheel temperatures.", "Check caliper, hose and parking-brake release.", "Arrange recovery for a locked brake."]],
+      "red-warning": ["Red Brake Warning", "A hydraulic, fluid-level or parking-brake warning requires immediate attention.", ["Low brake-fluid level", "Hydraulic leak", "Parking brake not fully released", "Brake-system pressure fault", "Sensor or wiring fault"], ["Stop if braking is reduced or fluid is low.", "Check parking-brake position.", "Check reservoir level without contaminating fluid.", "Inspect for leakage.", "Arrange professional diagnosis before continued use."]],
+      "abs-warning": ["ABS Warning Light", "The anti-lock system has detected a fault and may be unavailable.", ["Wheel-speed sensor or reluctor fault", "Wiring or connector damage", "ABS pump/module fault", "Low system voltage", "Wheel-bearing play"], ["Confirm normal base braking.", "Read ABS fault codes.", "Inspect sensor wiring and reluctor rings.", "Check wheel-bearing condition.", "Repair before MOT presentation where the warning remains illuminated."]]
+    },
+    safetyNames: ["brakes-performance","brakes-pedal","brakes-leak","brakes-heat-smoke"],
+    guides: [{title:"Braking System Guides",url:"diagnostics.html"},{title:"Brake Pads Explained",url:"brake-pads-explained.html"},{title:"Brake Discs Explained",url:"brake-discs-explained.html"}]
+  }
+});
+
+const extendedState = {
+  starting: { symptom: null, conditions: [], safety: {} },
+  cooling: { symptom: null, conditions: [], safety: {} },
+  brakes: { symptom: null, conditions: [], safety: {} }
+};
+
+function getExtendedChecker(system) {
+  return document.getElementById(`${system}-checker`);
+}
+
+function hideExtendedCheckers() {
+  document.querySelectorAll("[data-extended-checker]").forEach((checker) => {
+    checker.hidden = true;
+    checker.querySelectorAll(".checker-step").forEach((step) => {
+      step.hidden = true;
+    });
+  });
+}
+
+function showExtendedSystemStep(system, step) {
+  hideAllClutchSteps();
+  hideAllEngineSteps();
+  hideExtendedCheckers();
+  setHidden(dom.symptomChecker, true);
+  setHidden(dom.engineChecker, true);
+
+  const checker = getExtendedChecker(system);
+  const stepName = step === CHECKER_STEPS.SYMPTOM
+    ? "symptom"
+    : step === CHECKER_STEPS.CONDITIONS
+      ? "conditions"
+      : "safety";
+  const panel = document.getElementById(`${system}-step-${stepName}`);
+
+  state.activeSystem = system;
+  state.currentStep = step;
+  checker.hidden = false;
+  panel.hidden = false;
+  updateProgress(step);
+  focusFirstInput(panel);
+}
+
+function readExtendedSafety(system) {
+  const cfg = EXTENDED_SYSTEM_CONFIG[system];
+  const answers = {};
+  cfg.safetyNames.forEach((name) => {
+    answers[name] = getCheckedValue(
+      Array.from(document.querySelectorAll(`input[name="${name}"]`))
+    );
+  });
+  extendedState[system].safety = answers;
+  return answers;
+}
+
+function validateExtendedSafety(system) {
+  const answers = readExtendedSafety(system);
+  const missing = Object.entries(answers)
+    .filter(([, value]) => !value)
+    .map(([name]) => name.replace(`${system}-`, "").replaceAll("-", " "));
+  const message = document.getElementById(`${system}-safety-message`);
+
+  if (missing.length) {
+    message.textContent = `Please answer every safety question. Missing: ${missing.join(", ")}.`;
+    message.hidden = false;
+    message.focus?.();
+    return false;
+  }
+
+  message.hidden = true;
+  message.textContent = "";
+  return true;
+}
+
+function determineExtendedUrgency(system, safety, conditions) {
+  if (system === "starting") {
+    if (
+      safety["starting-drive-safe"] === "no" ||
+      safety["starting-battery-warning"] === "yes" ||
+      safety["starting-burning-smell"] === "severe"
+    ) return {level:"high",label:"Stop and arrange urgent assistance",title:"Do not continue if voltage or heat is unsafe",copy:"A charging warning while driving, electrical smoke or unreliable running can cause sudden loss of vehicle systems. Stop safely and arrange assistance."};
+    return {level:"medium",label:"Arrange testing promptly",title:"Limit use until starting and charging are tested",copy:"Short use may be reasonable only when the vehicle starts reliably, no burning smell is present and the charging warning remains off."};
+  }
+  if (system === "cooling") {
+    if (
+      safety["cooling-temperature"] === "red" ||
+      safety["cooling-loss"] === "rapid" ||
+      safety["cooling-drive-safe"] === "no"
+    ) return {level:"high",label:"Stop and arrange recovery",title:"Do not continue driving",copy:"A red temperature warning, steam or rapid coolant loss can cause severe engine damage. Stop safely, switch off and allow the vehicle to cool."};
+    return {level:"medium",label:"Book cooling-system diagnosis promptly",title:"Drive only if temperature remains normal",copy:"Do not continue if temperature rises, coolant loss increases or heater output suddenly changes."};
+  }
+  if (
+    safety["brakes-performance"] === "unsafe" ||
+    safety["brakes-pedal"] === "yes" ||
+    safety["brakes-leak"] === "yes" ||
+    safety["brakes-heat-smoke"] === "severe"
+  ) return {level:"high",label:"Stop and arrange recovery",title:"Do not drive the vehicle",copy:"Reduced braking, a sinking pedal, fluid leakage or a locked/smoking brake makes continued driving unsafe."};
+  return {level:"high",label:"Arrange urgent brake inspection",title:"Use only if braking is fully predictable",copy:"Brake faults can worsen quickly. Avoid driving when pedal feel, stopping distance, pulling or heat is abnormal."};
+}
+
+function generateExtendedResult(system) {
+  if (!validateExtendedSafety(system)) return;
+
+  const symptom = getCheckedValue(
+    Array.from(document.querySelectorAll(`input[name="${system}-symptom"]`))
+  );
+  const conditions = getCheckedValues(
+    Array.from(document.querySelectorAll(`input[name="${system}-condition"]`))
+  );
+  const cfg = EXTENDED_SYSTEM_CONFIG[system];
+  const profile = cfg.symptoms[symptom];
+  const safety = readExtendedSafety(system);
+
+  if (!profile) {
+    showExtendedSystemStep(system, CHECKER_STEPS.SYMPTOM);
+    return;
+  }
+
+  extendedState[system] = { symptom, conditions, safety };
+  const urgency = determineExtendedUrgency(system, safety, conditions);
+
+  const conditionNotes = conditions.map((value) =>
+    `Selected evidence: ${value.replaceAll("-", " ")}.`
+  );
+
+  renderResult({
+    eyebrow: cfg.eyebrow,
+    title: profile[0],
+    summary: profile[1],
+    urgency: { level: urgency.level, label: urgency.label },
+    direction: {
+      title: "Use symptom-led testing before replacing parts",
+      copy: `The most relevant fault areas are based on the main symptom and the conditions selected. ${conditionNotes.slice(0,3).join(" ")}`
+    },
+    driving: { title: urgency.title, copy: urgency.copy },
+    mot: {
+      title: system === "brakes" ? "Brake warnings and braking defects may fail the MOT" : system === "cooling" ? "Cooling faults are not a complete MOT assessment" : "Charging warnings may affect roadworthiness and MOT presentation",
+      copy: system === "brakes"
+        ? "A lit ABS warning, red brake warning or defective braking performance can affect the MOT and must be repaired."
+        : "The MOT does not prove the complete mechanical health of this system. Repair urgent safety faults before presenting the vehicle."
+    },
+    causes: profile[2],
+    checks: profile[3],
+    guides: cfg.guides
+  });
+}
+
+function bindExtendedSystemEvents() {
+  Object.keys(EXTENDED_SYSTEM_CONFIG).forEach((system) => {
+    const radios = Array.from(document.querySelectorAll(`input[name="${system}-symptom"]`));
+    const symptomContinue = document.getElementById(`${system}-symptom-continue`);
+    const conditionsContinue = document.getElementById(`${system}-conditions-continue`);
+    const generateButton = document.getElementById(`generate-${system}-result`);
+
+    radios.forEach((radio) => {
+      radio.addEventListener("change", () => {
+        extendedState[system].symptom = getCheckedValue(radios);
+        symptomContinue.disabled = !extendedState[system].symptom;
+      });
+    });
+
+    symptomContinue?.addEventListener("click", () => {
+      showExtendedSystemStep(system, CHECKER_STEPS.CONDITIONS);
+      scrollToElement(dom.checkerProgress);
+    });
+
+    conditionsContinue?.addEventListener("click", () => {
+      extendedState[system].conditions = getCheckedValues(
+        Array.from(document.querySelectorAll(`input[name="${system}-condition"]`))
+      );
+      showExtendedSystemStep(system, CHECKER_STEPS.SAFETY);
+      scrollToElement(dom.checkerProgress);
+    });
+
+    generateButton?.addEventListener("click", () => generateExtendedResult(system));
+  });
+}
+
+function resetExtendedSystems() {
+  Object.keys(EXTENDED_SYSTEM_CONFIG).forEach((system) => {
+    extendedState[system] = { symptom: null, conditions: [], safety: {} };
+    document.querySelectorAll(
+      `input[name="${system}-symptom"], input[name="${system}-condition"], input[name^="${system}-"]`
+    ).forEach((input) => { input.checked = false; });
+    const continueButton = document.getElementById(`${system}-symptom-continue`);
+    if (continueButton) continueButton.disabled = true;
+    const message = document.getElementById(`${system}-safety-message`);
+    if (message) {
+      message.hidden = true;
+      message.textContent = "";
+    }
+  });
+  hideExtendedCheckers();
+}
+
+
 /* ==========================================================
    39. WARNING-LIGHT DIAGNOSTIC CONTENT
 ========================================================== */
@@ -5793,6 +6068,18 @@ const REQUIRED_ELEMENT_IDS = Object.freeze([
   "clutch-conditions-continue",
   "engine-symptom-continue",
   "engine-conditions-continue",
+  "starting-checker",
+  "starting-symptom-continue",
+  "starting-conditions-continue",
+  "generate-starting-result",
+  "cooling-checker",
+  "cooling-symptom-continue",
+  "cooling-conditions-continue",
+  "generate-cooling-result",
+  "brakes-checker",
+  "brakes-symptom-continue",
+  "brakes-conditions-continue",
+  "generate-brakes-result",
   "generate-clutch-result",
   "generate-engine-result",
   "generate-warning-result",
@@ -6039,6 +6326,7 @@ function initialiseProductionApplication() {
 
   resetSymptomState();
   resetWarningState();
+  resetExtendedSystems();
   resetProgress();
 
   hideAllCheckers();
@@ -6095,6 +6383,27 @@ window.AutoKnowledgePro = Object.freeze({
 
   startWarningLightCheck() {
     openRoute("warning-light");
+  },
+
+  startStartingCheck() {
+    openRoute("symptom");
+    const radio = dom.systemRadios.find((item) => item.value === "starting");
+    if (radio) radio.checked = true;
+    showExtendedSystemStep("starting", CHECKER_STEPS.SYMPTOM);
+  },
+
+  startCoolingCheck() {
+    openRoute("symptom");
+    const radio = dom.systemRadios.find((item) => item.value === "cooling");
+    if (radio) radio.checked = true;
+    showExtendedSystemStep("cooling", CHECKER_STEPS.SYMPTOM);
+  },
+
+  startBrakeCheck() {
+    openRoute("symptom");
+    const radio = dom.systemRadios.find((item) => item.value === "brakes");
+    if (radio) radio.checked = true;
+    showExtendedSystemStep("brakes", CHECKER_STEPS.SYMPTOM);
   },
 
   reset() {
