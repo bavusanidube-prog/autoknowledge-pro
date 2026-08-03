@@ -1,6 +1,6 @@
 Library
 /
-AutoKnowledge-Pro-Full-app-TXT.txt
+AutoKnowledge-Pro-app-LOCKED.txt
 
 
 /* ==========================================================
@@ -6038,7 +6038,7 @@ function restoreAfterPrint() {
   }
 }
 
-printCurrentResult = function printProductionResult() {
+printCurrentResult = function openProductionReport() {
   if (
     !state.lastResult ||
     dom.resultSection?.hidden
@@ -6046,8 +6046,8 @@ printCurrentResult = function printProductionResult() {
     return;
   }
 
-  preparePrintDocument();
-  window.print();
+  saveResultToSession(state.lastResult);
+  window.location.href = "report.html";
 };
 
 window.addEventListener(
