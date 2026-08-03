@@ -1,3 +1,8 @@
+Library
+/
+autoknowledge-pro-app-clean.txt
+
+
 /* ==========================================================
    AUTOKNOWLEDGE PRO
    PRODUCTION APPLICATION SCRIPT
@@ -77,6 +82,20 @@ const state = {
     }
   },
 
+  engine: {
+    symptom: null,
+    conditions: [],
+    safety: {
+      powerPredictable: null,
+      oilWarning: null,
+      overheating: null,
+      smokeLevel: null,
+      noiseSeverity: null,
+      warningBehaviour: null,
+      faultTiming: null
+    }
+  },
+
   warningLight: null,
   lastResult: null
 };
@@ -110,14 +129,30 @@ const dom = {
   ),
 
   symptomChecker: document.getElementById("symptom-checker"),
+  engineChecker: document.getElementById("engine-checker"),
   warningChecker: document.getElementById("warning-light-checker"),
 
   symptomStepSystem: document.getElementById("symptom-step-system"),
-  clutchStepSymptom: document.getElementById("clutch-step-symptom"),
+
+  clutchStepSymptom: document.getElementById(
+    "clutch-step-symptom"
+  ),
   clutchStepConditions: document.getElementById(
     "clutch-step-conditions"
   ),
-  clutchStepSafety: document.getElementById("clutch-step-safety"),
+  clutchStepSafety: document.getElementById(
+    "clutch-step-safety"
+  ),
+
+  engineStepSymptom: document.getElementById(
+    "engine-step-symptom"
+  ),
+  engineStepConditions: document.getElementById(
+    "engine-step-conditions"
+  ),
+  engineStepSafety: document.getElementById(
+    "engine-step-safety"
+  ),
 
   systemRadios: Array.from(
     document.querySelectorAll('input[name="vehicle-system"]')
@@ -129,6 +164,14 @@ const dom = {
 
   clutchConditionCheckboxes: Array.from(
     document.querySelectorAll('input[name="clutch-condition"]')
+  ),
+
+  engineSymptomRadios: Array.from(
+    document.querySelectorAll('input[name="engine-symptom"]')
+  ),
+
+  engineConditionCheckboxes: Array.from(
+    document.querySelectorAll('input[name="engine-condition"]')
   ),
 
   warningLightRadios: Array.from(
@@ -151,16 +194,76 @@ const dom = {
     document.querySelectorAll('input[name="fault-timing"]')
   ),
 
-  systemContinue: document.getElementById("system-continue"),
+  enginePowerPredictableRadios: Array.from(
+    document.querySelectorAll(
+      'input[name="engine-power-predictable"]'
+    )
+  ),
+
+  engineOilWarningRadios: Array.from(
+    document.querySelectorAll(
+      'input[name="engine-oil-warning"]'
+    )
+  ),
+
+  engineOverheatingRadios: Array.from(
+    document.querySelectorAll(
+      'input[name="engine-overheating"]'
+    )
+  ),
+
+  engineSmokeLevelRadios: Array.from(
+    document.querySelectorAll(
+      'input[name="engine-smoke-level"]'
+    )
+  ),
+
+  engineNoiseSeverityRadios: Array.from(
+    document.querySelectorAll(
+      'input[name="engine-noise-severity"]'
+    )
+  ),
+
+  engineWarningBehaviourRadios: Array.from(
+    document.querySelectorAll(
+      'input[name="engine-warning-behaviour"]'
+    )
+  ),
+
+  engineFaultTimingRadios: Array.from(
+    document.querySelectorAll(
+      'input[name="engine-fault-timing"]'
+    )
+  ),
+
+  systemContinue: document.getElementById(
+    "system-continue"
+  ),
+
   clutchSymptomContinue: document.getElementById(
     "clutch-symptom-continue"
   ),
+
   clutchConditionsContinue: document.getElementById(
     "clutch-conditions-continue"
   ),
+
+  engineSymptomContinue: document.getElementById(
+    "engine-symptom-continue"
+  ),
+
+  engineConditionsContinue: document.getElementById(
+    "engine-conditions-continue"
+  ),
+
   generateClutchResult: document.getElementById(
     "generate-clutch-result"
   ),
+
+  generateEngineResult: document.getElementById(
+    "generate-engine-result"
+  ),
+
   generateWarningResult: document.getElementById(
     "generate-warning-result"
   ),
@@ -173,17 +276,38 @@ const dom = {
     "clutch-safety-message"
   ),
 
-  resultSection: document.getElementById("diagnostic-result"),
-  resultEyebrow: document.getElementById("result-eyebrow"),
-  resultTitle: document.getElementById("result-title"),
-  resultSummary: document.getElementById("result-summary"),
+  engineSafetyMessage: document.getElementById(
+    "engine-safety-message"
+  ),
 
-  resultUrgency: document.getElementById("result-urgency"),
+  resultSection: document.getElementById(
+    "diagnostic-result"
+  ),
+
+  resultEyebrow: document.getElementById(
+    "result-eyebrow"
+  ),
+
+  resultTitle: document.getElementById(
+    "result-title"
+  ),
+
+  resultSummary: document.getElementById(
+    "result-summary"
+  ),
+
+  resultUrgency: document.getElementById(
+    "result-urgency"
+  ),
+
   resultUrgencyLabel: document.getElementById(
     "result-urgency-label"
   ),
 
-  resultDirection: document.getElementById("result-direction"),
+  resultDirection: document.getElementById(
+    "result-direction"
+  ),
+
   resultDirectionCopy: document.getElementById(
     "result-direction-copy"
   ),
@@ -191,25 +315,43 @@ const dom = {
   resultDrivingTitle: document.getElementById(
     "result-driving-title"
   ),
+
   resultDrivingCopy: document.getElementById(
     "result-driving-copy"
   ),
 
-  resultMotTitle: document.getElementById("result-mot-title"),
-  resultMotCopy: document.getElementById("result-mot-copy"),
+  resultMotTitle: document.getElementById(
+    "result-mot-title"
+  ),
 
-  resultCauses: document.getElementById("result-causes"),
-  resultChecks: document.getElementById("result-checks"),
+  resultMotCopy: document.getElementById(
+    "result-mot-copy"
+  ),
+
+  resultCauses: document.getElementById(
+    "result-causes"
+  ),
+
+  resultChecks: document.getElementById(
+    "result-checks"
+  ),
+
   resultGuideLinks: document.getElementById(
     "result-guide-links"
   ),
 
-  printResult: document.getElementById("print-result"),
-  startNewCheck: document.getElementById("start-new-check"),
+  printResult: document.getElementById(
+    "print-result"
+  ),
+
+  startNewCheck: document.getElementById(
+    "start-new-check"
+  ),
 
   resultListItemTemplate: document.getElementById(
     "result-list-item-template"
   ),
+
   resultGuideLinkTemplate: document.getElementById(
     "result-guide-link-template"
   )
@@ -329,52 +471,164 @@ function setRouteExpandedState(activeRoute = null) {
 
 function hideAllCheckers() {
   setHidden(dom.symptomChecker, true);
+  setHidden(dom.engineChecker, true);
   setHidden(dom.warningChecker, true);
   setHidden(dom.checkerProgress, true);
 
   setRouteExpandedState();
 }
 
-function hideAllSymptomSteps() {
+function hideAllClutchSteps() {
   setHidden(dom.symptomStepSystem, true);
   setHidden(dom.clutchStepSymptom, true);
   setHidden(dom.clutchStepConditions, true);
   setHidden(dom.clutchStepSafety, true);
 }
 
-function showSymptomStep(step) {
+function hideAllEngineSteps() {
+  setHidden(dom.engineStepSymptom, true);
+  setHidden(dom.engineStepConditions, true);
+  setHidden(dom.engineStepSafety, true);
+}
+
+function hideAllSymptomSteps() {
+  hideAllClutchSteps();
+  hideAllEngineSteps();
+}
+
+function showSystemStep() {
   hideAllSymptomSteps();
 
+  state.currentStep = CHECKER_STEPS.SYSTEM;
+
+  setHidden(dom.engineChecker, true);
+  setHidden(dom.symptomChecker, false);
+
+  setHidden(dom.symptomStepSystem, false);
+
+  updateProgress(CHECKER_STEPS.SYSTEM);
+  focusFirstInput(dom.symptomStepSystem);
+}
+
+function showClutchStep(step) {
+  hideAllSymptomSteps();
+
+  state.activeSystem = "clutch";
   state.currentStep = step;
 
+  setHidden(dom.engineChecker, true);
+  setHidden(dom.symptomChecker, false);
+
   switch (step) {
-    case CHECKER_STEPS.SYSTEM:
-      setHidden(dom.symptomStepSystem, false);
-      updateProgress(CHECKER_STEPS.SYSTEM);
-      focusFirstInput(dom.symptomStepSystem);
-      break;
 
     case CHECKER_STEPS.SYMPTOM:
+
       setHidden(dom.clutchStepSymptom, false);
+
       updateProgress(CHECKER_STEPS.SYMPTOM);
+
       focusFirstInput(dom.clutchStepSymptom);
+
       break;
 
     case CHECKER_STEPS.CONDITIONS:
+
       setHidden(dom.clutchStepConditions, false);
+
       updateProgress(CHECKER_STEPS.CONDITIONS);
+
       focusFirstInput(dom.clutchStepConditions);
+
       break;
 
     case CHECKER_STEPS.SAFETY:
+
       setHidden(dom.clutchStepSafety, false);
+
       updateProgress(CHECKER_STEPS.SAFETY);
+
       focusFirstInput(dom.clutchStepSafety);
+
       break;
 
     default:
-      showSymptomStep(CHECKER_STEPS.SYSTEM);
+
+      showSystemStep();
+
   }
+
+}
+
+function showEngineStep(step) {
+
+  hideAllSymptomSteps();
+
+  state.activeSystem = "engine";
+  state.currentStep = step;
+
+  setHidden(dom.symptomChecker, true);
+  setHidden(dom.engineChecker, false);
+
+  switch (step) {
+
+    case CHECKER_STEPS.SYMPTOM:
+
+      setHidden(dom.engineStepSymptom, false);
+
+      updateProgress(CHECKER_STEPS.SYMPTOM);
+
+      focusFirstInput(dom.engineStepSymptom);
+
+      break;
+
+    case CHECKER_STEPS.CONDITIONS:
+
+      setHidden(dom.engineStepConditions, false);
+
+      updateProgress(CHECKER_STEPS.CONDITIONS);
+
+      focusFirstInput(dom.engineStepConditions);
+
+      break;
+
+    case CHECKER_STEPS.SAFETY:
+
+      setHidden(dom.engineStepSafety, false);
+
+      updateProgress(CHECKER_STEPS.SAFETY);
+
+      focusFirstInput(dom.engineStepSafety);
+
+      break;
+
+    default:
+
+      showSystemStep();
+
+  }
+
+}
+
+function showSymptomStep(step) {
+
+  if (step === CHECKER_STEPS.SYSTEM) {
+
+    showSystemStep();
+
+    return;
+
+  }
+
+  if (state.activeSystem === "engine") {
+
+    showEngineStep(step);
+
+    return;
+
+  }
+
+  showClutchStep(step);
+
 }
 
 /* ==========================================================
@@ -525,7 +779,13 @@ function continueFromSystem() {
   state.activeSystem = selectedSystem;
 
   if (selectedSystem === "clutch") {
-    showSymptomStep(CHECKER_STEPS.SYMPTOM);
+    showClutchStep(CHECKER_STEPS.SYMPTOM);
+    scrollToElement(dom.checkerProgress);
+    return;
+  }
+
+  if (selectedSystem === "engine") {
+    showEngineStep(CHECKER_STEPS.SYMPTOM);
     scrollToElement(dom.checkerProgress);
     return;
   }
@@ -583,7 +843,70 @@ function continueFromClutchConditions() {
 }
 
 /* ==========================================================
-   10. CLUTCH SAFETY STATE
+   10. ENGINE SYMPTOM SELECTION
+========================================================== */
+
+function handleEngineSymptomSelection() {
+
+  state.engine.symptom = getCheckedValue(
+    dom.engineSymptomRadios
+  );
+
+  setButtonDisabled(
+    dom.engineSymptomContinue,
+    !state.engine.symptom
+  );
+
+}
+
+function continueFromEngineSymptom() {
+
+  const selectedSymptom = getCheckedValue(
+    dom.engineSymptomRadios
+  );
+
+  if (!selectedSymptom) {
+
+    setButtonDisabled(
+      dom.engineSymptomContinue,
+      true
+    );
+
+    return;
+
+  }
+
+  state.engine.symptom = selectedSymptom;
+
+  showEngineStep(
+    CHECKER_STEPS.CONDITIONS
+  );
+
+  scrollToElement(
+    dom.checkerProgress
+  );
+
+}
+
+function continueFromEngineConditions() {
+
+  state.engine.conditions = getCheckedValues(
+    dom.engineConditionCheckboxes
+  );
+
+  showEngineStep(
+    CHECKER_STEPS.SAFETY
+  );
+
+  scrollToElement(
+    dom.checkerProgress
+  );
+
+}
+
+
+/* ==========================================================
+   11. CLUTCH SAFETY STATE
 ========================================================== */
 
 function readClutchSafetyAnswers() {
@@ -664,10 +987,11 @@ function hideClutchSafetyMessage() {
 
 function resetValidationMessages() {
   hideClutchSafetyMessage();
+  hideEngineSafetyMessage();
 }
 
 /* ==========================================================
-   11. WARNING-LIGHT SELECTION
+   12. WARNING-LIGHT SELECTION
 ========================================================== */
 
 function handleWarningLightSelection() {
@@ -682,32 +1006,65 @@ function handleWarningLightSelection() {
 }
 
 /* ==========================================================
-   12. BACK NAVIGATION
+   13. BACK NAVIGATION
 ========================================================== */
 
 function handleBackNavigation(target) {
+
   switch (target) {
+
     case "system":
-      showSymptomStep(CHECKER_STEPS.SYSTEM);
+
+      showSystemStep();
+
       break;
 
     case "clutch-symptom":
-      showSymptomStep(CHECKER_STEPS.SYMPTOM);
+
+      showClutchStep(
+        CHECKER_STEPS.SYMPTOM
+      );
+
       break;
 
     case "clutch-conditions":
-      showSymptomStep(CHECKER_STEPS.CONDITIONS);
+
+      showClutchStep(
+        CHECKER_STEPS.CONDITIONS
+      );
+
+      break;
+
+    case "engine-symptom":
+
+      showEngineStep(
+        CHECKER_STEPS.SYMPTOM
+      );
+
+      break;
+
+    case "engine-conditions":
+
+      showEngineStep(
+        CHECKER_STEPS.CONDITIONS
+      );
+
       break;
 
     default:
-      showSymptomStep(CHECKER_STEPS.SYSTEM);
+
+      showSystemStep();
+
   }
 
-  scrollToElement(dom.checkerProgress);
+  scrollToElement(
+    dom.checkerProgress
+  );
+
 }
 
 /* ==========================================================
-   13. RESET STATE
+   14. RESET STATE
 ========================================================== */
 
 function resetSymptomState() {
@@ -725,7 +1082,22 @@ function resetSymptomState() {
     }
   };
 
+  state.engine = {
+    symptom: null,
+    conditions: [],
+    safety: {
+      powerPredictable: null,
+      oilWarning: null,
+      overheating: null,
+      smokeLevel: null,
+      noiseSeverity: null,
+      warningBehaviour: null,
+      faultTiming: null
+    }
+  };
+
   clearInputs(dom.systemRadios);
+
   clearInputs(dom.clutchSymptomRadios);
   clearInputs(dom.clutchConditionCheckboxes);
   clearInputs(dom.drivePredictableRadios);
@@ -733,8 +1105,19 @@ function resetSymptomState() {
   clearInputs(dom.hydraulicLossRadios);
   clearInputs(dom.faultTimingRadios);
 
+  clearInputs(dom.engineSymptomRadios);
+  clearInputs(dom.engineConditionCheckboxes);
+  clearInputs(dom.enginePowerPredictableRadios);
+  clearInputs(dom.engineOilWarningRadios);
+  clearInputs(dom.engineOverheatingRadios);
+  clearInputs(dom.engineSmokeLevelRadios);
+  clearInputs(dom.engineNoiseSeverityRadios);
+  clearInputs(dom.engineWarningBehaviourRadios);
+  clearInputs(dom.engineFaultTimingRadios);
+
   setButtonDisabled(dom.systemContinue, true);
   setButtonDisabled(dom.clutchSymptomContinue, true);
+  setButtonDisabled(dom.engineSymptomContinue, true);
 
   resetValidationMessages();
 }
@@ -761,7 +1144,7 @@ function resetApplication() {
 }
 
 /* ==========================================================
-   14. RESULT VISIBILITY
+   15. RESULT VISIBILITY
 ========================================================== */
 
 function hideResult() {
@@ -774,7 +1157,7 @@ function showResult() {
 }
 
 /* ==========================================================
-   15. RESULT RENDERING HELPERS
+   16. RESULT RENDERING HELPERS
 ========================================================== */
 
 function clearElement(element) {
@@ -1147,6 +1530,13 @@ function bindEvents() {
     );
   });
 
+  dom.engineSymptomRadios.forEach((radio) => {
+    radio.addEventListener(
+      "change",
+      handleEngineSymptomSelection
+    );
+  });
+
   dom.warningLightRadios.forEach((radio) => {
     radio.addEventListener(
       "change",
@@ -1175,6 +1565,16 @@ function bindEvents() {
     continueFromClutchConditions
   );
 
+  dom.engineSymptomContinue?.addEventListener(
+    "click",
+    continueFromEngineSymptom
+  );
+
+  dom.engineConditionsContinue?.addEventListener(
+    "click",
+    continueFromEngineConditions
+  );
+
   dom.printResult?.addEventListener(
     "click",
     printCurrentResult
@@ -1200,10 +1600,7 @@ function initialiseApplication() {
   bindEvents();
 }
 
-document.addEventListener(
-  "DOMContentLoaded",
-  initialiseApplication
-);
+// Initialisation is handled once by initialiseProductionApplication().
 /* ==========================================================
    20. CLUTCH DIAGNOSTIC CONTENT
 ========================================================== */
@@ -2150,10 +2547,1334 @@ function bindClutchResultEvent() {
   );
 }
 
-bindClutchResultEvent();
+// bindClutchResultEvent(); bound during final application initialisation.
 
 /* ==========================================================
-   27. WARNING-LIGHT DIAGNOSTIC CONTENT
+   27. ENGINE DIAGNOSTIC GUIDES
+========================================================== */
+
+const ENGINE_GUIDES = Object.freeze({
+  diagnosticsHub: {
+    title: "Vehicle Diagnostics Hub",
+    url: "diagnostics.html"
+  },
+
+  faultCodes: {
+    title: "Fault-Code Checker",
+    url: "fault-codes.html"
+  },
+
+  warningLights: {
+    title: "Dashboard Warning Lights",
+    url: "warning-lights.html"
+  },
+
+  slowAcceleration: {
+    title: "Car Feels Slow to Accelerate",
+    url: "car-feels-slow-to-accelerate.html"
+  },
+
+  hesitation: {
+    title: "Car Hesitates When Accelerating",
+    url: "car-hesitates-when-accelerating.html"
+  },
+
+  stuttering: {
+    title: "Car Stutters When Accelerating",
+    url: "car-stutters-when-accelerating.html"
+  },
+
+  uphillPowerLoss: {
+    title: "Car Loses Power Uphill",
+    url: "car-loses-power-uphill.html"
+  },
+
+  revsNoAcceleration: {
+    title: "Car Revs but Won't Accelerate",
+    url: "car-revs-but-wont-accelerate.html"
+  },
+
+  idleShudder: {
+    title: "Car Shudders at Idle but Drives Fine",
+    url: "car-shudders-at-idle-but-drives-fine.html"
+  },
+
+  startingSmoke: {
+    title: "Car Smokes When Starting",
+    url: "car-smokes-when-starting.html"
+  },
+
+  p0299: {
+    title: "P0299 Underboost Code",
+    url: "p0299-code-meaning.html"
+  },
+
+  p0234: {
+    title: "P0234 Overboost Code",
+    url: "p0234-code-meaning.html"
+  },
+
+  clutchSlip: {
+    title: "Clutch Slipping Symptoms",
+    url: "clutch-slipping-symptoms.html"
+  }
+});
+
+/* ==========================================================
+   28. ENGINE SYMPTOM PROFILES
+========================================================== */
+
+const ENGINE_SYMPTOM_PROFILES = Object.freeze({
+  "loss-of-power": {
+    title: "Engine Power Loss",
+
+    summary:
+      "The selected symptom suggests that the engine is not producing or delivering its expected performance, particularly when demand increases.",
+
+    direction: {
+      title: "Airflow, fuel, boost or exhaust restriction requires testing",
+      copy:
+        "Power loss can result from restricted airflow, boost leakage, fuel-pressure problems, ignition weakness, exhaust restriction, sensor faults or a protective reduced-power mode."
+    },
+
+    baseUrgency: "medium",
+
+    causes: [
+      "Split, loose or restricted intake and boost pipework",
+      "Turbocharger control, boost-pressure or vacuum fault",
+      "Restricted fuel supply or inadequate fuel pressure",
+      "Airflow, pressure or temperature sensor fault",
+      "Exhaust or diesel particulate filter restriction",
+      "Ignition, injector or compression weakness",
+      "Engine-control system entering reduced-power mode"
+    ],
+
+    checks: [
+      "Read stored and pending engine fault codes before clearing them.",
+      "Inspect intake, vacuum, intercooler and boost hoses for leakage or collapse.",
+      "Compare requested and measured boost pressure under controlled load.",
+      "Review airflow, fuel-pressure and fuel-trim live data.",
+      "Check whether the exhaust or DPF is restricting engine breathing.",
+      "Separate true engine power loss from clutch or transmission slip."
+    ],
+
+    guides: [
+      ENGINE_GUIDES.slowAcceleration,
+      ENGINE_GUIDES.uphillPowerLoss,
+      ENGINE_GUIDES.p0299,
+      ENGINE_GUIDES.faultCodes,
+      ENGINE_GUIDES.diagnosticsHub
+    ]
+  },
+
+  hesitation: {
+    title: "Engine Hesitation During Acceleration",
+
+    summary:
+      "The selected symptom suggests a delay or interruption in engine response when additional torque is requested.",
+
+    direction: {
+      title: "Throttle, airflow, ignition and fuel response require comparison",
+      copy:
+        "Hesitation may occur when throttle information, airflow, boost pressure, ignition strength or fuel delivery does not respond correctly as the accelerator is pressed."
+    },
+
+    baseUrgency: "medium",
+
+    causes: [
+      "Throttle-body contamination or throttle-position fault",
+      "Airflow meter, manifold-pressure or intake-air fault",
+      "Ignition coil, spark-plug or combustion weakness",
+      "Fuel-pressure, injector or fuel-quality problem",
+      "Boost-control delay or intake-system leakage",
+      "EGR or emissions-system operation affecting airflow",
+      "Wiring, connector or power-supply fault"
+    ],
+
+    checks: [
+      "Record whether hesitation occurs cold, hot, uphill or under sudden throttle.",
+      "Read codes and retain freeze-frame information.",
+      "Compare accelerator position, throttle position and airflow data.",
+      "Check ignition performance and misfire counters.",
+      "Test fuel pressure under the condition that causes the hesitation.",
+      "Inspect intake and boost pipework for leaks."
+    ],
+
+    guides: [
+      ENGINE_GUIDES.hesitation,
+      ENGINE_GUIDES.stuttering,
+      ENGINE_GUIDES.slowAcceleration,
+      ENGINE_GUIDES.faultCodes,
+      ENGINE_GUIDES.diagnosticsHub
+    ]
+  },
+
+  "stutter-misfire": {
+    title: "Engine Stutter or Misfire",
+
+    summary:
+      "The selected symptom suggests that combustion is becoming uneven or interrupted in one or more cylinders.",
+
+    direction: {
+      title: "Ignition, fuelling, airflow or compression fault",
+      copy:
+        "A misfire may be caused by ignition failure, injector operation, incorrect mixture, air leakage, compression loss, wiring trouble or mechanical timing."
+    },
+
+    baseUrgency: "high",
+
+    causes: [
+      "Worn spark plugs or failed ignition coil",
+      "Injector or fuel-delivery fault",
+      "Intake-air or vacuum leakage",
+      "Low cylinder compression",
+      "Incorrect valve or mechanical timing",
+      "Contaminated or incorrect fuel",
+      "Sensor, wiring or engine-control fault"
+    ],
+
+    checks: [
+      "Check whether the engine-management light is steady or flashing.",
+      "Read fault codes, freeze-frame data and cylinder misfire counters.",
+      "Inspect spark plugs, ignition coils and electrical connections.",
+      "Check injector operation and fuel pressure.",
+      "Test compression or cylinder leakage where required.",
+      "Avoid prolonged driving with an active damaging misfire."
+    ],
+
+    guides: [
+      ENGINE_GUIDES.stuttering,
+      ENGINE_GUIDES.hesitation,
+      ENGINE_GUIDES.faultCodes,
+      ENGINE_GUIDES.warningLights,
+      ENGINE_GUIDES.diagnosticsHub
+    ]
+  },
+
+  "revs-no-acceleration": {
+    title: "Engine Revs Rise Without Matching Acceleration",
+
+    summary:
+      "The selected symptom may involve clutch or transmission torque-transfer loss rather than an engine that cannot produce power.",
+
+    direction: {
+      title: "Compare engine performance with drivetrain slip",
+      copy:
+        "When engine RPM rises smoothly but road speed does not follow, the engine may be producing power correctly while the clutch, automatic transmission or another drivetrain component fails to transfer it."
+    },
+
+    baseUrgency: "medium",
+
+    causes: [
+      "Manual clutch friction wear or reduced clamping force",
+      "Clutch contamination from engine or gearbox oil",
+      "Automatic transmission or continuously variable transmission slip",
+      "Incorrect transmission-fluid level or pressure",
+      "Transmission-control or hydraulic fault",
+      "Driveshaft, differential or final-drive failure"
+    ],
+
+    checks: [
+      "Confirm that engine RPM genuinely rises without matching road speed.",
+      "Check whether the symptom is worse in higher gears or uphill.",
+      "Record any burning smell, transmission warning or delayed engagement.",
+      "Check clutch-pedal return on manual vehicles.",
+      "Inspect transmission-fluid condition where the manufacturer provides a safe procedure.",
+      "Avoid repeated full-load testing because it can create further damage."
+    ],
+
+    guides: [
+      ENGINE_GUIDES.revsNoAcceleration,
+      ENGINE_GUIDES.clutchSlip,
+      ENGINE_GUIDES.uphillPowerLoss,
+      ENGINE_GUIDES.diagnosticsHub
+    ]
+  },
+
+  "rough-idle": {
+    title: "Rough Idle or Engine Shudder",
+
+    summary:
+      "The selected symptom suggests uneven combustion, unstable airflow control or excessive movement being transmitted through the engine mountings.",
+
+    direction: {
+      title: "Separate engine running quality from mounting vibration",
+      copy:
+        "A rough idle may involve misfire, incorrect airflow, fuel imbalance, EGR operation or mechanical compression. Smooth engine speed with strong vibration can instead point towards mounting or drivetrain movement."
+    },
+
+    baseUrgency: "low",
+
+    causes: [
+      "Ignition or injector-related misfire",
+      "Vacuum or intake-air leak",
+      "Dirty throttle body or unstable idle control",
+      "Fuel-trim or airflow-sensor fault",
+      "EGR valve operation affecting idle",
+      "Low compression or mechanical timing fault",
+      "Worn engine or gearbox mounting"
+    ],
+
+    checks: [
+      "Observe whether engine speed is unstable or only the vehicle body vibrates.",
+      "Read codes and inspect misfire counters and fuel trims.",
+      "Check intake hoses and vacuum circuits for leakage.",
+      "Inspect ignition and injector operation.",
+      "Compare vibration in neutral, with electrical load and with the clutch engaged.",
+      "Inspect engine and gearbox mounts before condemning internal engine parts."
+    ],
+
+    guides: [
+      ENGINE_GUIDES.idleShudder,
+      ENGINE_GUIDES.stuttering,
+      ENGINE_GUIDES.faultCodes,
+      ENGINE_GUIDES.diagnosticsHub
+    ]
+  },
+
+  "exhaust-smoke": {
+    title: "Unusual Exhaust Smoke",
+
+    summary:
+      "The selected symptom requires the smoke colour, timing, engine temperature and fluid consumption to be identified before the fault can be narrowed.",
+
+    direction: {
+      title: "Identify whether oil, coolant or excess fuel is entering combustion",
+      copy:
+        "Blue smoke generally supports oil burning, persistent white smoke can indicate coolant or unburned fuel, and black smoke commonly indicates excessive fuel or insufficient air."
+    },
+
+    baseUrgency: "medium",
+
+    causes: [
+      "Engine oil entering the combustion chambers",
+      "Turbocharger oil leakage",
+      "Coolant entering a cylinder",
+      "Injector or fuel-mixture fault",
+      "Restricted airflow or boost leakage",
+      "DPF regeneration or emissions-system issue",
+      "Normal condensation during a cold start"
+    ],
+
+    checks: [
+      "Record the smoke colour and whether it occurs cold, hot, at idle or under load.",
+      "Check engine-oil and coolant levels when safe.",
+      "Inspect intake and turbocharger pipework for oil accumulation.",
+      "Read fault codes and review fuel, airflow and temperature data.",
+      "Check cooling-system pressure where coolant loss is suspected.",
+      "Stop driving where smoke is heavy, persistent or accompanied by uncontrolled engine speed."
+    ],
+
+    guides: [
+      ENGINE_GUIDES.startingSmoke,
+      ENGINE_GUIDES.warningLights,
+      ENGINE_GUIDES.faultCodes,
+      ENGINE_GUIDES.diagnosticsHub
+    ]
+  },
+
+  "knocking-rattling": {
+    title: "Engine Knocking or Rattling",
+
+    summary:
+      "The selected symptom may involve lubrication pressure, timing components, combustion knock, auxiliary equipment or internal engine wear.",
+
+    direction: {
+      title: "Noise timing and engine condition must be established urgently",
+      copy:
+        "A brief cold-start rattle requires different investigation from a heavy knock that follows engine speed or worsens under load. Oil pressure and oil level should be considered before further running."
+    },
+
+    baseUrgency: "high",
+
+    causes: [
+      "Low oil level or inadequate oil pressure",
+      "Timing chain, tensioner or guide wear",
+      "Valve-train or hydraulic-lifter fault",
+      "Combustion knock or incorrect fuelling",
+      "Crankshaft, connecting-rod or bearing wear",
+      "Auxiliary belt tensioner, pulley or driven component",
+      "Loose exhaust shield or external engine component"
+    ],
+
+    checks: [
+      "Stop the engine if the oil-pressure warning is illuminated.",
+      "Check the oil level using the correct procedure.",
+      "Record whether the noise occurs cold, hot, at idle or under load.",
+      "Use controlled listening methods to identify the general source.",
+      "Measure oil pressure where lubrication failure is suspected.",
+      "Do not continue running an engine with a loud metallic knock."
+    ],
+
+    guides: [
+      ENGINE_GUIDES.faultCodes,
+      ENGINE_GUIDES.warningLights,
+      ENGINE_GUIDES.diagnosticsHub
+    ]
+  },
+
+  "warning-light-poor-running": {
+    title: "Engine Warning Light With Poor Running",
+
+    summary:
+      "The selected symptom indicates that the engine-control system has detected a fault while the vehicle is also showing a noticeable performance or combustion problem.",
+
+    direction: {
+      title: "Use fault codes and live evidence to direct physical testing",
+      copy:
+        "The warning light confirms that the control system has recorded an abnormal condition, but the code may identify a circuit or system response rather than the component that caused it."
+    },
+
+    baseUrgency: "medium",
+
+    causes: [
+      "Ignition or combustion misfire",
+      "Fuel-pressure or injector fault",
+      "Airflow, boost or intake leakage",
+      "Emissions-control or exhaust restriction",
+      "Sensor signal outside the expected range",
+      "Actuator, wiring or power-supply fault",
+      "Mechanical engine fault affecting monitored performance"
+    ],
+
+    checks: [
+      "Determine whether the warning light is steady or flashing.",
+      "Read stored, pending and manufacturer-specific fault codes.",
+      "Record freeze-frame information before clearing codes.",
+      "Compare relevant live data with expected values.",
+      "Inspect the complete circuit before replacing the named component.",
+      "Stop driving where poor running, smoke or power loss becomes severe."
+    ],
+
+    guides: [
+      ENGINE_GUIDES.faultCodes,
+      ENGINE_GUIDES.warningLights,
+      ENGINE_GUIDES.stuttering,
+      ENGINE_GUIDES.slowAcceleration,
+      ENGINE_GUIDES.diagnosticsHub
+    ]
+  }
+});
+
+/* ==========================================================
+   29. ENGINE CONDITION DEFINITIONS
+========================================================== */
+
+const ENGINE_CONDITION_DATA = Object.freeze({
+  "under-acceleration": {
+    score: 2,
+    category: "load",
+    cause:
+      "A fault that appears during acceleration supports airflow, ignition, fuel-delivery or boost-control trouble.",
+    check:
+      "Reproduce the concern under controlled acceleration while reviewing relevant live data."
+  },
+
+  "uphill-load": {
+    score: 2,
+    category: "load",
+    cause:
+      "A fault that becomes worse uphill supports a problem exposed by increased engine demand.",
+    check:
+      "Compare engine behaviour on level ground with uphill or higher-load operation."
+  },
+
+  "worse-cold": {
+    score: 1,
+    category: "temperature",
+    cause:
+      "Cold-only symptoms can involve fuelling correction, glow-plug operation, intake leakage, compression or temperature sensing.",
+    check:
+      "Compare cold-start data and running quality with fully warmed operation."
+  },
+
+  "worse-hot": {
+    score: 1,
+    category: "temperature",
+    cause:
+      "Heat-related deterioration may expose ignition breakdown, sensor drift, fuel-pressure loss or mechanical wear.",
+    check:
+      "Repeat testing after normal operating temperature is reached."
+  },
+
+  "at-idle": {
+    score: 1,
+    category: "idle",
+    cause:
+      "Poor idle supports unstable airflow, misfire, fuelling imbalance or mounting vibration.",
+    check:
+      "Compare engine speed stability with the amount of vibration felt through the vehicle."
+  },
+
+  "higher-speed": {
+    score: 1,
+    category: "load",
+    cause:
+      "Higher-speed symptoms can support fuel, airflow, boost or exhaust restriction concerns.",
+    check:
+      "Review pressure, airflow and fuelling data as engine demand rises."
+  },
+
+  "engine-light-steady": {
+    score: 2,
+    category: "warning",
+    cause:
+      "A steady engine-management warning confirms that the control system has stored a fault condition.",
+    check:
+      "Read stored and pending fault codes before clearing them."
+  },
+
+  "engine-light-flashing": {
+    score: 6,
+    category: "critical",
+    cause:
+      "A flashing engine-management warning strongly supports an active misfire with possible catalytic-converter damage.",
+    check:
+      "Reduce load immediately and stop driving if the engine is running severely unevenly."
+  },
+
+  "limp-mode": {
+    score: 3,
+    category: "control",
+    cause:
+      "Reduced-power mode indicates that the control system may be protecting the engine, gearbox, turbocharger or emissions system.",
+    check:
+      "Read codes and compare commanded and actual sensor or actuator values."
+  },
+
+  "heavy-smoke": {
+    score: 5,
+    category: "critical",
+    cause:
+      "Heavy smoke indicates significant oil, coolant or fuel-related combustion trouble.",
+    check:
+      "Identify smoke colour and stop driving if smoke is persistent, severe or accompanied by fluid loss."
+  },
+
+  "oil-use": {
+    score: 2,
+    category: "fluids",
+    cause:
+      "Falling oil level supports leakage, turbocharger oil loss or internal engine wear.",
+    check:
+      "Measure oil consumption and inspect both external leakage and intake-system oil contamination."
+  },
+
+  "coolant-loss": {
+    score: 3,
+    category: "fluids",
+    cause:
+      "Repeated coolant loss supports external leakage, internal leakage or cooling-system pressure trouble.",
+    check:
+      "Pressure-test the cooling system and inspect for internal coolant loss."
+  },
+
+  overheating: {
+    score: 6,
+    category: "critical",
+    cause:
+      "Overheating is a high-risk condition that can cause severe engine damage.",
+    check:
+      "Stop driving, allow the engine to cool and investigate coolant circulation and leakage."
+  },
+
+  "severe-knocking": {
+    score: 6,
+    category: "critical",
+    cause:
+      "A severe metallic knock or rattle may indicate lubrication failure, timing trouble or internal damage.",
+    check:
+      "Stop the engine and assess oil level, oil pressure and mechanical condition before further running."
+  },
+
+  "whistle-hiss": {
+    score: 2,
+    category: "airflow",
+    cause:
+      "A whistle or hiss under load supports intake, boost, vacuum or exhaust leakage.",
+    check:
+      "Inspect intake, intercooler, boost and vacuum pipework for leakage."
+  },
+
+  "recent-repair": {
+    score: 2,
+    category: "repair",
+    cause:
+      "A fault beginning after recent work supports disturbed wiring, hoses, timing, fluid levels or incorrect installation.",
+    check:
+      "Inspect all recently disturbed components and verify the work completed."
+  },
+
+  "after-refuelling": {
+    score: 2,
+    category: "fuel",
+    cause:
+      "A fault beginning after refuelling supports incorrect fuel, contamination or vapour-control trouble.",
+    check:
+      "Confirm the fuel type and investigate contamination before further driving."
+  }
+});
+
+/* ==========================================================
+   30. ENGINE SAFETY STATE
+========================================================== */
+
+function readEngineSafetyAnswers() {
+  state.engine.safety = {
+    powerPredictable: getCheckedValue(
+      dom.enginePowerPredictableRadios
+    ),
+
+    oilWarning: getCheckedValue(
+      dom.engineOilWarningRadios
+    ),
+
+    overheating: getCheckedValue(
+      dom.engineOverheatingRadios
+    ),
+
+    smokeLevel: getCheckedValue(
+      dom.engineSmokeLevelRadios
+    ),
+
+    noiseSeverity: getCheckedValue(
+      dom.engineNoiseSeverityRadios
+    ),
+
+    warningBehaviour: getCheckedValue(
+      dom.engineWarningBehaviourRadios
+    ),
+
+    faultTiming: getCheckedValue(
+      dom.engineFaultTimingRadios
+    )
+  };
+
+  return state.engine.safety;
+}
+
+function showEngineSafetyMessage(message) {
+  if (!dom.engineSafetyMessage) {
+    return;
+  }
+
+  dom.engineSafetyMessage.textContent = message;
+  dom.engineSafetyMessage.hidden = false;
+  dom.engineSafetyMessage.focus?.();
+}
+
+function hideEngineSafetyMessage() {
+  if (!dom.engineSafetyMessage) {
+    return;
+  }
+
+  dom.engineSafetyMessage.hidden = true;
+  dom.engineSafetyMessage.textContent = "";
+}
+
+function validateEngineSafetyAnswers() {
+  const answers = readEngineSafetyAnswers();
+
+  const missing = [];
+
+  if (!answers.powerPredictable) {
+    missing.push("power delivery");
+  }
+
+  if (!answers.oilWarning) {
+    missing.push("oil-pressure warning");
+  }
+
+  if (!answers.overheating) {
+    missing.push("engine temperature");
+  }
+
+  if (!answers.smokeLevel) {
+    missing.push("smoke level");
+  }
+
+  if (!answers.noiseSeverity) {
+    missing.push("engine noise");
+  }
+
+  if (!answers.warningBehaviour) {
+    missing.push("engine warning behaviour");
+  }
+
+  if (!answers.faultTiming) {
+    missing.push("when the fault began");
+  }
+
+  if (missing.length > 0) {
+    showEngineSafetyMessage(
+      `Please answer every engine safety question before generating the result. Missing: ${missing.join(
+        ", "
+      )}.`
+    );
+
+    return false;
+  }
+
+  hideEngineSafetyMessage();
+  return true;
+}
+
+/* ==========================================================
+   31. ENGINE SAFETY SCORING
+========================================================== */
+
+function scoreEngineConditions(conditions) {
+  return conditions.reduce((total, condition) => {
+    return (
+      total +
+      (ENGINE_CONDITION_DATA[condition]?.score || 0)
+    );
+  }, 0);
+}
+
+function scoreEngineSafety(safety) {
+  let score = 0;
+
+  if (safety.powerPredictable === "sometimes") {
+    score += 2;
+  }
+
+  if (safety.powerPredictable === "no") {
+    score += 6;
+  }
+
+  if (safety.oilWarning === "unsure") {
+    score += 2;
+  }
+
+  if (safety.oilWarning === "yes") {
+    score += 8;
+  }
+
+  if (safety.overheating === "mild") {
+    score += 3;
+  }
+
+  if (safety.overheating === "severe") {
+    score += 8;
+  }
+
+  if (safety.smokeLevel === "light") {
+    score += 1;
+  }
+
+  if (safety.smokeLevel === "heavy") {
+    score += 6;
+  }
+
+  if (safety.noiseSeverity === "mild") {
+    score += 1;
+  }
+
+  if (safety.noiseSeverity === "severe") {
+    score += 7;
+  }
+
+  if (safety.warningBehaviour === "steady") {
+    score += 2;
+  }
+
+  if (safety.warningBehaviour === "flashing") {
+    score += 6;
+  }
+
+  if (safety.faultTiming === "sudden") {
+    score += 2;
+  }
+
+  if (safety.faultTiming === "after-repair") {
+    score += 2;
+  }
+
+  if (safety.faultTiming === "after-refuelling") {
+    score += 2;
+  }
+
+  return score;
+}
+
+function determineEngineUrgency(
+  profile,
+  conditions,
+  safety
+) {
+  const conditionScore =
+    scoreEngineConditions(conditions);
+
+  const safetyScore =
+    scoreEngineSafety(safety);
+
+  const totalScore =
+    conditionScore + safetyScore;
+
+  const immediateStop =
+    safety.oilWarning === "yes" ||
+    safety.overheating === "severe" ||
+    safety.smokeLevel === "heavy" ||
+    safety.noiseSeverity === "severe" ||
+    safety.powerPredictable === "no";
+
+  const criticalCondition =
+    conditions.includes("engine-light-flashing") ||
+    conditions.includes("overheating") ||
+    conditions.includes("heavy-smoke") ||
+    conditions.includes("severe-knocking");
+
+  if (
+    immediateStop ||
+    criticalCondition ||
+    totalScore >= 12
+  ) {
+    return {
+      level: "high",
+      label: "Stop and arrange recovery",
+      drivingTitle: "Do not continue driving",
+      drivingCopy:
+        "A red oil-pressure warning, severe overheating, heavy smoke, loud metallic knocking or dangerously reduced power can cause major damage or unsafe vehicle behaviour. Stop safely and arrange professional assistance."
+    };
+  }
+
+  if (
+    profile.baseUrgency === "high" ||
+    safety.warningBehaviour === "flashing" ||
+    totalScore >= 7
+  ) {
+    return {
+      level: "high",
+      label: "Arrange urgent diagnosis",
+      drivingTitle: "Limit or avoid driving",
+      drivingCopy:
+        "Avoid high load, fast roads and unnecessary journeys. Stop if the warning begins flashing, power delivery becomes unpredictable, smoke increases or temperature rises."
+    };
+  }
+
+  if (
+    profile.baseUrgency === "medium" ||
+    totalScore >= 3
+  ) {
+    return {
+      level: "medium",
+      label: "Book diagnosis promptly",
+      drivingTitle: "Drive cautiously if stable",
+      drivingCopy:
+        "Short, gentle driving may be reasonable only when temperature is normal, power remains predictable and there is no heavy smoke, severe noise or red warning."
+    };
+  }
+
+  return {
+    level: "low",
+    label: "Monitor and arrange inspection",
+    drivingTitle: "Monitor for progression",
+    drivingCopy:
+      "The symptom may not require immediate recovery when vehicle behaviour remains stable, but arrange inspection if it becomes more frequent, affects performance or triggers warning lights."
+  };
+}
+
+/* ==========================================================
+   32. ENGINE MOT GUIDANCE
+========================================================== */
+
+function buildEngineMotGuidance(
+  symptom,
+  conditions,
+  safety
+) {
+  const emissionsConcern =
+    symptom === "exhaust-smoke" ||
+    symptom === "warning-light-poor-running" ||
+    conditions.includes("heavy-smoke") ||
+    conditions.includes("engine-light-steady") ||
+    conditions.includes("engine-light-flashing");
+
+  const unsafeCondition =
+    safety.oilWarning === "yes" ||
+    safety.overheating === "severe" ||
+    safety.powerPredictable === "no";
+
+  if (unsafeCondition) {
+    return {
+      title: "Repair the urgent fault before an MOT",
+      copy:
+        "The immediate concern is safe operation and preventing engine damage. A vehicle with severe overheating, unsafe power delivery or an oil-pressure warning should not be presented until repaired."
+    };
+  }
+
+  if (emissionsConcern) {
+    return {
+      title: "Engine and emissions faults may affect the MOT",
+      copy:
+        "An illuminated malfunction warning, excessive smoke or emissions outside the permitted limits may cause an MOT failure."
+    };
+  }
+
+  if (symptom === "revs-no-acceleration") {
+    return {
+      title: "Drivetrain slip is not fully assessed by the MOT",
+      copy:
+        "The clutch or transmission is not tested as a complete reliability inspection. A pass does not prove that torque transfer is mechanically sound."
+    };
+  }
+
+  return {
+    title: "MOT relevance depends on the confirmed fault",
+    copy:
+      "The MOT may assess warning lights, emissions, smoke and visible safety defects, but it does not provide a complete engine-health diagnosis."
+  };
+}
+
+/* ==========================================================
+   33. ENGINE CONDITION CONTENT BUILDERS
+========================================================== */
+
+function buildEngineConditionCauses(conditions) {
+  return conditions
+    .map(
+      (condition) =>
+        ENGINE_CONDITION_DATA[condition]?.cause
+    )
+    .filter(Boolean);
+}
+
+function buildEngineConditionChecks(conditions) {
+  return conditions
+    .map(
+      (condition) =>
+        ENGINE_CONDITION_DATA[condition]?.check
+    )
+    .filter(Boolean);
+}
+
+/* ==========================================================
+   34. ENGINE GUIDE SELECTION
+========================================================== */
+
+function buildEngineGuides(
+  symptom,
+  conditions,
+  safety
+) {
+  const profile =
+    ENGINE_SYMPTOM_PROFILES[symptom];
+
+  const guides = [
+    ...(profile?.guides || [])
+  ];
+
+  if (
+    conditions.includes("uphill-load") ||
+    conditions.includes("limp-mode")
+  ) {
+    guides.unshift(
+      ENGINE_GUIDES.uphillPowerLoss
+    );
+  }
+
+  if (
+    conditions.includes("whistle-hiss")
+  ) {
+    guides.unshift(
+      ENGINE_GUIDES.p0299,
+      ENGINE_GUIDES.uphillPowerLoss
+    );
+  }
+
+  if (
+    conditions.includes("engine-light-steady") ||
+    conditions.includes("engine-light-flashing") ||
+    safety.warningBehaviour === "steady" ||
+    safety.warningBehaviour === "flashing"
+  ) {
+    guides.unshift(
+      ENGINE_GUIDES.faultCodes,
+      ENGINE_GUIDES.warningLights
+    );
+  }
+
+  if (
+    conditions.includes("at-idle")
+  ) {
+    guides.unshift(
+      ENGINE_GUIDES.idleShudder
+    );
+  }
+
+  if (
+    conditions.includes("heavy-smoke") ||
+    safety.smokeLevel === "heavy"
+  ) {
+    guides.unshift(
+      ENGINE_GUIDES.startingSmoke,
+      ENGINE_GUIDES.warningLights
+    );
+  }
+
+  if (
+    symptom === "revs-no-acceleration"
+  ) {
+    guides.unshift(
+      ENGINE_GUIDES.revsNoAcceleration,
+      ENGINE_GUIDES.clutchSlip
+    );
+  }
+
+  guides.push(
+    ENGINE_GUIDES.diagnosticsHub
+  );
+
+  return uniqueGuides(guides).slice(0, 6);
+}
+
+/* ==========================================================
+   35. ENGINE EVIDENCE SUMMARY
+========================================================== */
+
+function buildEngineEvidenceSummary(
+  conditions,
+  safety
+) {
+  const evidence = [];
+
+  if (conditions.includes("under-acceleration")) {
+    evidence.push(
+      "the fault appearing during acceleration"
+    );
+  }
+
+  if (conditions.includes("uphill-load")) {
+    evidence.push(
+      "the symptom becoming worse uphill or under load"
+    );
+  }
+
+  if (conditions.includes("worse-cold")) {
+    evidence.push(
+      "the fault being worse with a cold engine"
+    );
+  }
+
+  if (conditions.includes("worse-hot")) {
+    evidence.push(
+      "the fault becoming worse at normal operating temperature"
+    );
+  }
+
+  if (conditions.includes("at-idle")) {
+    evidence.push(
+      "poor running or vibration at idle"
+    );
+  }
+
+  if (conditions.includes("limp-mode")) {
+    evidence.push(
+      "reduced-power or limp-mode operation"
+    );
+  }
+
+  if (conditions.includes("whistle-hiss")) {
+    evidence.push(
+      "a whistle or hissing noise under load"
+    );
+  }
+
+  if (
+    conditions.includes("engine-light-flashing") ||
+    safety.warningBehaviour === "flashing"
+  ) {
+    evidence.push(
+      "a flashing engine-management warning"
+    );
+  } else if (
+    conditions.includes("engine-light-steady") ||
+    safety.warningBehaviour === "steady"
+  ) {
+    evidence.push(
+      "a steady engine-management warning"
+    );
+  }
+
+  if (
+    conditions.includes("heavy-smoke") ||
+    safety.smokeLevel === "heavy"
+  ) {
+    evidence.push(
+      "heavy or persistent smoke"
+    );
+  }
+
+  if (
+    conditions.includes("oil-use")
+  ) {
+    evidence.push(
+      "falling engine-oil level"
+    );
+  }
+
+  if (
+    conditions.includes("coolant-loss")
+  ) {
+    evidence.push(
+      "repeated coolant loss"
+    );
+  }
+
+  if (
+    conditions.includes("overheating") ||
+    safety.overheating === "severe"
+  ) {
+    evidence.push(
+      "severe overheating or a red temperature warning"
+    );
+  }
+
+  if (
+    conditions.includes("severe-knocking") ||
+    safety.noiseSeverity === "severe"
+  ) {
+    evidence.push(
+      "a severe metallic knock or rattle"
+    );
+  }
+
+  if (
+    conditions.includes("recent-repair") ||
+    safety.faultTiming === "after-repair"
+  ) {
+    evidence.push(
+      "the fault beginning after recent work"
+    );
+  }
+
+  if (
+    conditions.includes("after-refuelling") ||
+    safety.faultTiming === "after-refuelling"
+  ) {
+    evidence.push(
+      "the fault beginning after refuelling"
+    );
+  }
+
+  return uniqueStrings(evidence);
+}
+
+function buildEngineDirectionCopy(
+  profile,
+  conditions,
+  safety
+) {
+  const evidence = buildEngineEvidenceSummary(
+    conditions,
+    safety
+  );
+
+  if (evidence.length === 0) {
+    return profile.direction.copy;
+  }
+
+  return `${profile.direction.copy} The selected supporting evidence includes ${formatNaturalList(
+    evidence
+  )}.`;
+}
+
+/* ==========================================================
+   36. ENGINE RESULT CONTENT BUILDERS
+========================================================== */
+
+function buildEngineCauses(
+  profile,
+  conditions
+) {
+  return uniqueStrings([
+    ...buildEngineConditionCauses(conditions),
+    ...profile.causes
+  ]).slice(0, 7);
+}
+
+function buildEngineChecks(
+  profile,
+  conditions,
+  urgency
+) {
+  return uniqueStrings([
+    urgency.level === "high"
+      ? "Do not perform repeated high-load road tests while serious warning signs remain present."
+      : "",
+
+    ...buildEngineConditionChecks(conditions),
+
+    ...profile.checks
+  ]).slice(0, 8);
+}
+
+/* ==========================================================
+   37. GENERATE ENGINE DIAGNOSTIC RESULT
+========================================================== */
+
+function generateEngineDiagnosticResult() {
+  if (!validateEngineSafetyAnswers()) {
+    return;
+  }
+
+  const symptom =
+    state.engine.symptom ||
+    getCheckedValue(
+      dom.engineSymptomRadios
+    );
+
+  if (!symptom) {
+    showEngineStep(
+      CHECKER_STEPS.SYMPTOM
+    );
+
+    return;
+  }
+
+  const profile =
+    ENGINE_SYMPTOM_PROFILES[symptom];
+
+  if (!profile) {
+    renderGuideOnlyResult({
+      title: "Engine Diagnostic Guidance",
+
+      summary:
+        "The selected engine symptom requires further investigation through the Motor Vehicle Expert diagnostic knowledge centre.",
+
+      url: `${MVE_BASE_URL}/diagnostics.html`
+    });
+
+    return;
+  }
+
+  state.engine.symptom = symptom;
+
+  state.engine.conditions =
+    getCheckedValues(
+      dom.engineConditionCheckboxes
+    );
+
+  const safety =
+    readEngineSafetyAnswers();
+
+  const urgency =
+    determineEngineUrgency(
+      profile,
+      state.engine.conditions,
+      safety
+    );
+
+  const mot =
+    buildEngineMotGuidance(
+      symptom,
+      state.engine.conditions,
+      safety
+    );
+
+  const causes =
+    buildEngineCauses(
+      profile,
+      state.engine.conditions
+    );
+
+  const checks =
+    buildEngineChecks(
+      profile,
+      state.engine.conditions,
+      urgency
+    );
+
+  const guides =
+    buildEngineGuides(
+      symptom,
+      state.engine.conditions,
+      safety
+    );
+
+  renderResult({
+    eyebrow:
+      "Engine and performance diagnostic guidance",
+
+    title:
+      profile.title,
+
+    summary:
+      profile.summary,
+
+    urgency: {
+      level:
+        urgency.level,
+
+      label:
+        urgency.label
+    },
+
+    direction: {
+      title:
+        profile.direction.title,
+
+      copy:
+        buildEngineDirectionCopy(
+          profile,
+          state.engine.conditions,
+          safety
+        )
+    },
+
+    driving: {
+      title:
+        urgency.drivingTitle,
+
+      copy:
+        urgency.drivingCopy
+    },
+
+    mot,
+
+    causes,
+
+    checks,
+
+    guides
+  });
+}
+
+/* ==========================================================
+   38. ENGINE EVENT BINDING
+========================================================== */
+
+function bindEngineEvents() {
+  dom.engineSymptomRadios.forEach(
+    (radio) => {
+      radio.addEventListener(
+        "change",
+        handleEngineSymptomSelection
+      );
+    }
+  );
+
+  dom.engineSymptomContinue?.addEventListener(
+    "click",
+    continueFromEngineSymptom
+  );
+
+  dom.engineConditionsContinue?.addEventListener(
+    "click",
+    continueFromEngineConditions
+  );
+
+  dom.generateEngineResult?.addEventListener(
+    "click",
+    generateEngineDiagnosticResult
+  );
+}
+
+// bindEngineEvents(); bound during final application initialisation.
+
+/* ==========================================================
+   39. WARNING-LIGHT DIAGNOSTIC CONTENT
 ========================================================== */
 
 const WARNING_LIGHT_PROFILES = Object.freeze({
@@ -2769,7 +4490,7 @@ const WARNING_LIGHT_PROFILES = Object.freeze({
 });
 
 /* ==========================================================
-   28. WARNING-LIGHT FALLBACK GUIDES
+   40. WARNING-LIGHT FALLBACK GUIDES
 ========================================================== */
 
 function addWarningFallbackGuides(guides) {
@@ -2787,7 +4508,7 @@ function addWarningFallbackGuides(guides) {
 }
 
 /* ==========================================================
-   29. GENERATE WARNING-LIGHT RESULT
+   41. GENERATE WARNING-LIGHT RESULT
 ========================================================== */
 
 function generateWarningLightResult() {
@@ -2846,7 +4567,7 @@ function generateWarningLightResult() {
 }
 
 /* ==========================================================
-   30. WARNING-LIGHT EVENT BINDING
+   42. WARNING-LIGHT EVENT BINDING
 ========================================================== */
 
 function bindWarningLightResultEvent() {
@@ -2856,10 +4577,10 @@ function bindWarningLightResultEvent() {
   );
 }
 
-bindWarningLightResultEvent();
+// bindWarningLightResultEvent(); bound during final application initialisation.
 
 /* ==========================================================
-   31. RESULT QUALITY SAFEGUARDS
+   43. RESULT QUALITY SAFEGUARDS
 ========================================================== */
 
 function validateResultStructure(result) {
@@ -2971,7 +4692,7 @@ renderResult = function safeRenderResult(result) {
 };
 
 /* ==========================================================
-   32. APPLICATION ERROR BOUNDARY
+   44. APPLICATION ERROR BOUNDARY
 ========================================================== */
 
 function renderApplicationError() {
@@ -3062,7 +4783,7 @@ window.addEventListener(
   }
 );
 /* ==========================================================
-   33. ENGINE AND ACCELERATION CONTENT
+   45. ENGINE AND ACCELERATION CONTENT
 ========================================================== */
 
 const ENGINE_SYSTEM_RESULT = Object.freeze({
@@ -3143,7 +4864,7 @@ const ENGINE_SYSTEM_RESULT = Object.freeze({
 });
 
 /* ==========================================================
-   34. BATTERY AND STARTING CONTENT
+   46. BATTERY AND STARTING CONTENT
 ========================================================== */
 
 const STARTING_SYSTEM_RESULT = Object.freeze({
@@ -3224,7 +4945,7 @@ const STARTING_SYSTEM_RESULT = Object.freeze({
 });
 
 /* ==========================================================
-   35. COOLING AND OVERHEATING CONTENT
+   47. COOLING AND OVERHEATING CONTENT
 ========================================================== */
 
 const COOLING_SYSTEM_RESULT = Object.freeze({
@@ -3305,7 +5026,7 @@ const COOLING_SYSTEM_RESULT = Object.freeze({
 });
 
 /* ==========================================================
-   36. BRAKE SYSTEM CONTENT
+   48. BRAKE SYSTEM CONTENT
 ========================================================== */
 
 const BRAKE_SYSTEM_RESULT = Object.freeze({
@@ -3386,7 +5107,7 @@ const BRAKE_SYSTEM_RESULT = Object.freeze({
 });
 
 /* ==========================================================
-   37. PRODUCTION SYSTEM RESULT MAP
+   49. PRODUCTION SYSTEM RESULT MAP
 ========================================================== */
 
 const SYSTEM_RESULTS = Object.freeze({
@@ -3397,7 +5118,7 @@ const SYSTEM_RESULTS = Object.freeze({
 });
 
 /* ==========================================================
-   38. SYSTEM RESULT NORMALISATION
+   50. SYSTEM RESULT NORMALISATION
 ========================================================== */
 
 function cloneResultContent(result) {
@@ -3452,7 +5173,7 @@ function prepareSystemResult(system) {
 }
 
 /* ==========================================================
-   39. REPLACE TEMPORARY SYSTEM RESULTS
+   51. REPLACE TEMPORARY SYSTEM RESULTS
 ========================================================== */
 
 renderPendingSystemResult = function renderProductionSystemResult(
@@ -3475,7 +5196,7 @@ renderPendingSystemResult = function renderProductionSystemResult(
 };
 
 /* ==========================================================
-   40. ROUTE-SPECIFIC SAFETY OVERRIDES
+   52. ROUTE-SPECIFIC SAFETY OVERRIDES
 ========================================================== */
 
 function applySystemSafetyOverride(system, result) {
@@ -3559,7 +5280,7 @@ renderPendingSystemResult = function renderSafeProductionSystemResult(
 };
 
 /* ==========================================================
-   41. LIVE-LINK FALLBACK HANDLING
+   53. LIVE-LINK FALLBACK HANDLING
 ========================================================== */
 
 function handleGuideLinkError(anchor) {
@@ -3585,7 +5306,7 @@ function prepareRenderedGuideLinks() {
 }
 
 /* ==========================================================
-   42. ENHANCE RESULT RENDERING
+   54. ENHANCE RESULT RENDERING
 ========================================================== */
 
 const validatedRenderResult = renderResult;
@@ -3596,7 +5317,7 @@ renderResult = function renderEnhancedResult(result) {
 };
 
 /* ==========================================================
-   43. KEYBOARD ESCAPE SUPPORT
+   55. KEYBOARD ESCAPE SUPPORT
 ========================================================== */
 
 function handleEscapeKey(event) {
@@ -3606,6 +5327,7 @@ function handleEscapeKey(event) {
 
   const checkerOpen =
     !dom.symptomChecker?.hidden ||
+    !dom.engineChecker?.hidden ||
     !dom.warningChecker?.hidden;
 
   if (checkerOpen) {
@@ -3619,7 +5341,7 @@ document.addEventListener(
 );
 
 /* ==========================================================
-   44. HASH-BASED ENTRY ROUTES
+   56. HASH-BASED ENTRY ROUTES
 ========================================================== */
 
 function openRouteFromHash() {
@@ -3627,6 +5349,22 @@ function openRouteFromHash() {
 
   if (hash === "#clutch-checker") {
     openClutchChecker();
+    return;
+  }
+
+  if (hash === "#engine-checker") {
+    openRoute("symptom");
+
+    const engineSystemRadio = dom.systemRadios.find(
+      (radio) => radio.value === "engine"
+    );
+
+    if (engineSystemRadio) {
+      engineSystemRadio.checked = true;
+      handleSystemSelection();
+      continueFromSystem();
+    }
+
     return;
   }
 
@@ -3643,7 +5381,7 @@ function openRouteFromHash() {
 window.addEventListener("load", openRouteFromHash);
 
 /* ==========================================================
-   45. FINAL PRODUCTION CONFIGURATION
+   57. FINAL PRODUCTION CONFIGURATION
 ========================================================== */
 
 const APP_CONFIG = Object.freeze({
@@ -3657,7 +5395,7 @@ const APP_CONFIG = Object.freeze({
 let applicationInitialised = false;
 
 /* ==========================================================
-   46. SAFE SESSION STORAGE
+   58. SAFE SESSION STORAGE
 ========================================================== */
 
 function canUseSessionStorage() {
@@ -3804,7 +5542,7 @@ function clearStoredResult() {
 }
 
 /* ==========================================================
-   47. PROGRESS RESET
+   59. PROGRESS RESET
 ========================================================== */
 
 function resetProgress() {
@@ -3829,7 +5567,7 @@ function resetProgress() {
 }
 
 /* ==========================================================
-   48. RESULT DOCUMENT TITLE
+   60. RESULT DOCUMENT TITLE
 ========================================================== */
 
 function updateDocumentTitleForResult(result) {
@@ -3847,7 +5585,7 @@ function restoreDefaultDocumentTitle() {
 }
 
 /* ==========================================================
-   49. EXTERNAL LINK SAFETY
+   61. EXTERNAL LINK SAFETY
 ========================================================== */
 
 function secureExternalLink(anchor) {
@@ -3893,7 +5631,7 @@ function secureRenderedGuideLinks() {
 }
 
 /* ==========================================================
-   50. FINAL RESULT RENDERING WRAPPER
+   62. FINAL RESULT RENDERING WRAPPER
 ========================================================== */
 
 const enhancedResultRenderer = renderResult;
@@ -3916,7 +5654,7 @@ renderResult = function renderFinalProductionResult(
 };
 
 /* ==========================================================
-   51. RESULT RESTORATION
+   63. RESULT RESTORATION
 ========================================================== */
 
 function restorePreviousResultFromSession() {
@@ -3934,7 +5672,7 @@ function restorePreviousResultFromSession() {
 }
 
 /* ==========================================================
-   52. COMPLETE RESET
+   64. COMPLETE RESET
 ========================================================== */
 
 const previousResetApplication = resetApplication;
@@ -3952,7 +5690,7 @@ resetApplication = function resetProductionApplication() {
 };
 
 /* ==========================================================
-   53. CLOSE CHECKER WITHOUT LOSING RESULT
+   65. CLOSE CHECKER WITHOUT LOSING RESULT
 ========================================================== */
 
 const previousCloseChecker = closeChecker;
@@ -3963,7 +5701,7 @@ closeChecker = function closeProductionChecker() {
 };
 
 /* ==========================================================
-   54. OPEN ROUTE STATE CLEANUP
+   66. OPEN ROUTE STATE CLEANUP
 ========================================================== */
 
 const previousOpenRoute = openRoute;
@@ -3976,7 +5714,7 @@ openRoute = function openProductionRoute(routeName) {
 };
 
 /* ==========================================================
-   55. OPEN CLUTCH CHECKER STATE CLEANUP
+   67. OPEN CLUTCH CHECKER STATE CLEANUP
 ========================================================== */
 
 const previousOpenClutchChecker = openClutchChecker;
@@ -3988,7 +5726,7 @@ openClutchChecker = function openProductionClutchChecker() {
 };
 
 /* ==========================================================
-   56. PRINT PREPARATION
+   68. PRINT PREPARATION
 ========================================================== */
 
 function buildPrintTitle(result) {
@@ -4043,16 +5781,20 @@ window.addEventListener(
 );
 
 /* ==========================================================
-   57. REQUIRED DOM VALIDATION
+   69. REQUIRED DOM VALIDATION
 ========================================================== */
 
 const REQUIRED_ELEMENT_IDS = Object.freeze([
   "symptom-checker",
+  "engine-checker",
   "warning-light-checker",
   "system-continue",
   "clutch-symptom-continue",
   "clutch-conditions-continue",
+  "engine-symptom-continue",
+  "engine-conditions-continue",
   "generate-clutch-result",
+  "generate-engine-result",
   "generate-warning-result",
   "diagnostic-result",
   "result-title",
@@ -4087,7 +5829,7 @@ function validateApplicationMarkup() {
 }
 
 /* ==========================================================
-   58. EVENT BINDING GUARD
+   70. EVENT BINDING GUARD
 ========================================================== */
 
 function addEventOnce(
@@ -4116,7 +5858,7 @@ function addEventOnce(
 }
 
 /* ==========================================================
-   59. FINAL EVENT RECONCILIATION
+   71. FINAL EVENT RECONCILIATION
 ========================================================== */
 
 function reconcileProductionEvents() {
@@ -4125,6 +5867,13 @@ function reconcileProductionEvents() {
     "click",
     generateClutchDiagnosticResult,
     "ClutchResult"
+  );
+
+  addEventOnce(
+    dom.generateEngineResult,
+    "click",
+    generateEngineDiagnosticResult,
+    "EngineResult"
   );
 
   addEventOnce(
@@ -4150,7 +5899,7 @@ function reconcileProductionEvents() {
 }
 
 /* ==========================================================
-   60. INPUT STATE SYNCHRONISATION
+   72. INPUT STATE SYNCHRONISATION
 ========================================================== */
 
 function synchroniseCurrentInputState() {
@@ -4167,12 +5916,23 @@ function synchroniseCurrentInputState() {
       dom.clutchConditionCheckboxes
     );
 
+  state.engine.symptom =
+    getCheckedValue(
+      dom.engineSymptomRadios
+    );
+
+  state.engine.conditions =
+    getCheckedValues(
+      dom.engineConditionCheckboxes
+    );
+
   state.warningLight =
     getCheckedValue(
       dom.warningLightRadios
     );
 
   readClutchSafetyAnswers();
+  readEngineSafetyAnswers();
 
   setButtonDisabled(
     dom.systemContinue,
@@ -4185,13 +5945,18 @@ function synchroniseCurrentInputState() {
   );
 
   setButtonDisabled(
+    dom.engineSymptomContinue,
+    !state.engine.symptom
+  );
+
+  setButtonDisabled(
     dom.generateWarningResult,
     !state.warningLight
   );
 }
 
 /* ==========================================================
-   61. PAGE VISIBILITY RECOVERY
+   73. PAGE VISIBILITY RECOVERY
 ========================================================== */
 
 function handlePageRestore(event) {
@@ -4212,7 +5977,7 @@ window.addEventListener(
 );
 
 /* ==========================================================
-   62. HASH ROUTE CORRECTION
+   74. HASH ROUTE CORRECTION
 ========================================================== */
 
 function normaliseHashRoute() {
@@ -4225,6 +5990,7 @@ function normaliseHashRoute() {
     "#symptom-checker",
     "#warning-light-checker",
     "#clutch-checker",
+    "#engine-checker",
     "#how-it-works",
     "#safety",
     "#limitations",
@@ -4256,7 +6022,7 @@ window.addEventListener(
 );
 
 /* ==========================================================
-   63. FINAL APPLICATION INITIALISATION
+   75. FINAL APPLICATION INITIALISATION
 ========================================================== */
 
 function initialiseProductionApplication() {
@@ -4291,7 +6057,7 @@ function initialiseProductionApplication() {
 }
 
 /* ==========================================================
-   64. REPLACE EARLIER INITIALISATION
+   76. REPLACE EARLIER INITIALISATION
 ========================================================== */
 
 document.removeEventListener(
@@ -4312,7 +6078,7 @@ if (document.readyState === "loading") {
 }
 
 /* ==========================================================
-   65. PUBLIC APP INFORMATION
+   77. PUBLIC APP INFORMATION
 ========================================================== */
 
 window.AutoKnowledgePro = Object.freeze({
